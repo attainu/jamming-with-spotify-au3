@@ -1,0 +1,15 @@
+.logout-button {
+  background: #1db954;
+  font-family: Proxima Nova, Georgia, sans-serif;
+  font-weight: BOLD;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px 10px 10px 0px;
+  width: 100px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  outline: none;
+}
