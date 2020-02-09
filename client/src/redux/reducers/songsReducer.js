@@ -4,7 +4,7 @@ const defaultState = {
   fetchTopTracksPending: true,
   searchSongsPending: true,
   songPlaying: false,
-  //timeElapsed: 0,
+  timeElapsed: 0,
   songId: 0,
   viewType: "songs",
   songPaused: true
@@ -16,6 +16,43 @@ export const songsReducer = (state = defaultState, action) => {
       return {
         ...state,
         viewType: action.view
+      };
+
+    case "PLAY_SONG":
+      return {
+        ...state,
+        songPlaying: true,
+        songDetails: action.song,
+        songId: action.song.id,
+        timeElapsed: 0,
+        songPaused: false
+      };
+
+    case "STOP_SONG":
+      return {
+        ...state,
+        songPlaying: false,
+        songDetails: null,
+        timeElapsed: 0,
+        songPaused: true
+      };
+
+    case "PAUSE_SONG":
+      return {
+        ...state,
+        songPaused: true
+      };
+
+    case "RESUME_SONG":
+      return {
+        ...state,
+        songPaused: false
+      };
+
+    case "INCREASE_SONG_TIME":
+      return {
+        ...state,
+        timeElapsed: action.time
       };
 
     case "FETCH_ARTIST_SONGS_PENDING":
@@ -125,55 +162,48 @@ export const songsReducer = (state = defaultState, action) => {
         fetchPlaylistSongsPending: true
       };
 
-    case "BROWSE_ALBUM_PENDING":
+    case "FETCH_SONGS_PENDING":
       return {
         ...state,
-        browseAlbumPending: true
+        fetchSongsPending: true
       };
 
-    case "BROWSE_ALBUM_SUCCESS":
+    case "FETCH_SONGS_SUCCESS":
       return {
         ...state,
         songs: action.songs,
-        viewType: "Songs",
-        browseAlbumError: false,
-        browseAlbumPending: false
+        fetchSongsError: false,
+        fetchSongsPending: false,
+        viewType: "songs"
       };
 
-    case "BROWSE_ALBUM_ERROR":
+    case "FETCH_SONGS_ERROR":
       return {
         ...state,
-        browseAlbumError: true,
-        browseAlbumPending: false
+        fetchSongsError: true,
+        fetchSongsPending: false
       };
 
-    // case "PLAY_SONG":
+    // case "BROWSE_ALBUM_PENDING":
     //   return {
     //     ...state,
-    //     songPlaying: true,
-    //     songDetails: action.song,
-    //     songId: action.song.id,
-    //     songPaused: false
+    //     browseAlbumPending: true
     //   };
 
-    // case "STOP_SONG":
+    // case "BROWSE_ALBUM_SUCCESS":
     //   return {
     //     ...state,
-    //     songPlaying: false,
-    //     songDetails: null,
-    //     songPaused: true
+    //     songs: action.songs,
+    //     viewType: "Songs",
+    //     browseAlbumError: false,
+    //     browseAlbumPending: false
     //   };
 
-    // case "PAUSE_SONG":
+    // case "BROWSE_ALBUM_ERROR":
     //   return {
     //     ...state,
-    //     songPaused: true
-    //   };
-
-    // case "RESUME_SONG":
-    //   return {
-    //     ...state,
-    //     songPaused: false
+    //     browseAlbumError: true,
+    //     browseAlbumPending: false
     //   };
 
     default:

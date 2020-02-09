@@ -8,6 +8,38 @@ export const updateViewType = view => {
   };
 };
 
+export const playSong = song => {
+  return {
+    type: "PLAY_SONG",
+    song
+  };
+};
+
+export const stopSong = () => {
+  return {
+    type: "STOP_SONG"
+  };
+};
+
+export const pauseSong = () => {
+  return {
+    type: "PAUSE_SONG"
+  };
+};
+
+export const resumeSong = () => {
+  return {
+    type: "RESUME_SONG"
+  };
+};
+
+export const increaseSongTime = time => {
+  return {
+    type: "INCREASE_SONG_TIME",
+    time
+  };
+};
+
 export const fetchSongsPending = () => {
   return {
     type: "FETCH_SONGS_PENDING"
@@ -49,15 +81,15 @@ export const fetchSongs = accessToken => {
       })
       .then(res => {
         // get all artist ids and remove duplicates
-        let artistIds = uniqBy(res.items, item => {
-          return item.track.artists[0].name;
-        })
-          .map(item => {
-            return item.track.artists[0].id;
-          })
-          .join(",");
+        // let artistIds = uniqBy(res.items, item => {
+        //   return item.track.artists[0].name;
+        // })
+        //   .map(item => {
+        //     return item.track.artists[0].id;
+        //   })
+        //   .join(",");
 
-        dispatch(setArtistIds(artistIds));
+        // dispatch(setArtistIds(artistIds));
 
         dispatch(fetchSongsSuccess(res.items));
       })

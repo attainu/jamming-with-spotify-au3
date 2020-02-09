@@ -4,7 +4,7 @@ import "./SideMenu.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
-  //fetchSongs,
+  fetchSongs,
   fetchRecentlyPlayed,
   fetchTopTracks,
   updateViewType
@@ -25,7 +25,7 @@ const SideMenu = ({
   fetchTopTracks,
   token,
   title,
-  artistIds, 
+  artistIds
 }) => {
   const handleClick = name => {
     updateHeaderTitle(name);
@@ -42,11 +42,11 @@ const SideMenu = ({
     const menu = [
       {
         name: "Top Tracks",
-        action: fetchTopTracks,
+        action: fetchTopTracks
       },
       {
         name: "Recently Played",
-        action: fetchRecentlyPlayed,
+        action: fetchRecentlyPlayed
       },
       {
         name: "Songs",
@@ -71,12 +71,10 @@ const SideMenu = ({
             title === item.name ? "active side-menu-item" : "side-menu-item"
           }
           onClick={() => {
-            if(item.getArtists)
-              item.action(token, artistIds)
-              else
-               item.action(token);
+            if (item.getArtists) item.action(token, artistIds);
+            else item.action(token);
 
-               handleClick(item.name)
+            handleClick(item.name);
           }}
         >
           {item.name}
@@ -104,6 +102,8 @@ const SideMenu = ({
       <br />
       <h3 className="user-library-header">Your Library</h3>
       {renderSideMenu()}
+      <br />
+      <h3 className="user-library-header">Create Playlist</h3>
     </ul>
   );
 };
@@ -126,7 +126,9 @@ const mapStateToProps = state => {
   return {
     userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
-    artistIds: state.artistsReducer.artistIds? state.artistsReducer.artistIds: "",
+    artistIds: state.artistsReducer.artistIds
+      ? state.artistsReducer.artistIds
+      : "",
     title: state.uiReducer.title
   };
 };
@@ -134,8 +136,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-        fetchRecentlyPlayed,
-      //   fetchSongs,
+      fetchRecentlyPlayed,
+      fetchSongs,
       fetchAlbums,
       fetchArtists,
       fetchTopTracks,

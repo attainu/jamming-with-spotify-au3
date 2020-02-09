@@ -13,7 +13,7 @@ import "./MainView.css";
 const MainView = ({
   headerTitle,
   viewType,
-  viewTypeAlbum,
+  //viewTypeAlbum,
   audioControl,
   resumeSong,
   pauseSong
@@ -33,11 +33,15 @@ const MainView = ({
       ) : viewType === "Artist" ? (
         <SingleArtistTracks />
       ) : viewType === "Albums" ? (
-        <Albums />
+        <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (
         <SingleAlbumTracks />
-      ) : (
-        <SongList />
+      ) : viewType === "Category Playlist" ? null : (
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       )}
       {/* {headerTitle === "Albums" ? (
         <AlbumList audioControl={audioControl} />
@@ -58,10 +62,10 @@ const MainView = ({
 };
 
 MainView.propTypes = {
-  headerTitle: PropTypes.string
-  //   audioControl: PropTypes.func,
-  //   resumeSong: PropTypes.func,
-  //   pauseSong: PropTypes.func
+  headerTitle: PropTypes.string,
+  audioControl: PropTypes.func,
+  resumeSong: PropTypes.func,
+  pauseSong: PropTypes.func
 };
 
 const mapStateToProps = state => {

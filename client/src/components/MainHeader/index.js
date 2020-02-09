@@ -7,24 +7,31 @@ import {
   fetchNewReleases,
   fetchFeatured
 } from "../../redux/actions/browseActions";
+import {
+  fetchPlaylistSongs,
+  addPlaylistItem
+} from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
 import "./MainHeader.css";
 
 const MainHeader = ({
-  //   pauseSong,
-  //   resumeSong,
+  pauseSong,
+  resumeSong,
   fetchCategories,
   fetchNewReleases,
   fetchFeatured,
+  fetchPlaylistSongs,
+  addPlaylistItem,
   updateHeaderTitle,
   updateViewType,
-  //songPaused,
+  songPaused,
   headerTitle,
   viewType,
   //viewTypeAlbum,
   albums,
   playlists,
+  categoryPlaylists,
   token,
   artists,
   releaseAlbum
@@ -48,9 +55,6 @@ const MainHeader = ({
   }
 
   if (viewType === "New Release Album") {
-    // currentAlbum = releaseAlbum.filter(album => {
-    //   return album.name === headerTitle;
-    // })[0];
     currentAlbum = { ...releaseAlbum };
     console.log(currentAlbum);
   }
@@ -86,14 +90,69 @@ const MainHeader = ({
               - {currentPlaylist.tracks.total} songs
             </p>
             <button
-              // onClick={!songPaused ? pauseSong : resumeSong}
+              onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
             >
-              {/* {songPaused ? "PLAY" : "PAUSE"} */}
+              {songPaused ? "PLAY" : "PAUSE"}
             </button>
           </div>
         </div>
       )}
+
+      {viewType === "Category Playlist" && categoryPlaylists
+        ? categoryPlaylists.map((currentPlaylist, index) => {
+            const getPlaylistSongs = () => {
+              addPlaylistItem(currentPlaylist);
+              console.log(currentPlaylist.owner.id, currentPlaylist.id, token);
+              fetchPlaylistSongs(
+                currentPlaylist.owner.id,
+                currentPlaylist.id,
+                token
+              );
+              updateHeaderTitle(currentPlaylist.name);
+            };
+
+            return (
+              <>
+                <div
+                  className="playlist-title-container"
+                  key={index}
+                  onClick={() => getPlaylistSongs()}
+                >
+                  <div className="playlist-image-container">
+                    <img
+                      className="playlist-image"
+                      src={
+                        currentPlaylist.images[0]
+                          ? currentPlaylist.images[0].url
+                          : null
+                      }
+                    />
+                  </div>
+                  <div className="playlist-info-container">
+                    <p className="playlist-text">PLAYLIST</p>
+                    <h3 className="header-title">{currentPlaylist.name}</h3>
+                    <h4 className="playlist-desc">
+                      {currentPlaylist.description}
+                    </h4>
+                    <p className="created-by">
+                      Created By:{" "}
+                      <span className="lighter-text">
+                        {currentPlaylist.owner.display_name}
+                      </span>{" "}
+                      - {currentPlaylist.tracks.total} songs
+                    </p>
+                    {/* <button
+                      onClick={!songPaused ? pauseSong : resumeSong}
+                      className="main-pause-play-btn"
+                    ></button> */}
+                  </div>
+                </div>
+                <br />
+              </>
+            );
+          })
+        : null}
 
       {viewType === "Album" && currentAlbum && (
         <div>
@@ -117,7 +176,7 @@ const MainHeader = ({
             </div>
           </div>
           <button
-            //onClick={!songPaused ? pauseSong : resumeSong}
+            // onClick={!songPaused ? pauseSong : resumeSong}
             className="main-pause-play-btn album-button"
           >
             {/* {songPaused ? "PLAY" : "PAUSE"} */}
@@ -183,14 +242,14 @@ const MainHeader = ({
         headerTitle === "Top Tracks") && (
         <div>
           <h3 className="header-title">{headerTitle}</h3>
-          {/* {headerTitle !== "Artists" && (
+          {headerTitle !== "Artists" && (
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
             >
               {songPaused ? "PLAY" : "PAUSE"}
             </button>
-          )} */}
+          )}
         </div>
       )}
 
@@ -247,6 +306,7 @@ MainHeader.propTypes = {
   headerTitle: PropTypes.string,
   viewType: PropTypes.string,
   playlists: PropTypes.array,
+  categoryPlaylists: PropTypes.array,
   playlistMenu: PropTypes.array,
   token: PropTypes.string,
   artists: PropTypes.array,
@@ -256,11 +316,12 @@ MainHeader.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    //songPaused: state.songsReducer.songPaused,
+    songPaused: state.songsReducer.songPaused,
     headerTitle: state.uiReducer.title,
     viewType: state.songsReducer.viewType,
     //viewTypeAlbum: state.albumTracksReducer.viewType,
     playlists: state.playlistReducer.playlists,
+    categoryPlaylists: state.categoryPlaylistReducer.categoryPlaylists,
     releaseAlbum: state.albumsReducer.releaseAlbum,
     artists: state.artistsReducer.artistList
       ? state.artistsReducer.artistList.items
@@ -275,6 +336,8 @@ const mapDispatchToProps = dispatch => {
     {
       fetchCategories,
       fetchNewReleases,
+      fetchPlaylistSongs,
+      addPlaylistItem,
       updateHeaderTitle,
       updateViewType,
       fetchFeatured

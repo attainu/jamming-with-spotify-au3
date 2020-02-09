@@ -45,6 +45,26 @@ export const addPlaylistItem = playlist => {
   };
 };
 
+export const fetchCategoryPlaylistsPending = () => {
+  return {
+    type: "FETCH_CATEGORY_PLAYLISTS_PENDING"
+  };
+};
+
+export const fetchCategoryPlaylistsError = () => {
+  return {
+    type: "FETCH_CATEGORY_PLAYLISTS_ERROR"
+  };
+};
+
+export const fetchCategoryPlaylistsSuccess = playlists => {
+  console.log(playlists);
+  return {
+    type: "FETCH_CATEGORY_PLAYLISTS_SUCCESS",
+    playlists
+  };
+};
+
 export const fetchPlaylistSongs = (userId, playlistId, accessToken) => {
   return dispatch => {
     const request = new Request(
@@ -101,6 +121,36 @@ export const fetchPlaylistsMenu = (userId, accessToken) => {
       })
       .catch(err => {
         dispatch(fetchPlaylistMenuError(err));
+      });
+  };
+};
+
+export const fetchCategoryPlaylists = (accessToken, categoryId) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/browse/categories/${categoryId}/playlists`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+        })
+      }
+    );
+
+    dispatch(fetchCategoryPlaylistsPending());
+
+    fetch(request)
+      .then(res => {
+        if (res.statusText === "Unauthorized") {
+          window.location.href = "./";
+        }
+        return res.json();
+      })
+      .then(res => {
+        console.log(res.playlists.items);
+        dispatch(fetchCategoryPlaylistsSuccess(res.playlists.items));
+      })
+      .catch(err => {
+        dispatch(fetchCategoryPlaylistsError(err));
       });
   };
 };

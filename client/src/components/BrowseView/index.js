@@ -4,12 +4,14 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
   fetchPlaylistSongs,
-  addPlaylistItem
+  addPlaylistItem,
+  fetchCategoryPlaylists
 } from "../../redux/actions/playlistActions";
 import { updateViewType } from "../../redux/actions/songActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import "./BrowseView.css";
 import { fetchAlbumTracks, addAlbum } from "../../redux/actions/albumActions";
+//import { fetchCategoryPlaylists } from "../../redux/actions/playlistActions";
 
 const BrowseView = ({
   view,
@@ -20,7 +22,8 @@ const BrowseView = ({
   updateViewType,
   addPlaylistItem,
   addAlbum,
-  fetchAlbumTracks
+  fetchAlbumTracks,
+  fetchCategoryPlaylists
 }) => {
   let browseView;
 
@@ -41,6 +44,14 @@ const BrowseView = ({
         updateHeaderTitle(item.name);
       };
 
+      const getCategoryPlaylists = () => {
+        //addPlaylistItem(item);
+        fetchCategoryPlaylists(token, item.id);
+        //updateViewType("playlist");
+        updateViewType("Category Playlist");
+        updateHeaderTitle(item.name);
+      };
+
       return (
         <li
           onClick={
@@ -48,6 +59,8 @@ const BrowseView = ({
               ? getPlaylistSongs
               : viewType === "New Releases"
               ? getAlbumSongs
+              : viewType === "Genres"
+              ? getCategoryPlaylists
               : null
           }
           className="category-item"
@@ -76,6 +89,7 @@ BrowseView.propTypes = {
   token: PropTypes.string,
   fetchPlaylistSongs: PropTypes.func,
   fetchAlbumTracks: PropTypes.func,
+  fetchCategoryPlaylists: PropTypes.func,
   updateHeaderTitle: PropTypes.func,
   addPlaylistItem: PropTypes.func,
   addAlbum: PropTypes.func
@@ -97,7 +111,8 @@ const mapDispatchToProps = dispatch => {
       updateViewType,
       addPlaylistItem,
       addAlbum,
-      fetchAlbumTracks
+      fetchAlbumTracks,
+      fetchCategoryPlaylists
     },
     dispatch
   );

@@ -3,16 +3,24 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { fetchUser } from "./redux/actions/userActions";
 import { setToken } from "./redux/actions/tokenActions";
+import {
+  playSong,
+  stopSong,
+  pauseSong,
+  resumeSong
+} from "./redux/actions/songActions";
 import Header from "./components/Header";
 import SideMenu from "./components/SideMenu";
 import MainHeader from "./components/MainHeader";
 import MainView from "./components/MainView";
 import UserPlaylists from "./components/UserPlaylists";
+import Footer from "./components/Footer";
 import "./App.css";
 import { connect } from "react-redux";
 //import { Redirect } from "react-router-dom";
 
 class App extends Component {
+  static audio;
   componentDidMount() {
     console.log(window.location.pathname);
 
@@ -32,7 +40,48 @@ class App extends Component {
     if (nextProps.token) {
       this.props.fetchUser(nextProps.token);
     }
+
+    if (this.audio !== undefined) {
+      this.audio.volume = nextProps.volume / 100;
+    }
   }
+
+  stopSong = () => {
+    if (this.audio) {
+      this.props.stopSong();
+      this.audio.pause();
+    }
+  };
+
+  pauseSong = () => {
+    if (this.audio) {
+      this.props.pauseSong();
+      this.audio.pause();
+    }
+  };
+
+  resumeSong = () => {
+    if (this.audio) {
+      this.props.resumeSong();
+      this.audio.play();
+    }
+  };
+
+  audioControl = song => {
+    const { playSong, stopSong } = this.props;
+
+    if (this.audio === undefined) {
+      playSong(song.track);
+      this.audio = new Audio(song.track.preview_url);
+      this.audio.play();
+    } else {
+      stopSong();
+      this.audio.pause();
+      playSong(song.track);
+      this.audio = new Audio(song.track.preview_url);
+      this.audio.play();
+    }
+  };
 
   render() {
     return (
@@ -47,16 +96,22 @@ class App extends Component {
             <Header />
             <div className="main-section-container">
               <MainHeader
-              //pauseSong={this.pauseSong}
-              //resumeSong={this.resumeSong}
+                pauseSong={this.pauseSong}
+                resumeSong={this.resumeSong}
               />
               <MainView
-              //pauseSong={this.pauseSong}
-              //resumeSong={this.resumeSong}
-              //audioControl={this.audioControl}
+                pauseSong={this.pauseSong}
+                resumeSong={this.resumeSong}
+                audioControl={this.audioControl}
               />
             </div>
           </div>
+          <Footer
+            stopSong={this.stopSong}
+            pauseSong={this.pauseSong}
+            resumeSong={this.resumeSong}
+            audioControl={this.audioControl}
+          />
         </div>
       </div>
     );
@@ -65,12 +120,18 @@ class App extends Component {
 
 App.propTypes = {
   token: PropTypes.string,
-  setToken: PropTypes.func
+  setToken: PropTypes.func,
+  pauseSong: PropTypes.func,
+  playSong: PropTypes.func,
+  stopSong: PropTypes.func,
+  resumeSong: PropTypes.func,
+  volume: PropTypes.number
 };
 
 const mapStateToProps = state => {
   return {
-    token: state.tokenReducer.token
+    token: state.tokenReducer.token,
+    volume: state.soundReducer.volume
   };
 };
 
@@ -78,14 +139,14 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       fetchUser,
-      setToken
+      setToken,
+      playSong,
+      stopSong,
+      pauseSong,
+      resumeSong
     },
     dispatch
   );
-  // return {
-  //   fetchUser: token => dispatch(fetchUser(token)),
-  //   setToken: token => dispatch(setToken(token))
-  // };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
