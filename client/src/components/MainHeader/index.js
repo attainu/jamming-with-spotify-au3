@@ -1,0 +1,349 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import {
+  fetchCategories,
+  fetchNewReleases,
+  fetchFeatured
+} from "../../redux/actions/browseActions";
+import {
+  fetchPlaylistSongs,
+  addPlaylistItem
+} from "../../redux/actions/playlistActions";
+import { updateHeaderTitle } from "../../redux/actions/uiActions";
+import { updateViewType } from "../../redux/actions/songActions";
+import "./MainHeader.css";
+
+const MainHeader = ({
+  pauseSong,
+  resumeSong,
+  fetchCategories,
+  fetchNewReleases,
+  fetchFeatured,
+  fetchPlaylistSongs,
+  addPlaylistItem,
+  updateHeaderTitle,
+  updateViewType,
+  songPaused,
+  headerTitle,
+  viewType,
+  //viewTypeAlbum,
+  albums,
+  playlists,
+  categoryPlaylists,
+  token,
+  artists,
+  releaseAlbum
+}) => {
+  let currentPlaylist;
+  let currentAlbum;
+  let currentArtist;
+
+  if (viewType === "playlist") {
+    currentPlaylist = playlists.filter(playlist => {
+      return playlist.name === headerTitle;
+    })[0];
+    console.log("Current Playlist", currentPlaylist);
+  }
+
+  if (viewType === "Album") {
+    currentAlbum = albums.filter(item => {
+      return item.album.name === headerTitle;
+    })[0];
+    console.log(currentAlbum);
+  }
+
+  if (viewType === "New Release Album") {
+    currentAlbum = { ...releaseAlbum };
+    console.log(currentAlbum);
+  }
+
+  if (viewType === "Artist" && artists.length > 0) {
+    currentArtist = artists.filter(artist => {
+      return artist.name === headerTitle;
+    })[0];
+    console.log(currentArtist);
+  }
+
+  return (
+    <div className="section-title">
+      {viewType === "playlist" && (
+        <div className="playlist-title-container">
+          <div className="playlist-image-container">
+            <img
+              className="playlist-image"
+              src={
+                currentPlaylist.images[0] ? currentPlaylist.images[0].url : null
+              }
+            />
+          </div>
+          <div className="playlist-info-container">
+            <p className="playlist-text">PLAYLIST</p>
+            <h3 className="header-title">{headerTitle}</h3>
+            <h4 className="playlist-desc">{currentPlaylist.description}</h4>
+            <p className="created-by">
+              Created By:{" "}
+              <span className="lighter-text">
+                {currentPlaylist.owner.display_name}
+              </span>{" "}
+              - {currentPlaylist.tracks.total} songs
+            </p>
+            <button
+              onClick={!songPaused ? pauseSong : resumeSong}
+              className="main-pause-play-btn"
+            >
+              {songPaused ? "PLAY" : "PAUSE"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {viewType === "Category Playlist" && categoryPlaylists
+        ? categoryPlaylists.map((currentPlaylist, index) => {
+            const getPlaylistSongs = () => {
+              addPlaylistItem(currentPlaylist);
+              console.log(currentPlaylist.owner.id, currentPlaylist.id, token);
+              fetchPlaylistSongs(
+                currentPlaylist.owner.id,
+                currentPlaylist.id,
+                token
+              );
+              updateHeaderTitle(currentPlaylist.name);
+            };
+
+            return (
+              <>
+                <div
+                  className="playlist-title-container"
+                  key={index}
+                  onClick={() => getPlaylistSongs()}
+                >
+                  <div className="playlist-image-container">
+                    <img
+                      className="playlist-image"
+                      src={
+                        currentPlaylist.images[0]
+                          ? currentPlaylist.images[0].url
+                          : null
+                      }
+                    />
+                  </div>
+                  <div className="playlist-info-container">
+                    <p className="playlist-text">PLAYLIST</p>
+                    <h3 className="header-title">{currentPlaylist.name}</h3>
+                    <h4 className="playlist-desc">
+                      {currentPlaylist.description}
+                    </h4>
+                    <p className="created-by">
+                      Created By:{" "}
+                      <span className="lighter-text">
+                        {currentPlaylist.owner.display_name}
+                      </span>{" "}
+                      - {currentPlaylist.tracks.total} songs
+                    </p>
+                    <button
+                      onClick={!songPaused ? pauseSong : resumeSong}
+                      className="main-pause-play-btn"
+                    ></button>
+                  </div>
+                </div>
+                <br />
+              </>
+            );
+          })
+        : null}
+
+      {viewType === "Album" && currentAlbum && (
+        <div>
+          <div className="current-album-header-container">
+            <img
+              alt="albumName"
+              className="current-album-image"
+              src={currentAlbum.album.images[0].url}
+            />
+            <div className="current-album-info">
+              <p>Album from your library</p>
+              <h3>{currentAlbum.album.name}</h3>
+              <p className="created-by">
+                By:{" "}
+                <span className="lighter-text">
+                  {currentAlbum.album.artists[0].name}{" "}
+                </span>{" "}
+                - {currentAlbum.album.total_tracks}{" "}
+                {currentAlbum.album.total_tracks > 1 ? "songs" : "song"}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={!songPaused ? pauseSong : resumeSong}
+            className="main-pause-play-btn album-button"
+          >
+            {songPaused ? "PLAY" : "PAUSE"}
+          </button>
+        </div>
+      )}
+
+      {viewType === "New Release Album" && (
+        <div className="playlist-title-container">
+          <div className="playlist-image-container">
+            <img
+              className="playlist-image"
+              src={currentAlbum.images[0] ? currentAlbum.images[0].url : null}
+            />
+          </div>
+          <div className="playlist-info-container">
+            <p className="playlist-text">NEW RELEASE ALBUM</p>
+            <h3 className="header-title">{headerTitle}</h3>
+            <p className="created-by">
+              By:{" "}
+              <span className="lighter-text">
+                {currentAlbum.artists[0].name}
+              </span>{" "}
+              - {currentAlbum.total_tracks}{" "}
+              {currentAlbum.total_tracks > 1 ? "songs" : "song"}
+            </p>
+            <button
+              onClick={!songPaused ? pauseSong : resumeSong}
+              className="main-pause-play-btn"
+            >
+              {songPaused ? "PLAY" : "PAUSE"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {viewType === "Artist" && currentArtist && (
+        <div>
+          <div className="current-artist-header-container">
+            <img
+              alt="artistName"
+              className="current-artist-image"
+              src={currentArtist.images[0].url}
+            />
+            <div className="current-artist-info">
+              <p>Artist from your library</p>
+              <h3>{currentArtist.name}</h3>
+            </div>
+          </div>
+          <button
+            onClick={!songPaused ? pauseSong : resumeSong}
+            className="main-pause-play-btn artist-button"
+          >
+            {songPaused ? "PLAY" : "PAUSE"}
+          </button>
+        </div>
+      )}
+
+      {(headerTitle === "Songs" ||
+        headerTitle === "Recently Played" ||
+        headerTitle === "Albums" ||
+        headerTitle === "Artists" ||
+        headerTitle === "Top Tracks") && (
+        <div>
+          <h3 className="header-title">{headerTitle}</h3>
+          {headerTitle !== "Artists" && headerTitle !== "Albums" && (
+            <button
+              onClick={!songPaused ? pauseSong : resumeSong}
+              className="main-pause-play-btn"
+            >
+              {songPaused ? "PLAY" : "PAUSE"}
+            </button>
+          )}
+        </div>
+      )}
+
+      {headerTitle === "Browse" && (
+        <div>
+          <h3 className="header-title">{headerTitle}</h3>
+          <div className="browse-headers">
+            <p
+              className={viewType === "Genres" ? "active" : ""}
+              onClick={() => {
+                fetchCategories(token);
+                updateViewType("Genres");
+                updateHeaderTitle("Browse");
+              }}
+            >
+              Genres
+            </p>
+            <p
+              className={viewType === "New Releases" ? "active" : ""}
+              onClick={() => {
+                fetchNewReleases(token);
+                updateViewType("New Releases");
+                updateHeaderTitle("Browse");
+              }}
+            >
+              New Releases
+            </p>
+            <p
+              className={viewType === "Featured" ? "active" : ""}
+              onClick={() => {
+                fetchFeatured(token);
+                updateViewType("Featured");
+                updateHeaderTitle("Browse");
+              }}
+            >
+              Featured
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+MainHeader.propTypes = {
+  pauseSong: PropTypes.func,
+  resumeSong: PropTypes.func,
+  fetchCategories: PropTypes.func,
+  fetchNewReleases: PropTypes.func,
+  fetchFeatured: PropTypes.func,
+  updateHeaderTitle: PropTypes.func,
+  updateViewType: PropTypes.func,
+  songPaused: PropTypes.bool,
+  headerTitle: PropTypes.string,
+  viewType: PropTypes.string,
+  playlists: PropTypes.array,
+  categoryPlaylists: PropTypes.array,
+  playlistMenu: PropTypes.array,
+  token: PropTypes.string,
+  artists: PropTypes.array,
+  releaseAlbum: PropTypes.object,
+  albums: PropTypes.array
+};
+
+const mapStateToProps = state => {
+  return {
+    songPaused: state.songsReducer.songPaused,
+    headerTitle: state.uiReducer.title,
+    viewType: state.songsReducer.viewType,
+    //viewTypeAlbum: state.albumTracksReducer.viewType,
+    playlists: state.playlistReducer.playlists,
+    categoryPlaylists: state.categoryPlaylistReducer.categoryPlaylists,
+    releaseAlbum: state.albumsReducer.releaseAlbum,
+    artists: state.artistsReducer.artistList
+      ? state.artistsReducer.artistList.items
+      : [],
+    token: state.tokenReducer.token,
+    albums: state.albumsReducer.albums ? state.albumsReducer.albums : []
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(
+    {
+      fetchCategories,
+      fetchNewReleases,
+      fetchPlaylistSongs,
+      addPlaylistItem,
+      updateHeaderTitle,
+      updateViewType,
+      fetchFeatured
+    },
+    dispatch
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainHeader);
