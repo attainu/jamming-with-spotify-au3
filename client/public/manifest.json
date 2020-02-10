@@ -1,0 +1,25 @@
+{
+  "short_name": "Spotify App",
+  "name": "Jamming with Spotify",
+  "icons": [
+    {
+      "src": "images/spotify-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "images/spotify-386.png",
+      "sizes": "386x386",
+      "type": "image/png"
+    },
+    {
+      "src": "images/spotify-275x252.jpg",
+      "sizes": "275x252",
+      "type": "image/jpg"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "theme_color": "#1db954",
+  "background_color": "black"
+}
