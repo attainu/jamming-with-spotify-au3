@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -9,31 +9,41 @@ import {
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import "./UserPlaylists.css";
 
-class UserPlaylists extends Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.userId !== "" && nextProps.token !== "") {
-      this.props.fetchPlaylistsMenu(nextProps.userId, nextProps.token);
-    }
-  }
+//class UserPlaylists extends Component {
+const UserPlaylists = ({
+  userId,
+  token,
+  playlistMenu,
+  title,
+  newPlaylistData,
+  fetchPlaylistSongs,
+  fetchPlaylistsMenu,
+  updateHeaderTitle
+}) => {
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.userId !== "" && nextProps.token !== "") {
+  //     this.props.fetchPlaylistsMenu(nextProps.userId, nextProps.token);
+  //   }
+  // }
 
-  renderPlaylists() {
-    return this.props.playlistMenu.map(playlist => {
+  useEffect(() => {
+    if (userId !== "" && token !== "") {
+      fetchPlaylistsMenu(userId, token);
+    }
+  }, [userId, token, newPlaylistData]);
+
+  const renderPlaylists = () => {
+    return playlistMenu.map(playlist => {
       const getPlaylistSongs = () => {
-        this.props.fetchPlaylistSongs(
-          playlist.owner.id,
-          playlist.id,
-          this.props.token
-        );
-        this.props.updateHeaderTitle(playlist.name);
+        fetchPlaylistSongs(playlist.owner.id, playlist.id, token);
+        updateHeaderTitle(playlist.name);
       };
 
       return (
         <li
           onClick={getPlaylistSongs}
           className={
-            this.props.title === playlist.name
-              ? "active side-menu-item"
-              : "side-menu-item"
+            title === playlist.name ? "active side-menu-item" : "side-menu-item"
           }
           key={playlist.id}
         >
@@ -41,17 +51,17 @@ class UserPlaylists extends Component {
         </li>
       );
     });
-  }
+  };
 
-  render() {
-    return (
-      <div className="user-playlist-container">
-        <h3 className="user-playlist-header">Playlists</h3>
-        {this.props.playlistMenu && this.renderPlaylists()}
-      </div>
-    );
-  }
-}
+  //render() {
+  return (
+    <div className="user-playlist-container">
+      <h3 className="user-playlist-header">Playlists</h3>
+      {playlistMenu && renderPlaylists()}
+    </div>
+  );
+};
+//}
 
 UserPlaylists.propTypes = {
   userId: PropTypes.string,
@@ -70,7 +80,8 @@ const mapStateToProps = state => {
       ? state.playlistReducer.playlistMenu
       : "",
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
-    title: state.uiReducer.title
+    title: state.uiReducer.title,
+    newPlaylistData: state.createPlaylistReducer.newPlaylistData
   };
 };
 

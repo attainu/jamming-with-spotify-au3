@@ -184,6 +184,29 @@ export const songsReducer = (state = defaultState, action) => {
         fetchSongsPending: false
       };
 
+    case "SAVE_PLAYLIST_TRACK_PENDING":
+      return {
+        ...state,
+        savePlaylistTrackPending: true
+      };
+
+    case "SAVE_PLAYLIST_TRACK_SUCCESS":
+      return {
+        ...state,
+        //songs: action.songs,
+        addedTrack: action.addedTrack,
+        savePlaylistTrackPending: false,
+        savePlaylistTrackError: false
+        //viewType: "songs"
+      };
+
+    case "SAVE_PLAYLIST_TRACK_ERROR":
+      return {
+        ...state,
+        savePlaylistTrackError: true,
+        savePlaylistTrackPending: false
+      };
+
     // case "BROWSE_ALBUM_PENDING":
     //   return {
     //     ...state,

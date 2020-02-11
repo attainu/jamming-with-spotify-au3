@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import defaultCover from "./music.jpg";
 import {
   fetchCategories,
   fetchNewReleases,
@@ -74,7 +75,9 @@ const MainHeader = ({
             <img
               className="playlist-image"
               src={
-                currentPlaylist.images[0] ? currentPlaylist.images[0].url : null
+                currentPlaylist.images[0]
+                  ? currentPlaylist.images[0].url
+                  : defaultCover
               }
             />
           </div>
@@ -87,7 +90,8 @@ const MainHeader = ({
               <span className="lighter-text">
                 {currentPlaylist.owner.display_name}
               </span>{" "}
-              - {currentPlaylist.tracks.total} songs
+              - {currentPlaylist.tracks.total}{" "}
+              {currentPlaylist.tracks.total > 1 ? "songs" : "song"}
             </p>
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
@@ -116,6 +120,7 @@ const MainHeader = ({
               <>
                 <div
                   className="playlist-title-container"
+                  style={{ cursor: "pointer" }}
                   key={index}
                   onClick={() => getPlaylistSongs()}
                 >

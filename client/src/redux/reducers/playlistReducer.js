@@ -1,47 +1,31 @@
 export const playlistReducer = (state = {}, action) => {
   switch (action.type) {
-    case "FETCH_PLAYLIST_MENU_PENDING":
+    case "FETCH_PLAYLISTS_MENU_PENDING":
       return {
-        fetchPlaylistPending: true,
-        ...state
+        ...state,
+        fetchPlaylistPending: true
       };
 
-    case "FETCH_PLAYLIST_MENU_SUCCESS":
+    case "FETCH_PLAYLISTS_MENU_SUCCESS":
       return {
-        playlistMenu: action.playlists,
-        playlists: action.playlists,
+        ...state,
+        playlistMenu: [...action.playlists],
+        playlists: [...action.playlists],
         fetchPlaylistError: false,
-        fetchPlaylistPending: false,
-        ...state
+        fetchPlaylistPending: false
       };
 
-    case "FETCH_PLAYLIST_MENU_ERROR":
+    case "FETCH_PLAYLISTS_MENU_ERROR":
       return {
+        ...state,
         fetchPlaylistError: true,
-        fetchPlaylistPending: false,
-        ...state
+        fetchPlaylistPending: false
       };
 
     case "ADD_PLAYLIST_ITEM":
       return {
         ...state,
         playlists: [...state.playlists, action.playlist]
-      };
-
-    case "FETCH_PLAYLIST_MENU_SUCCESS":
-      return {
-        playlistMenu: action.playlists,
-        playlists: action.playlists,
-        fetchPlaylistError: false,
-        fetchPlaylistPending: false,
-        ...state
-      };
-
-    case "FETCH_PLAYLIST_MENU_ERROR":
-      return {
-        fetchPlaylistError: true,
-        fetchPlaylistPending: false,
-        ...state
       };
 
     default:
@@ -71,6 +55,34 @@ export const categoryPlaylistReducer = (state = {}, action) => {
         fetchCategoryPlaylistsError: true,
         fetchCategoryPlaylistsPending: false,
         ...state
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const createPlaylistReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "CREATE_PLAYLIST_PENDING":
+      return {
+        ...state,
+        createPlaylistPending: true
+      };
+
+    case "CREATE_PLAYLIST_SUCCESS":
+      return {
+        ...state,
+        newPlaylistData: action.playlist,
+        createPlaylistPending: false,
+        createPlaylistError: false
+      };
+
+    case "CREATE_PLAYLIST_ERROR":
+      return {
+        ...state,
+        createPlaylistPending: false,
+        createPlaylistError: true
       };
 
     default:

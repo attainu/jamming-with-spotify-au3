@@ -19,22 +19,22 @@ export const fetchPlaylistSongsError = () => {
   };
 };
 
-export const fetchPlaylistMenuPending = () => {
+export const fetchPlaylistsMenuPending = () => {
   return {
-    type: "FETCH_PLAYLIST_MENU_PENDING"
+    type: "FETCH_PLAYLISTS_MENU_PENDING"
   };
 };
 
-export const fetchPlaylistMenuSuccess = playlists => {
+export const fetchPlaylistsMenuSuccess = playlists => {
   return {
-    type: "FETCH_PLAYLIST_MENU_SUCCESS",
+    type: "FETCH_PLAYLISTS_MENU_SUCCESS",
     playlists
   };
 };
 
-export const fetchPlaylistMenuError = () => {
+export const fetchPlaylistsMenuError = () => {
   return {
-    type: "FETCH_PLAYLIST_MENU_ERROR"
+    type: "FETCH_PLAYLISTS_MENU_ERROR"
   };
 };
 
@@ -62,6 +62,44 @@ export const fetchCategoryPlaylistsSuccess = playlists => {
   return {
     type: "FETCH_CATEGORY_PLAYLISTS_SUCCESS",
     playlists
+  };
+};
+
+export const createPlaylistPending = () => {
+  return {
+    type: "CREATE_PLAYLIST_PENDING"
+  };
+};
+
+export const createPlaylistSuccess = playlist => {
+  return {
+    type: "CREATE_PLAYLIST_SUCCESS",
+    playlist
+  };
+};
+
+export const createPlaylistError = () => {
+  return {
+    type: "CREATE_PLAYLIST_ERROR"
+  };
+};
+
+export const saveTrackToPlaylistPending = () => {
+  return {
+    type: "SAVE_PLAYLIST_TRACK_PENDING"
+  };
+};
+
+export const saveTrackToPlaylistSuccess = addedTrack => {
+  return {
+    type: "SAVE_PLAYLIST_TRACK_SUCCESS",
+    addedTrack
+  };
+};
+
+export const saveTrackToPlaylistError = () => {
+  return {
+    type: "SAVE_PLAYLIST_TRACK_ERROR"
   };
 };
 
@@ -107,7 +145,7 @@ export const fetchPlaylistsMenu = (userId, accessToken) => {
       }
     );
 
-    dispatch(fetchPlaylistMenuPending());
+    dispatch(fetchPlaylistsMenuPending());
 
     fetch(request)
       .then(res => {
@@ -117,10 +155,11 @@ export const fetchPlaylistsMenu = (userId, accessToken) => {
         return res.json();
       })
       .then(res => {
-        dispatch(fetchPlaylistMenuSuccess(res.items));
+        console.log(res.items);
+        dispatch(fetchPlaylistsMenuSuccess(res.items));
       })
       .catch(err => {
-        dispatch(fetchPlaylistMenuError(err));
+        dispatch(fetchPlaylistsMenuError(err));
       });
   };
 };
@@ -151,6 +190,75 @@ export const fetchCategoryPlaylists = (accessToken, categoryId) => {
       })
       .catch(err => {
         dispatch(fetchCategoryPlaylistsError(err));
+      });
+  };
+};
+
+export const createPlaylist = (userId, playlistData, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        }),
+        method: "POST",
+        body: playlistData
+      }
+    );
+
+    dispatch(createPlaylistPending());
+    fetch(request)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        dispatch(createPlaylistError("Request failed!"));
+        //throw new Error("Request failed!");
+      })
+      .then(res => {
+        console.log("playlist successfully created.", res);
+        dispatch(createPlaylistSuccess(res));
+      })
+      // .then(res => dispatch(fetchPlaylistsMenu(userId, accessToken)))
+      .catch(err => {
+        dispatch(createPlaylistError(err));
+      });
+  };
+};
+
+export const saveTrackToPlaylist = (playlistId, trackURI, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${encodeURIComponent(
+        trackURI
+      )}`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }),
+        method: "POST"
+      }
+    );
+
+    console.log(request);
+
+    dispatch(saveTrackToPlaylistPending());
+
+    fetch(request)
+      .then(res => {
+        console.log(res);
+        return res.json();
+      })
+      .then(res => {
+        console.log("tracks successful stored", res);
+        dispatch(saveTrackToPlaylistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(saveTrackToPlaylistError(err));
       });
   };
 };
