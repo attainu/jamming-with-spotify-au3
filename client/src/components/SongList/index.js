@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -12,7 +12,10 @@ import {
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
-import { addSongToLibrary } from "../../redux/actions/userActions";
+import {
+  addSongToLibrary,
+  removeSongFromLibrary
+} from "../../redux/actions/userActions";
 
 //class SongList extends Component {
 const SongList = ({
@@ -33,10 +36,14 @@ const SongList = ({
   songId,
   songAddedId,
   addSongToLibrary,
+  removeSongFromLibrary,
   fetchPlaylistSongsPending,
   searchSongsPending,
   searchSongsError
 }) => {
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
   // componentWillReceiveProps(nextProps) {
   //   if (
   //     nextProps.token !== "" &&
@@ -61,8 +68,8 @@ const SongList = ({
     if (
       token !== "" &&
       !fetchSongsError &&
-      fetchSongsPending &&
-      viewType === "songs"
+      fetchSongsPending
+      // viewType === "songs"
     ) {
       fetchSongs(token);
     } else {
@@ -70,11 +77,41 @@ const SongList = ({
     }
   }, [token, likedSongs]);
 
+  const openModal = e => {
+    setModal(true);
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[3].children[0].innerText;
+    console.log(trackName);
+    console.log(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+  };
+
+  let addModalClose = () => {
+    setModal(false);
+  };
+
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
+
+  function toggleButton(e, token, songID) {
+    console.log(e.target);
+    if (e.target.classList.contains("fa-check")) {
+      e.target.className = "fa fa-plus";
+      removeSongFromLibrary(token, songID);
+    } else if (e.target.classList.contains("fa-plus")) {
+      e.target.className = "fa fa-check";
+      addSongToLibrary(token, songID);
+    }
+    //fetchSongs(token);
+  }
 
   const renderSongs = () => {
     return songs
@@ -112,20 +149,29 @@ const SongList = ({
               </div>
 
               {viewType !== "Liked Songs" && (
-                <p
-                  className="add-song"
-                  onClick={() => {
-                    addSongToLibrary(token, song.track.id);
-                  }}
-                >
-                  {songAddedId === songID ||
-                  likedSongs.findIndex(song => song.track.id === songID) >
+                <>
+                  <p className="fav-song">
+                    <i className="fa fa-heart-o" aria-hidden="true" />
+                  </p>
+                  &nbsp;
+                  <p className="add-song">
+                    {/* {songAddedId === songID || */}
+                    {likedSongs.findIndex(song => song.track.id === songID) >
                     -1 ? (
-                    <i className="fa fa-check add-song" aria-hidden="true" />
-                  ) : (
-                    <i className="fa fa-plus add-song" aria-hidden="true" />
-                  )}
-                </p>
+                      <i
+                        className={"fa fa-check"}
+                        aria-hidden="true"
+                        onClick={e => toggleButton(e, token, songID)}
+                      />
+                    ) : (
+                      <i
+                        className="fa fa-plus"
+                        aria-hidden="true"
+                        onClick={e => toggleButton(e, token, songID)}
+                      />
+                    )}
+                  </p>
+                </>
               )}
 
               {/* {viewType === "songs" && (
@@ -181,7 +227,7 @@ const SongList = ({
 
               {song.added_by ? (
                 song.added_by.id === userId ? (
-                  <div className="remove-song">
+                  <div className="remove-song-playlist">
                     <DropdownButton
                       id="dropdown-button-drop-right"
                       title=""
@@ -198,33 +244,33 @@ const SongList = ({
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                ) : null
-              ) : (
-                <>
-                  <div className="add-song">
-                    <DropdownButton
-                      id="dropdown-button-drop-right"
-                      title=""
-                      drop="right"
-                      variant="secondary"
-                      key="right"
-                    >
-                      <Dropdown.Item
-                        href="#"
-                        className="options-dropdown"
-                        // onClick={openModal}
+                ) : (
+                  <>
+                    <div className="add-song-playlist">
+                      <DropdownButton
+                        id="dropdown-button-drop-right"
+                        title=""
+                        drop="right"
+                        variant="secondary"
+                        key="right"
                       >
-                        + &nbsp; Add To Playlist
-                      </Dropdown.Item>
-                    </DropdownButton>
-                  </div>
-                  {/* <AddToPlaylistModal
-                  onHide={addModalClose}
-                  show={addModalShow}
-                  trackURI={trackURI}
-                  /> */}
-                </>
-              )}
+                        <Dropdown.Item
+                          href="#"
+                          className="options-dropdown"
+                          onClick={openModal}
+                        >
+                          + &nbsp; Spotify Playlist
+                        </Dropdown.Item>
+                      </DropdownButton>
+                    </div>
+                    <AddToPlaylistModal
+                      onHide={addModalClose}
+                      show={addModalShow}
+                      trackURI={trackURI}
+                    />
+                  </>
+                )
+              ) : null}
             </li>
           );
         })
@@ -234,7 +280,7 @@ const SongList = ({
   //render() {
   console.log("View Type:", viewType);
   return (
-    <div>
+    <div className="song-container">
       <div className="song-header-container">
         <div className="song-title-header">
           <p>Title</p>
@@ -350,6 +396,7 @@ const mapDispatchToProps = dispatch => {
       //fetchRecentlyPlayed,
       //fetchTopTracks,
       addSongToLibrary,
+      removeSongFromLibrary,
       searchSongs
     },
     dispatch

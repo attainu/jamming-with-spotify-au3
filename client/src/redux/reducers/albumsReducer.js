@@ -48,8 +48,8 @@ export const albumTracksReducer = (state = {}, action) => {
         ...state,
         albumTracks: action.albumTracks,
         fetchAlbumTracksError: false,
-        fetchAlbumTracksPending: false
-        //viewType: "Album"
+        fetchAlbumTracksPending: false,
+        viewType: "Album"
       };
 
     case "FETCH_ALBUM_TRACKS_ERROR":

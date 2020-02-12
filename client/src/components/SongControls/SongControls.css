@@ -108,3 +108,14 @@
   width: 10%;
   height: 10%;
 }
+
+.default-image-container {
+  position: fixed;
+  bottom: -2px;
+  right: -700px;
+}
+
+.default-image {
+  width: 8%;
+  height: 4%;
+}

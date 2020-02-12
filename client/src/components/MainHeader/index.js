@@ -184,10 +184,10 @@ const MainHeader = ({
             </div>
           </div>
           <button
-            // onClick={!songPaused ? pauseSong : resumeSong}
+            onClick={!songPaused ? pauseSong : resumeSong}
             className="main-pause-play-btn album-button"
           >
-            {/* {songPaused ? "PLAY" : "PAUSE"} */}
+            {songPaused ? "PLAY" : "PAUSE"}
           </button>
         </div>
       )}
@@ -251,14 +251,15 @@ const MainHeader = ({
         headerTitle === "Top Tracks") && (
         <div>
           <h3 className="header-title">{headerTitle}</h3>
-          {headerTitle !== "Artists" && (
-            <button
-              onClick={!songPaused ? pauseSong : resumeSong}
-              className="main-pause-play-btn"
-            >
-              {songPaused ? "PLAY" : "PAUSE"}
-            </button>
-          )}
+          {headerTitle !== "Artists" &&
+            headerTitle !== "Albums" && (
+              <button
+                onClick={!songPaused ? pauseSong : resumeSong}
+                className="main-pause-play-btn"
+              >
+                {songPaused ? "PLAY" : "PAUSE"}
+              </button>
+            )}
         </div>
       )}
 

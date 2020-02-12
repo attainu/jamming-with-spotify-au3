@@ -254,7 +254,7 @@ export const saveTrackToPlaylist = (playlistId, trackURI, accessToken) => {
         return res.json();
       })
       .then(res => {
-        console.log("tracks successful stored", res);
+        console.log("tracks successfully stored", res);
         dispatch(saveTrackToPlaylistSuccess(res));
       })
       .catch(err => {

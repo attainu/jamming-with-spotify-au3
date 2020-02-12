@@ -123,12 +123,8 @@ const LikedSongs = ({
                   )}
                 </p> */}
 
-              <p className="add-song">
-                <i
-                  className="fa fa-heart-o"
-                  aria-hidden="true"
-                  style={{ color: "green" }}
-                />
+              <p className="fav-song">
+                <i className="fa fa-heart-o" aria-hidden="true" />
               </p>
 
               {/* 
