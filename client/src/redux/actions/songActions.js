@@ -46,10 +46,10 @@ export const fetchSongsPending = () => {
   };
 };
 
-export const fetchSongsSuccess = songs => {
+export const fetchSongsSuccess = likedSongs => {
   return {
     type: "FETCH_SONGS_SUCCESS",
-    songs
+    likedSongs
   };
 };
 

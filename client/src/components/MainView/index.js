@@ -9,6 +9,7 @@ import SingleAlbumTracks from "../SingleAlbumTracks";
 import Profile from "../Profile";
 import BrowseView from "../BrowseView";
 import "./MainView.css";
+import LikedSongs from "../LikedSongs";
 
 const MainView = ({
   headerTitle,
@@ -26,22 +27,31 @@ const MainView = ({
         <Profile />
 
       ) : headerTitle === "Recently Played" ? (
-        <SongList  resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : headerTitle === "Top Tracks" ? (
-        <SongList  resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-        
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : headerTitle === "Browse" ? (
         <BrowseView />
       ) : viewType === "Artist" ? (
-        <SingleArtistTracks resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-
+        <SingleArtistTracks
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
+      ) : viewType === "Liked Songs" ? (
+        <LikedSongs
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : viewType === "Albums" ? (
         <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (

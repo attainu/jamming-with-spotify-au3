@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -10,7 +10,8 @@ import {
 } from "../../redux/actions/browseActions";
 import {
   fetchPlaylistSongs,
-  addPlaylistItem
+  addPlaylistItem,
+  fetchPlaylistsMenu
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
@@ -34,6 +35,7 @@ const MainHeader = ({
   playlists,
   categoryPlaylists,
   token,
+  userId,
   artists,
   releaseAlbum
 }) => {
@@ -42,6 +44,7 @@ const MainHeader = ({
   let currentArtist;
 
   if (viewType === "playlist") {
+    //let currentPlaylists = fetchPlaylistsMenu(userId, token);
     currentPlaylist = playlists.filter(playlist => {
       return playlist.name === headerTitle;
     })[0];
@@ -75,9 +78,9 @@ const MainHeader = ({
             <img
               className="playlist-image"
               src={
-                currentPlaylist.images[0]
-                  ? currentPlaylist.images[0].url
-                  : defaultCover
+                !currentPlaylist.images[0]
+                  ? defaultCover
+                  : currentPlaylist.images[0].url
               }
             />
           </div>
@@ -240,7 +243,8 @@ const MainHeader = ({
         </div>
       )}
 
-      {(headerTitle === "Songs" ||
+      {(headerTitle === "Liked Songs" ||
+        headerTitle === "Songs" ||
         headerTitle === "Recently Played" ||
         headerTitle === "Albums" ||
         headerTitle === "Artists" ||
@@ -331,6 +335,7 @@ const mapStateToProps = state => {
     artists: state.artistsReducer.artistList
       ? state.artistsReducer.artistList.items
       : [],
+    userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token,
     albums: state.albumsReducer.albums ? state.albumsReducer.albums : []
   };
@@ -342,6 +347,7 @@ const mapDispatchToProps = dispatch => {
       fetchCategories,
       fetchNewReleases,
       fetchPlaylistSongs,
+      fetchPlaylistsMenu,
       addPlaylistItem,
       updateHeaderTitle,
       updateViewType,

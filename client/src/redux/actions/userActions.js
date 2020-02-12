@@ -50,6 +50,19 @@ export const addSongToLibraryError = () => {
   };
 };
 
+export const removeSongFromLibrarySuccess = songId => {
+  return {
+    type: "REMOVE_SONG_FROM_LIBRARY_SUCCESS",
+    songId
+  };
+};
+
+export const removeSongFromLibraryError = () => {
+  return {
+    type: "REMOVE_SONG_FROM_LIBRARY_ERROR"
+  };
+};
+
 export const addSongToLibrary = (accessToken, id) => {
   return dispatch => {
     const request = new Request(
@@ -70,6 +83,31 @@ export const addSongToLibrary = (accessToken, id) => {
       })
       .catch(err => {
         dispatch(addSongToLibraryError(err));
+      });
+  };
+};
+
+export const removeSongFromLibrary = (accessToken, id) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/me/tracks?ids=${id}`,
+      {
+        method: "DELETE",
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+        })
+      }
+    );
+
+    fetch(request)
+      .then(res => {
+        if (res.ok) {
+          console.log(res);
+          dispatch(removeSongFromLibrarySuccess(id));
+        }
+      })
+      .catch(err => {
+        dispatch(removeSongFromLibraryError(err));
       });
   };
 };

@@ -4,21 +4,20 @@ import "./TrackSearch.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { searchSongs } from "../../redux/actions/songActions";
-// import SongList from '../SongList'
 
-const TrackSearch = props => {
+const TrackSearch = ({ token, searchSongs }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const updateSearchTerm = e => {
     setSearchTerm(e.target.value);
   };
 
-  var accessToken = props.token;
+  var accessToken = token;
   return (
     <div className="track-search-container">
       <form
         onSubmit={() => {
-          props.searchSongs(searchTerm, accessToken);
+          searchSongs(searchTerm, accessToken);
         }}
       >
         <input
@@ -29,14 +28,12 @@ const TrackSearch = props => {
         <button
           onClick={e => {
             e.preventDefault();
-            props.searchSongs(searchTerm, accessToken);
+            searchSongs(searchTerm, accessToken);
           }}
         >
           <i className="fa fa-search search" aria-hidden="true" />
         </button>
       </form>
-
-      {/* <SongList/> */}
     </div>
   );
 };

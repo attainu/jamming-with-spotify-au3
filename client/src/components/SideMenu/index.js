@@ -49,7 +49,7 @@ const SideMenu = ({
         action: fetchRecentlyPlayed
       },
       {
-        name: "Songs",
+        name: "Liked Songs",
         action: fetchSongs
       },
       {
@@ -101,7 +101,6 @@ const SideMenu = ({
       </h3>
       <h3 className="user-library-header">Your Library</h3>
       {renderSideMenu()}
-      {/* <h3 className="user-library-header">Create Playlist</h3> */}
     </ul>
   );
 };

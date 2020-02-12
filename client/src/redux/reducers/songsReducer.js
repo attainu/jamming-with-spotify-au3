@@ -171,10 +171,10 @@ export const songsReducer = (state = defaultState, action) => {
     case "FETCH_SONGS_SUCCESS":
       return {
         ...state,
-        songs: action.songs,
+        likedSongs: action.likedSongs,
         fetchSongsError: false,
         fetchSongsPending: false,
-        viewType: "songs"
+        viewType: "Liked Songs"
       };
 
     case "FETCH_SONGS_ERROR":
@@ -182,6 +182,29 @@ export const songsReducer = (state = defaultState, action) => {
         ...state,
         fetchSongsError: true,
         fetchSongsPending: false
+      };
+
+    case "SAVE_PLAYLIST_TRACK_PENDING":
+      return {
+        ...state,
+        savePlaylistTrackPending: true
+      };
+
+    case "SAVE_PLAYLIST_TRACK_SUCCESS":
+      return {
+        ...state,
+        //songs: action.songs,
+        addedTrack: action.addedTrack,
+        savePlaylistTrackPending: false,
+        savePlaylistTrackError: false
+        //viewType: "songs"
+      };
+
+    case "SAVE_PLAYLIST_TRACK_ERROR":
+      return {
+        ...state,
+        savePlaylistTrackError: true,
+        savePlaylistTrackPending: false
       };
 
     // case "BROWSE_ALBUM_PENDING":

@@ -1,10 +1,10 @@
 .album-artwork-container {
-    width: 200px;
-    position: fixed;
-    bottom: 75px;
-    right: 5px;
+  width: 200px;
+  position: fixed;
+  bottom: 75px;
+  right: 5px;
 }
-  
+
 .album-artwork {
-width: 100%;
+  width: 100%;
 }

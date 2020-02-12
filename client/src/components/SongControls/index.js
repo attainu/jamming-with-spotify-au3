@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -7,9 +7,35 @@ import moment from "moment";
 import "./SongControls.css";
 
 class SongControls extends Component {
+  // const SongControls = ({
+  //   songName,
+  //   artistName,
+  //   albumImage,
+  //   songPaused,
+  //   songPlaying,
+  //   timeElapsed,
+  //   songs,
+  //   songDetails,
+  //   stopSong,
+  //   pauseSong,
+  //   resumeSong,
+  //   audioControl
+  // }) => {
   state = {
     timeElapsed: this.props.timeElapsed
   };
+
+  // const [timeElapsedLocal, setTimeElapsed] = useState(timeElapsed);
+  // const [intervalIdLocal, setIntervalId] = useState();
+
+  // useEffect(() => {
+  //   if (!songPlaying) clearInterval(intervalIdLocal);
+  //   if (songPlaying && timeElapsed === 0) {
+  //     clearInterval(intervalIdLocal);
+  //     calculateTime();
+  //   }
+  //   setTimeElapsed(timeElapsed);
+  // }, [songPlaying, timeElapsed]);
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.songPlaying) {
@@ -26,7 +52,7 @@ class SongControls extends Component {
     });
   }
 
-  calculateTime() {
+  calculateTime = () => {
     const intervalId = setInterval(() => {
       if (this.state.timeElapsed === 30) {
         clearInterval(this.state.intervalId);
@@ -36,13 +62,24 @@ class SongControls extends Component {
       }
     }, 1000);
 
+    //setIntervalId(intervalId);
+
     this.setState({
       intervalId: intervalId
     });
-  }
+  };
 
   getSongIndex = () => {
-    const { songs, songDetails } = this.props;
+    let songs,
+      songDetails = this.props.songDetails;
+    if (this.props.viewType === "Liked Songs") {
+      songs = this.props.likedSongs;
+      //audioControl = this.props.audioControl;
+    } else {
+      songs = this.props.songs;
+    }
+    //const { songs, songDetails } = this.props;
+    console.log(songDetails);
     const currentIndex = songs
       .map((song, index) => {
         if (song.track === songDetails) {
@@ -57,7 +94,14 @@ class SongControls extends Component {
   };
 
   nextSong = () => {
-    const { songs, audioControl } = this.props;
+    let songs,
+      audioControl = this.props.audioControl;
+    if (this.props.viewType === "Liked Songs") {
+      songs = this.props.likedSongs;
+      //audioControl = this.props.audioControl;
+    } else {
+      songs = this.props.songs;
+    }
     let currentIndex = this.getSongIndex();
     currentIndex === songs.length - 1
       ? audioControl(songs[0])
@@ -65,7 +109,15 @@ class SongControls extends Component {
   };
 
   prevSong = () => {
-    const { songs, audioControl } = this.props;
+    //const { songs, audioControl } = this.props;
+    let songs,
+      audioControl = this.props.audioControl;
+    if (this.props.viewType === "Liked Songs") {
+      songs = this.props.likedSongs;
+      //audioControl = this.props.audioControl;
+    } else {
+      songs = this.props.songs;
+    }
     let currentIndex = this.getSongIndex();
     currentIndex === 0
       ? audioControl(songs[songs.length - 1])
@@ -101,6 +153,14 @@ class SongControls extends Component {
             />
           </div>
 
+          <div className="stop-btn">
+            <i
+              onClick={this.props.stopSong}
+              className={"fa fa-stop-circle-o"}
+              aria-hidden="true"
+            />
+          </div>
+
           <div onClick={this.nextSong} className="next-song">
             <i className="fa fa-step-forward forward" aria-hidden="true" />
           </div>
@@ -126,6 +186,13 @@ class SongControls extends Component {
               .format("m:ss")}
           </p>
         </div>
+        <div className="song-image-container">
+          <img
+            className="song-image"
+            src={this.props.albumImage}
+            alt="song-image"
+          />
+        </div>
       </div>
     );
   }
@@ -142,6 +209,7 @@ SongControls.propTypes = {
   increaseSongTime: PropTypes.func,
   pauseSong: PropTypes.func,
   songs: PropTypes.array,
+  likedSongs: PropTypes.array,
   songDetails: PropTypes.object,
   audioControl: PropTypes.func
 };
@@ -154,11 +222,16 @@ const mapStateToProps = state => {
     artistName: state.songsReducer.songDetails
       ? state.songsReducer.songDetails.artists[0].name
       : "",
+    albumImage: state.songsReducer.songDetails
+      ? state.songsReducer.songDetails.album.images[0].url
+      : "",
     songPlaying: state.songsReducer.songPlaying,
     timeElapsed: state.songsReducer.timeElapsed,
     songPaused: state.songsReducer.songPaused,
     songDetails: state.songsReducer.songDetails,
-    songs: state.songsReducer.songs
+    songs: state.songsReducer.songs,
+    likedSongs: state.songsReducer.likedSongs,
+    viewType: state.songsReducer.viewType
   };
 };
 

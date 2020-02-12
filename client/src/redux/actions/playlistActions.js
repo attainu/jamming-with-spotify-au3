@@ -228,7 +228,6 @@ export const createPlaylist = (userId, playlistData, accessToken) => {
   };
 };
 
-
 export const saveTrackToPlaylist = (playlistId, trackURI, accessToken) => {
   return dispatch => {
     const request = new Request(
