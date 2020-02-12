@@ -99,11 +99,9 @@ const SideMenu = ({
       >
         YOUR PROFILE
       </h3>
-      <br />
       <h3 className="user-library-header">Your Library</h3>
       {renderSideMenu()}
-      <br />
-      <h3 className="user-library-header">Create Playlist</h3>
+      {/* <h3 className="user-library-header">Create Playlist</h3> */}
     </ul>
   );
 };

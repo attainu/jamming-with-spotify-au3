@@ -1,45 +1,79 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 //import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 import { fetchArtistSongs } from "../../redux/actions/artistActions";
+import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import "../SongList/SongList.css";
 import { addSongToLibrary } from "../../redux/actions/userActions";
 
-class SingleArtistTracks extends Component {
-  msToMinutesAndSeconds(ms) {
+const SingleArtistTracks = ({
+  artistSongs,
+  viewType,
+  fetchArtistSongsPending,
+  fetchArtistSongsError,
+  songs,
+  songAddedId,
+  songId,
+  songPaused,
+  songPlaying,
+  resumeSong,
+  pauseSong,
+  audioControl,
+  addSongToLibrary,
+  token
+ }) => {
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
+  const openModal = e => {
+    setModal(true);
+    let trackName =
+      e.target.parentElement.parentElement.children[1].children[0].innerText;
+    console.log(trackName);
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+  };
+
+  let addModalClose = () => {
+    setModal(false);
+  };
+
+  const msToMinutesAndSeconds = (ms) =>{
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   }
 
-  renderSongs() {
-    return this.props.artistSongs
-    ? this.props.artistSongs.map((song, i) => {
+  const renderSongs = () => {
+    return artistSongs
+    ? artistSongs.map((song, i) => {
         const buttonClass =
-          song.track.id === this.props.songId && !this.props.songPaused
+          song.track.id === songId && !songPaused
             ? "fa-pause-circle-o"
             : "fa-play-circle-o";
 
       return (
         <li className={ 
-          song.track.id === this.props.songId
+          song.track.id === songId
             ? 'active user-song-item'
             : 'user-song-item'
            } key={i}>
             
           <div
               onClick={() => {
-                song.track.id === this.props.songId &&
-                this.props.songPlaying &&
-                this.props.songPaused
-                  ? this.props.resumeSong()
-                  : this.props.songPlaying &&
-                    !this.props.songPaused &&
-                    song.track.id === this.props.songId
-                  ? this.props.pauseSong()
-                  : this.props.audioControl(song);
+                song.track.id === songId &&
+                songPlaying &&
+                songPaused
+                  ? resumeSong()
+                  : songPlaying &&
+                    !songPaused &&
+                    song.track.id === songId
+                  ? pauseSong()
+                  :audioControl(song);
               }}
               className="play-song"
             >
@@ -49,14 +83,14 @@ class SingleArtistTracks extends Component {
               />
           </div>
 
-          {this.props.viewType === "Artist" && (
+          {viewType === "Artist" && (
             <p
               className="add-song"
               onClick={() => {
-                this.props.addSongToLibrary(this.props.token, song.track.id);
+                addSongToLibrary(token, song.track.id);
               }}
             >
-              {this.props.songAddedId === song.track.id ? (
+              {songAddedId === song.track.id ? (
                 <i className="fa fa-check add-song" aria-hidden="true" />
               ) : (
                 <i className="fa fa-plus add-song" aria-hidden="true" />
@@ -82,15 +116,27 @@ class SingleArtistTracks extends Component {
           </div>
 
           <div className="song-length">
-            <p>{this.msToMinutesAndSeconds(song.track.duration_ms)}</p>
+            <p>{msToMinutesAndSeconds(song.track.duration_ms)}</p>
           </div>
+          <p className="add-song">
+            <i
+              className="fa fa-plus"
+              aria-hidden="true"
+              style={{ color: "red" }}
+              onClick={openModal}
+            />
+          </p>
+          <AddToPlaylistModal
+            onHide={addModalClose}
+            show={addModalShow}
+            trackURI={trackURI}
+          />
         </li>
       );
   }): null
   }
 
-  render() {
-    console.log("View Type:", this.props.viewType);
+    // console.log("View Type:", this.props.viewType);
     return (
       <div>
         <div className="song-header-container">
@@ -112,14 +158,14 @@ class SingleArtistTracks extends Component {
             </p>
           </div>
         </div>
-        {this.props.artistSongs &&
-          !this.props.fetchArtistSongsPending &&
-          !this.props.fetchArtistSongsError &&
-          this.renderSongs()}
+        {artistSongs &&
+          !fetchArtistSongsPending &&
+          !fetchArtistSongsError &&
+          renderSongs()}
       </div>
     );
   }
-}
+
 
 SingleArtistTracks.propTypes = {
   viewType: PropTypes.string,

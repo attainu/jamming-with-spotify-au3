@@ -1,22 +1,18 @@
 module.exports = (sequelize,Sequelize) =>{
-    const playlist = sequelize.define("playlists",{
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-       },
+    const podcast = sequelize.define("podcasts",{
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement : true
       },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+       },
       description: {
         type: Sequelize.TEXT
-      },
-      createdBy: {
-        type: Sequelize.STRING
       }
-  
     })
-    return playlist
+    return podcast
 };

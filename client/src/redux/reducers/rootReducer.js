@@ -6,7 +6,12 @@ import artistsReducer from "./artistsReducer";
 import uiReducer from "./uiReducer";
 import browseReducer from "./browseReducer";
 import { albumsReducer, albumTracksReducer } from "./albumsReducer";
-import { playlistReducer, categoryPlaylistReducer } from "./playlistReducer";
+import {
+  playlistReducer,
+  categoryPlaylistReducer,
+  createPlaylistReducer,
+} from "./playlistReducer";
+import {createPodcastReducer, podcastReducer} from './podcastReducer'
 import soundReducer from "./soundReducer";
 
 export default combineReducers({
@@ -19,6 +24,9 @@ export default combineReducers({
   albumsReducer,
   albumTracksReducer,
   playlistReducer,
+  podcastReducer,
   categoryPlaylistReducer,
+  createPlaylistReducer,
+  createPodcastReducer,
   soundReducer
 });
