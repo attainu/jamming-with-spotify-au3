@@ -5,7 +5,8 @@ import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal, Form } from "react-bootstrap";
 import {
   saveTrackToPlaylist,
-  fetchPlaylistsMenu
+  fetchPlaylistsMenu,
+  fetchPlaylistSongs
 } from "../../../redux/actions/playlistActions";
 
 const AddToPlaylistModal = ({
@@ -15,6 +16,8 @@ const AddToPlaylistModal = ({
   token,
   playlistMenu,
   saveTrackToPlaylist,
+  fetchPlaylistsMenu,
+  fetchPlaylistSongs,
   trackURI
 }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
@@ -84,7 +87,8 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       saveTrackToPlaylist,
-      fetchPlaylistsMenu
+      fetchPlaylistsMenu,
+      fetchPlaylistSongs
     },
     dispatch
   );

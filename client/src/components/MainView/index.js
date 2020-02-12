@@ -9,6 +9,7 @@ import SingleAlbumTracks from "../SingleAlbumTracks";
 import Profile from "../Profile";
 import BrowseView from "../BrowseView";
 import "./MainView.css";
+import LikedSongs from "../LikedSongs";
 
 const MainView = ({
   headerTitle,
@@ -25,13 +26,31 @@ const MainView = ({
       ) : headerTitle === "Get Profile" ? (
         <Profile />
       ) : headerTitle === "Recently Played" ? (
-        <SongList />
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : headerTitle === "Top Tracks" ? (
-        <SongList />
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : headerTitle === "Browse" ? (
         <BrowseView />
       ) : viewType === "Artist" ? (
-        <SingleArtistTracks />
+        <SingleArtistTracks
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
+      ) : viewType === "Liked Songs" ? (
+        <LikedSongs
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : viewType === "Albums" ? (
         <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (

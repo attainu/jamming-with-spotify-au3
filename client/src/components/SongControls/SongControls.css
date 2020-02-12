@@ -24,7 +24,8 @@
 
 .forward,
 .reverse,
-.play-btn {
+.play-btn,
+.stop-btn {
   padding: 0 5px;
   color: rgb(179, 179, 179);
   cursor: pointer;
@@ -41,6 +42,12 @@
   font-size: 40px;
 }
 
+.song-player-container .stop-btn {
+  position: relative;
+  top: -14px;
+  font-size: 40px;
+}
+
 .song-player-container .pause-btn {
   position: relative;
   top: -7px;
@@ -48,7 +55,8 @@
   margin: 0 5px;
 }
 
-.play-btn .fa {
+.play-btn .fa,
+.stop-btn .fa {
   -webkit-text-stroke: 4px rgb(40, 40, 40);
 }
 
@@ -85,4 +93,18 @@
   position: relative;
   top: -5px;
   left: 10px;
+}
+
+.song-image-container {
+  /* max-width: 10px;
+  max-height: 10px; */
+  /* width: 100px; */
+  position: fixed;
+  bottom: 5px;
+  right: -350px;
+}
+
+.song-image {
+  width: 10%;
+  height: 10%;
 }

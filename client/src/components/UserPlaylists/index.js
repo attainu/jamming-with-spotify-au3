@@ -35,8 +35,9 @@ const UserPlaylists = ({
   const renderPlaylists = () => {
     return playlistMenu.map(playlist => {
       const getPlaylistSongs = () => {
-        fetchPlaylistSongs(playlist.owner.id, playlist.id, token);
         updateHeaderTitle(playlist.name);
+        fetchPlaylistsMenu(userId, token);
+        fetchPlaylistSongs(playlist.owner.id, playlist.id, token);
       };
 
       return (

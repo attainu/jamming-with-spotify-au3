@@ -5,17 +5,15 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
-  searchSongs,
+  //searchSongs,
   fetchSongs
-  //   fetchRecentlyPlayed,
-  //   fetchTopTracks
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import { addSongToLibrary } from "../../redux/actions/userActions";
 
 //class SongList extends Component {
-const SongList = ({
+const LikedSongs = ({
   userId,
   token,
   songs,
@@ -24,18 +22,18 @@ const SongList = ({
   fetchSongsPending,
   viewType,
   fetchSongs,
-  searchSongs,
+  //searchSongs,
   songPlaying,
   songPaused,
   resumeSong,
   pauseSong,
   audioControl,
   songId,
-  songAddedId,
-  addSongToLibrary,
-  fetchPlaylistSongsPending,
-  searchSongsPending,
-  searchSongsError
+  //songAddedId,
+  //addSongToLibrary,
+  fetchPlaylistSongsPending
+  //searchSongsPending,
+  //searchSongsError
 }) => {
   // componentWillReceiveProps(nextProps) {
   //   if (
@@ -61,14 +59,15 @@ const SongList = ({
     if (
       token !== "" &&
       !fetchSongsError &&
-      fetchSongsPending &&
-      viewType === "songs"
+      !fetchSongsPending &&
+      viewType === "Liked Songs"
     ) {
       fetchSongs(token);
-    } else {
-      searchSongs(token);
     }
-  }, [token, likedSongs]);
+    //else {
+    //   searchSongs(token);
+    // }
+  }, [token]);
 
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
@@ -77,8 +76,8 @@ const SongList = ({
   };
 
   const renderSongs = () => {
-    return songs
-      ? songs.map((song, i) => {
+    return likedSongs
+      ? likedSongs.map((song, i) => {
           let songID = song.track.id;
           //console.log(song.added_by);
           const buttonClass =
@@ -111,28 +110,27 @@ const SongList = ({
                 />
               </div>
 
-              {viewType !== "Liked Songs" && (
-                <p
+              {/* <p
                   className="add-song"
                   onClick={() => {
                     addSongToLibrary(token, song.track.id);
                   }}
                 >
-                  {songAddedId === songID ||
-                  likedSongs.findIndex(song => song.track.id === songID) >
-                    -1 ? (
+                  {songAddedId === songID ? (
                     <i className="fa fa-check add-song" aria-hidden="true" />
                   ) : (
                     <i className="fa fa-plus add-song" aria-hidden="true" />
                   )}
-                </p>
-              )}
+                </p> */}
 
-              {/* {viewType === "songs" && (
-                <p className="add-song">
-                  <i className="fa fa-check" aria-hidden="true" />
-                </p>
-              )} */}
+              <p className="add-song">
+                <i
+                  className="fa fa-heart-o"
+                  aria-hidden="true"
+                  style={{ color: "green" }}
+                />
+              </p>
+
               {/* 
           {this.props.viewType === "search" && (
             <p className="add-song">
@@ -181,7 +179,7 @@ const SongList = ({
 
               {song.added_by ? (
                 song.added_by.id === userId ? (
-                  <div className="remove-song">
+                  <div className="remove-song-playlist">
                     <DropdownButton
                       id="dropdown-button-drop-right"
                       title=""
@@ -201,7 +199,7 @@ const SongList = ({
                 ) : null
               ) : (
                 <>
-                  <div className="add-song">
+                  <div className="add-song-playlist">
                     <DropdownButton
                       id="dropdown-button-drop-right"
                       title=""
@@ -259,7 +257,7 @@ const SongList = ({
         !fetchPlaylistSongsPending &&
         renderSongs()}
 
-      {songs && !searchSongsPending && !searchSongsError && renderSongs()}
+      {/* {songs && !searchSongsPending && !searchSongsError && renderSongs()} */}
 
       {/* {this.props.songs &&
           !this.props.fetchSongsError &&
@@ -285,7 +283,7 @@ const SongList = ({
   //}
 };
 
-SongList.propTypes = {
+LikedSongs.propTypes = {
   viewType: PropTypes.string,
   token: PropTypes.string,
   songId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -346,14 +344,14 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      fetchSongs,
+      fetchSongs
       //fetchRecentlyPlayed,
       //fetchTopTracks,
-      addSongToLibrary,
-      searchSongs
+      //addSongToLibrary,
+      //searchSongs
     },
     dispatch
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SongList);
+export default connect(mapStateToProps, mapDispatchToProps)(LikedSongs);

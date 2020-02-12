@@ -37,7 +37,8 @@
   background: rgb(51, 51, 51);
 }
 
-.add-song {
+.add-song,
+.remove-song {
   color: #fff;
 }
 
@@ -155,17 +156,24 @@
   margin-top: 20px;
 }
 
-.add-song {
+.add-song,
+.remove-song {
   font-size: 20px;
   cursor: pointer;
   z-index: 1;
   width: 20px;
 }
 
-.add-song .fa {
+.add-song .fa,
+.remove-song .fa {
   -webkit-text-stroke: 3px rgb(24, 24, 24);
 }
 
-.add-song .fa:hover {
+.add-song .fa:hover,
+.remove-song .fa:hover {
   -webkit-text-stroke: 2px rgb(24, 24, 24);
+}
+
+#dropdown-button-drop-right {
+  opacity: 0.4;
 }

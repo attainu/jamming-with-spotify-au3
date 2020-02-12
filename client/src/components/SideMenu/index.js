@@ -49,7 +49,7 @@ const SideMenu = ({
         action: fetchRecentlyPlayed
       },
       {
-        name: "Songs",
+        name: "Liked Songs",
         action: fetchSongs
       },
       {

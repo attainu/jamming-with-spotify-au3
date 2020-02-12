@@ -171,10 +171,10 @@ export const songsReducer = (state = defaultState, action) => {
     case "FETCH_SONGS_SUCCESS":
       return {
         ...state,
-        songs: action.songs,
+        likedSongs: action.likedSongs,
         fetchSongsError: false,
         fetchSongsPending: false,
-        viewType: "songs"
+        viewType: "Liked Songs"
       };
 
     case "FETCH_SONGS_ERROR":
