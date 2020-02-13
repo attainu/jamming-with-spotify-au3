@@ -103,6 +103,44 @@ export const saveTrackToPlaylistError = () => {
   };
 };
 
+export const removeTrackFromPlaylistPending = () => {
+  return {
+    type: "REMOVE_PLAYLIST_TRACK_PENDING"
+  };
+};
+
+export const removeTrackFromPlaylistSuccess = removedTrack => {
+  return {
+    type: "REMOVE_PLAYLIST_TRACK_SUCCESS",
+    removedTrack
+  };
+};
+
+export const removeTrackFromPlaylistError = () => {
+  return {
+    type: "REMOVE_PLAYLIST_TRACK_ERROR"
+  };
+};
+
+export const unFollowPlaylistPending = () => {
+  return {
+    type: "UNFOLLOW_PLAYLIST_PENDING"
+  };
+};
+
+export const unFollowPlaylistSuccess = delResponse => {
+  return {
+    type: "UNFOLLOW_PLAYLIST_SUCCESS",
+    delResponse
+  };
+};
+
+export const unFollowPlaylistError = () => {
+  return {
+    type: "UNFOLLOW_PLAYLIST_ERROR"
+  };
+};
+
 export const fetchPlaylistSongs = (userId, playlistId, accessToken) => {
   return dispatch => {
     const request = new Request(
@@ -259,6 +297,81 @@ export const saveTrackToPlaylist = (playlistId, trackURI, accessToken) => {
       })
       .catch(err => {
         dispatch(saveTrackToPlaylistError(err));
+      });
+  };
+};
+
+export const removeTrackFromPlaylist = (playlistId, trackURI, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      {
+        method: "DELETE",
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }),
+        data: JSON.stringify({
+          tracks: [
+            {
+              uri: trackURI
+              //positions: [0]
+            }
+          ]
+        })
+      }
+    );
+
+    console.log(request);
+
+    dispatch(removeTrackFromPlaylistPending());
+
+    fetch(request)
+      .then(res => {
+        console.log(res);
+        return res.json();
+      })
+      .then(res => {
+        console.log("track successfully removed", res);
+        dispatch(removeTrackFromPlaylistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(removeTrackFromPlaylistError(err));
+      });
+  };
+};
+
+export const unFollowPlaylist = (playlistId, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/playlists/${playlistId}/followers`,
+      {
+        method: "DELETE",
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+          // Accept: "application/json",
+          // "Content-Type": "application/json"
+        })
+      }
+    );
+
+    console.log(request);
+
+    dispatch(unFollowPlaylistPending());
+
+    fetch(request)
+      .then(res => {
+        console.log(res);
+        return res;
+      })
+      .then(res => {
+        //console.log(res);
+        console.log("Playlist successfully unfollowed", res);
+        dispatch(unFollowPlaylistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(unFollowPlaylistError(err));
       });
   };
 };

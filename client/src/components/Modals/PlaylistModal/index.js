@@ -4,26 +4,16 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
 import CreatePlaylist from "../../CreatePlaylist";
-import {
-  createPlaylist,
-  fetchPlaylistsMenu
-} from "../../../redux/actions/playlistActions";
+import { createPlaylist } from "../../../redux/actions/playlistActions";
 
 const PlaylistModal = ({ onHide, show, userId, token, createPlaylist }) => {
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [newPlaylistDesc, setNewPlaylistDesc] = useState("");
-  //const [addModalShow, setModal] = useState(false);
 
   const handleChange = e => {
     if (e.target.nodeName === "INPUT") setNewPlaylistName(e.target.value);
     if (e.target.nodeName === "TEXTAREA") setNewPlaylistDesc(e.target.value);
   };
-
-  // const keyChange = e => {
-  //   console.log(e.target.value);
-  //   setNewPlaylistName(e.target.value);
-  //   console.log(newPlaylistName);
-  // };
 
   const handleClick = e => {
     e.preventDefault();
@@ -91,8 +81,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      createPlaylist,
-      fetchPlaylistsMenu
+      createPlaylist
     },
     dispatch
   );

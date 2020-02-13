@@ -207,27 +207,28 @@ export const songsReducer = (state = defaultState, action) => {
         savePlaylistTrackPending: false
       };
 
-    // case "BROWSE_ALBUM_PENDING":
-    //   return {
-    //     ...state,
-    //     browseAlbumPending: true
-    //   };
+    case "REMOVE_PLAYLIST_TRACK_PENDING":
+      return {
+        ...state,
+        savePlaylistTrackPending: true
+      };
 
-    // case "BROWSE_ALBUM_SUCCESS":
-    //   return {
-    //     ...state,
-    //     songs: action.songs,
-    //     viewType: "Songs",
-    //     browseAlbumError: false,
-    //     browseAlbumPending: false
-    //   };
+    case "REMOVE_PLAYLIST_TRACK_SUCCESS":
+      return {
+        ...state,
+        //songs: action.songs,
+        removedTrack: action.removedTrack,
+        savePlaylistTrackPending: false,
+        savePlaylistTrackError: false
+        //viewType: "songs"
+      };
 
-    // case "BROWSE_ALBUM_ERROR":
-    //   return {
-    //     ...state,
-    //     browseAlbumError: true,
-    //     browseAlbumPending: false
-    //   };
+    case "REMOVE_PLAYLIST_TRACK_ERROR":
+      return {
+        ...state,
+        savePlaylistTrackError: true,
+        savePlaylistTrackPending: false
+      };
 
     default:
       return state;

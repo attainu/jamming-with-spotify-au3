@@ -4,8 +4,9 @@ import "./TrackSearch.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { searchSongs } from "../../redux/actions/songActions";
+import { updateHeaderTitle } from "../../redux/actions/uiActions";
 
-const TrackSearch = ({ token, searchSongs }) => {
+const TrackSearch = ({ token, searchSongs, updateHeaderTitle }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const updateSearchTerm = e => {
@@ -28,6 +29,7 @@ const TrackSearch = ({ token, searchSongs }) => {
         <button
           onClick={e => {
             e.preventDefault();
+            updateHeaderTitle("Search Results...");
             searchSongs(searchTerm, accessToken);
           }}
         >
@@ -45,14 +47,16 @@ TrackSearch.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    token: state.tokenReducer.token
+    token: state.tokenReducer.token,
+    headerTitle: state.uiReducer.title
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      searchSongs
+      searchSongs,
+      updateHeaderTitle
     },
     dispatch
   );

@@ -16,12 +16,15 @@ import {
   addSongToLibrary,
   removeSongFromLibrary
 } from "../../redux/actions/userActions";
+import { removeTrackFromPlaylist } from "../../redux/actions/playlistActions";
 
 //class SongList extends Component {
 const SongList = ({
   userId,
   token,
+  headerTitle,
   songs,
+  playlistMenu,
   likedSongs,
   fetchSongsError,
   fetchSongsPending,
@@ -35,6 +38,7 @@ const SongList = ({
   audioControl,
   songId,
   songAddedId,
+  removeTrackFromPlaylist,
   addSongToLibrary,
   removeSongFromLibrary,
   fetchPlaylistSongsPending,
@@ -93,6 +97,27 @@ const SongList = ({
 
   let addModalClose = () => {
     setModal(false);
+  };
+
+  const handleRemoveTrack = e => {
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[3].children[0].innerText;
+    console.log(trackName);
+    console.log(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+
+    let playlistID = playlistMenu.filter(
+      playlist => playlist.name === headerTitle
+    )[0].id;
+
+    console.log(playlistID);
+
+    removeTrackFromPlaylist(playlistID, trackURI, token);
   };
 
   const msToMinutesAndSeconds = ms => {
@@ -238,7 +263,7 @@ const SongList = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        // onClick={openModal}
+                        onClick={handleRemoveTrack}
                       >
                         - &nbsp; Remove from Playlist
                       </Dropdown.Item>
@@ -334,6 +359,7 @@ const SongList = ({
 SongList.propTypes = {
   viewType: PropTypes.string,
   token: PropTypes.string,
+  headerTitle: PropTypes.string,
   songId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   songAddedId: PropTypes.string,
   songs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
@@ -341,30 +367,26 @@ SongList.propTypes = {
   searchSongsError: PropTypes.bool,
   searchSongsPending: PropTypes.bool,
   searchSongs: PropTypes.func,
-  //fetchRecentlyPlayed: PropTypes.func,
   fetchTopTracksPending: PropTypes.bool,
   fetchTopTracksError: PropTypes.bool,
-  //fetchTopTracks: PropTypes.func,
   fetchSongsError: PropTypes.bool,
   fetchSongsPending: PropTypes.bool,
   fetchPlaylistSongsPending: PropTypes.bool,
   fetchPlaylistSongsError: PropTypes.bool,
-  browseAlbumPending: PropTypes.bool,
-  browseAlbumError: PropTypes.bool,
-  //fetchPlaylistSongs: PropTypes.func
+  playlistMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   fetchSongs: PropTypes.func,
   audioControl: PropTypes.func,
   songPaused: PropTypes.bool,
   songPlaying: PropTypes.bool,
   resumeSong: PropTypes.func,
   pauseSong: PropTypes.func
-  // addSongToLibrary: PropTypes.func
 };
 
 const mapStateToProps = state => {
   return {
     userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
+    headerTitle: state.uiReducer.title,
     songs: state.songsReducer.songs ? state.songsReducer.songs : [],
     likedSongs: state.songsReducer.likedSongs
       ? state.songsReducer.likedSongs
@@ -377,10 +399,7 @@ const mapStateToProps = state => {
     fetchSongsPending: state.songsReducer.fetchSongsPending,
     fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
-    browseAlbumPending: state.songsReducer.browseAlbumPending,
-    browseAlbumError: state.songsReducer.browseAlbumError,
-    //releaseAlbum: state.albumReducer.releaseAlbum,
-    //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
+    playlistMenu: state.playlistReducer.playlistMenu,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
@@ -393,8 +412,7 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       fetchSongs,
-      //fetchRecentlyPlayed,
-      //fetchTopTracks,
+      removeTrackFromPlaylist,
       addSongToLibrary,
       removeSongFromLibrary,
       searchSongs
