@@ -71,7 +71,6 @@ const SingleAlbumTracks = ({
       : [];
     return songs.map((song, i) => {
       let songID = song.id;
-      console.log("SongID", songId);
       const buttonClass =
         song.id === songId && !songPaused
           ? "fa-pause-circle-o"

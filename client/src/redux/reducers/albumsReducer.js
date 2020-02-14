@@ -63,3 +63,31 @@ export const albumTracksReducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const saveAlbumReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "SAVE_ALBUM_PENDING":
+      return {
+        ...state,
+        saveAlbumPending: true
+      };
+
+    case "SAVE_ALBUM_SUCCESS":
+      return {
+        ...state,
+        savedAlbum: action.savedAlbum,
+        saveAlbumPending: false,
+        saveAlbumError: false
+      };
+
+    case "SAVE_ALBUM_ERROR":
+      return {
+        ...state,
+        saveAlbumPending: false,
+        saveAlbumError: true
+      };
+
+    default:
+      return state;
+  }
+};

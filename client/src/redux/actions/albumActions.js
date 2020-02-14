@@ -29,10 +29,10 @@ export const saveAlbumError = () => {
   };
 };
 
-export const saveAlbumSuccess = songs => {
+export const saveAlbumSuccess = savedAlbum => {
   return {
     type: "SAVE_ALBUM_SUCCESS",
-    songs
+    savedAlbum
   };
 };
 

@@ -5,7 +5,11 @@ import { songsReducer } from "./songsReducer";
 import artistsReducer from "./artistsReducer";
 import uiReducer from "./uiReducer";
 import browseReducer from "./browseReducer";
-import { albumsReducer, albumTracksReducer } from "./albumsReducer";
+import {
+  albumsReducer,
+  albumTracksReducer,
+  saveAlbumReducer
+} from "./albumsReducer";
 import {
   playlistReducer,
   categoryPlaylistReducer,
@@ -25,6 +29,7 @@ export default combineReducers({
   browseReducer,
   albumsReducer,
   albumTracksReducer,
+  saveAlbumReducer,
   playlistReducer,
   categoryPlaylistReducer,
   createPlaylistReducer,

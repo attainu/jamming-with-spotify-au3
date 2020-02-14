@@ -17,7 +17,7 @@ import {
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
 import { followPlaylist } from "../../redux/actions/playlistActions";
-import { saveAlbum } from "../../redux/actions/albumActions";
+import { saveAlbum, fetchAlbums } from "../../redux/actions/albumActions";
 import "./MainHeader.css";
 
 const MainHeader = ({
@@ -41,7 +41,9 @@ const MainHeader = ({
   token,
   userId,
   artists,
-  releaseAlbum
+  releaseAlbum,
+  saveAlbum,
+  fetchAlbums
 }) => {
   let currentPlaylist;
   let currentAlbum;
@@ -54,7 +56,8 @@ const MainHeader = ({
 
   const handleAlbumSave = albumId => {
     console.log(albumId);
-    saveAlbum(albumId);
+    saveAlbum(albumId, token);
+    fetchAlbums(token);
   };
 
   if (viewType === "playlist") {
@@ -401,7 +404,8 @@ const mapDispatchToProps = dispatch => {
       updateViewType,
       fetchFeatured,
       followPlaylist,
-      saveAlbum
+      saveAlbum,
+      fetchAlbums
     },
     dispatch
   );
