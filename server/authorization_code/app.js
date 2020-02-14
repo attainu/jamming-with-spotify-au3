@@ -13,6 +13,9 @@ var cors = require("cors");
 var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
 
+var database = require('../databaseConfig/config')
+var playlist = require('../models/playlistModel')
+
 //var client_id = '54df5f9f2997420987bca232f3aa1d4b'; // Your client id
 //var client_secret = 'fc0da25adf544521afc96d5feb945c81'; // Your secret
 var redirect_uri = "http://localhost:8888/callback"; // Your redirect uri
@@ -46,6 +49,7 @@ app
 
 app.get("/", function(req, res) {
   res.redirect("/login");
+  console.log('database')
 });
 
 app.get("/login", function(req, res) {

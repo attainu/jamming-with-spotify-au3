@@ -52,6 +52,7 @@ const Albums = props => {
       {/* </div> */}
     </div>
   );
+
 };
 
 Albums.propTypes = {

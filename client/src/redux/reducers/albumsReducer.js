@@ -33,8 +33,6 @@ export const albumsReducer = (state = {}, action) => {
   }
 };
 
-//export default albumsReducer;
-
 export const albumTracksReducer = (state = {}, action) => {
   switch (action.type) {
     case "FETCH_ALBUM_TRACKS_PENDING":

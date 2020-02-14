@@ -12,10 +12,12 @@ import {
 } from "../../redux/actions/userActions";
 import { fetchSongs } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
+import { addSongToLibrary } from "../../redux/actions/userActions";
 
 const SingleAlbumTracks = ({
   token,
   songs,
+  token,
   viewType,
   fetchAlbumTracksPending,
   fetchAlbumTracksError,
@@ -29,7 +31,9 @@ const SingleAlbumTracks = ({
   resumeSong,
   pauseSong,
   audioControl,
+  songAddedId,
   songId
+
 }) => {
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
@@ -69,6 +73,7 @@ const SingleAlbumTracks = ({
     const selected_album = albums
       ? albums.filter(item => item.album.name === albumName)
       : [];
+
     return songs.map((song, i) => {
       let songID = song.id;
       const buttonClass =
@@ -120,13 +125,13 @@ const SingleAlbumTracks = ({
               </p>
             </>
           )}
-
+      
           <div className="song-title">
-            <p>{song.name}</p>
+            <p>{song.track.name}</p>
           </div>
 
           <div className="song-artist">
-            <p>{song.artists[0].name}</p>
+            <p>{song.track.artists[0].name}</p>
           </div>
 
           <div className="song-album">
@@ -172,7 +177,7 @@ const SingleAlbumTracks = ({
           />
         </li>
       );
-    });
+  }): null
   };
 
   console.log("View Type:", viewType);
@@ -212,7 +217,8 @@ SingleAlbumTracks.propTypes = {
   songs: PropTypes.array,
   fetchAlbumTracksPending: PropTypes.bool,
   fetchAlbumTracksError: PropTypes.bool,
-  fetchAlbumTracks: PropTypes.func
+  fetchAlbumTracks: PropTypes.func,
+  addSongToLibrary: PropTypes.func
 };
 
 const mapStateToProps = state => {
@@ -233,6 +239,7 @@ const mapStateToProps = state => {
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
     songAddedId: state.userReducer.songId || ""
+
   };
 };
 
@@ -243,6 +250,7 @@ const mapDispatchToProps = dispatch => {
       addSongToLibrary,
       removeSongFromLibrary,
       fetchSongs
+
     },
     dispatch
   );

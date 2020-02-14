@@ -17,6 +17,8 @@ import UserPlaylists from "./components/UserPlaylists";
 import CreatePlaylist from "./components/CreatePlaylist";
 import Footer from "./components/Footer";
 // import ArtWork from "./components/ArtWork";
+
+
 import "./App.css";
 import { connect } from "react-redux";
 //import { Redirect } from "react-router-dom";
