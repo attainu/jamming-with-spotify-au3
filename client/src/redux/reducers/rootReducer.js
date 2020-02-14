@@ -11,6 +11,7 @@ import {
   categoryPlaylistReducer,
   createPlaylistReducer,
   editPlaylistReducer,
+  followPlaylistReducer,
   unFollowPlaylistReducer
 } from "./playlistReducer";
 import soundReducer from "./soundReducer";
@@ -28,6 +29,7 @@ export default combineReducers({
   categoryPlaylistReducer,
   createPlaylistReducer,
   editPlaylistReducer,
+  followPlaylistReducer,
   unFollowPlaylistReducer,
   soundReducer
 });

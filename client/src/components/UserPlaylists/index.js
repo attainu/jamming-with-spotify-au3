@@ -22,6 +22,7 @@ const UserPlaylists = ({
   fetchPlaylistsMenu,
   updateHeaderTitle,
   updatedPlaylistResponse,
+  folResponse,
   delResponse
 }) => {
   // componentWillReceiveProps(nextProps) {
@@ -89,7 +90,14 @@ const UserPlaylists = ({
     if (userId !== "" && token !== "") {
       fetchPlaylistsMenu(userId, token);
     }
-  }, [userId, token, newPlaylistData, updatedPlaylistResponse, delResponse]);
+  }, [
+    userId,
+    token,
+    newPlaylistData,
+    updatedPlaylistResponse,
+    folResponse,
+    delResponse
+  ]);
 
   const renderPlaylists = () => {
     return playlistMenu.map(playlist => {
@@ -195,6 +203,7 @@ const mapStateToProps = state => {
     title: state.uiReducer.title,
     newPlaylistData: state.createPlaylistReducer.newPlaylistData,
     updatedPlaylistResponse: state.editPlaylistReducer.updatedPlaylistResponse,
+    folResponse: state.followPlaylistReducer.folResponse,
     delResponse: state.unFollowPlaylistReducer.delResponse
   };
 };

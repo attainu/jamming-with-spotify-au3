@@ -16,6 +16,8 @@ import {
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
+import { followPlaylist } from "../../redux/actions/playlistActions";
+import { saveAlbum } from "../../redux/actions/albumActions";
 import "./MainHeader.css";
 
 const MainHeader = ({
@@ -25,6 +27,7 @@ const MainHeader = ({
   fetchNewReleases,
   fetchFeatured,
   fetchPlaylistSongs,
+  followPlaylist,
   addPlaylistItem,
   updateHeaderTitle,
   updateViewType,
@@ -44,8 +47,14 @@ const MainHeader = ({
   let currentAlbum;
   let currentArtist;
 
-  const handleFollow = () => {
-    //unFollowPlaylist(playlistId, token);
+  const handleFollow = playlistId => {
+    console.log(playlistId);
+    followPlaylist(playlistId, token);
+  };
+
+  const handleAlbumSave = albumId => {
+    console.log(albumId);
+    saveAlbum(albumId);
   };
 
   if (viewType === "playlist") {
@@ -103,7 +112,10 @@ const MainHeader = ({
             {playlistMenu.findIndex(
               playlist => playlist.name === headerTitle
             ) === -1 ? (
-              <button className="follow-btn" onClick={handleFollow}>
+              <button
+                className="follow-btn"
+                onClick={() => handleFollow(currentPlaylist.id)}
+              >
                 FOLLOW
               </button>
             ) : (
@@ -194,14 +206,25 @@ const MainHeader = ({
                 - {currentAlbum.album.total_tracks}{" "}
                 {currentAlbum.album.total_tracks > 1 ? "songs" : "song"}
               </p>
+              {albums.findIndex(item => item.album.name === headerTitle) ===
+              -1 ? (
+                <button
+                  className="follow-btn"
+                  onClick={() => handleAlbumSave(currentAlbum.album.id)}
+                >
+                  + LIBRARY
+                </button>
+              ) : (
+                <span className="following-text">SAVED TO LIBRARY</span>
+              )}
+              <button
+                onClick={!songPaused ? pauseSong : resumeSong}
+                className="main-pause-play-btn album-button"
+              >
+                {songPaused ? "PLAY" : "PAUSE"}
+              </button>
             </div>
           </div>
-          <button
-            onClick={!songPaused ? pauseSong : resumeSong}
-            className="main-pause-play-btn album-button"
-          >
-            {songPaused ? "PLAY" : "PAUSE"}
-          </button>
         </div>
       )}
 
@@ -224,6 +247,17 @@ const MainHeader = ({
               - {currentAlbum.total_tracks}{" "}
               {currentAlbum.total_tracks > 1 ? "songs" : "song"}
             </p>
+            {albums.findIndex(item => item.album.name === headerTitle) ===
+            -1 ? (
+              <button
+                className="follow-btn"
+                onClick={() => handleAlbumSave(currentAlbum.id)}
+              >
+                + LIBRARY
+              </button>
+            ) : (
+              <span className="following-text">SAVED TO LIBRARY</span>
+            )}
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
@@ -365,7 +399,9 @@ const mapDispatchToProps = dispatch => {
       addPlaylistItem,
       updateHeaderTitle,
       updateViewType,
-      fetchFeatured
+      fetchFeatured,
+      followPlaylist,
+      saveAlbum
     },
     dispatch
   );

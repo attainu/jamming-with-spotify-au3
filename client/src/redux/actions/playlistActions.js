@@ -141,6 +141,25 @@ export const removeTrackFromPlaylistError = () => {
   };
 };
 
+export const followPlaylistPending = () => {
+  return {
+    type: "FOLLOW_PLAYLIST_PENDING"
+  };
+};
+
+export const followPlaylistSuccess = folResponse => {
+  return {
+    type: "FOLLOW_PLAYLIST_SUCCESS",
+    folResponse
+  };
+};
+
+export const followPlaylistError = () => {
+  return {
+    type: "FOLLOW_PLAYLIST_ERROR"
+  };
+};
+
 export const unFollowPlaylistPending = () => {
   return {
     type: "UNFOLLOW_PLAYLIST_PENDING"
@@ -411,6 +430,40 @@ export const removeTrackFromPlaylist = (playlistId, trackURI, accessToken) => {
       })
       .catch(err => {
         dispatch(removeTrackFromPlaylistError(err));
+      });
+  };
+};
+
+export const followPlaylist = (playlistId, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/playlists/${playlistId}/followers`,
+      {
+        method: "PUT",
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        })
+      }
+    );
+
+    console.log(request);
+
+    dispatch(followPlaylistPending());
+
+    fetch(request)
+      .then(res => {
+        console.log(res);
+        return res;
+      })
+      .then(res => {
+        //console.log(res);
+        console.log("Playlist successfully followed", res);
+        dispatch(followPlaylistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(followPlaylistError(err));
       });
   };
 };

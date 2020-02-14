@@ -17,21 +17,21 @@ export const fetchAlbumsPending = () => {
   };
 };
 
-export const browseAlbumPending = () => {
+export const saveAlbumPending = () => {
   return {
-    type: "BROWSE_ALBUM_PENDING"
+    type: "SAVE_ALBUM_PENDING"
   };
 };
 
-export const browseAlbumError = () => {
+export const saveAlbumError = () => {
   return {
-    type: "BROWSE_ALBUM_ERROR"
+    type: "SAVE_ALBUM_ERROR"
   };
 };
 
-export const browseAlbumSuccess = songs => {
+export const saveAlbumSuccess = songs => {
   return {
-    type: "BROWSE_ALBUM_SUCCESS",
+    type: "SAVE_ALBUM_SUCCESS",
     songs
   };
 };
@@ -114,17 +114,19 @@ export const fetchAlbumTracks = (accessToken, albumId) => {
   };
 };
 
-export const browseAlbum = (albumId, accessToken) => {
+export const saveAlbum = (albumId, accessToken) => {
   return dispatch => {
     const request = new Request(
-      `https://api.spotify.com/v1/albums/${albumId}/tracks`,
+      `https://api.spotify.com/v1/me/albums?ids=${albumId}`,
       {
         headers: new Headers({
-          Authorization: "Bearer " + accessToken
-        })
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        }),
+        method: "PUT"
       }
     );
-    dispatch(browseAlbumPending());
+    dispatch(saveAlbumPending());
 
     fetch(request)
       .then(res => {
@@ -134,11 +136,11 @@ export const browseAlbum = (albumId, accessToken) => {
         return res.json();
       })
       .then(res => {
-        console.log("Browse Album", res);
-        dispatch(browseAlbumSuccess(res.items));
+        console.log("Save Album", res);
+        dispatch(saveAlbumSuccess(res.items));
       })
       .catch(err => {
-        dispatch(browseAlbumError(err));
+        dispatch(saveAlbumError(err));
       });
   };
 };
