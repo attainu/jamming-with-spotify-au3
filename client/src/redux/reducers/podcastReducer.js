@@ -60,3 +60,30 @@ export const podcastReducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const deletePodcastReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "DELETE_PODCAST_PENDING":
+      return {
+        ...state,
+        deletePodcastPending: true
+      };
+
+    case "DELETE_PODCAST_SUCCESS":
+      return {
+        ...state,
+        deletePodcastError: false,
+        deletePodcastPending: false
+      };
+
+    case "DELETE_PODCAST_ERROR":
+      return {
+        ...state,
+        deletePodcastPending: false,
+        deletePodcastError: true
+      };
+
+    default:
+      return state;
+  }
+};

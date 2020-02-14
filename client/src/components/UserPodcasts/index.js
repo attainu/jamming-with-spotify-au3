@@ -4,34 +4,39 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
   fetchPodcastMenu,
-//   fetchPodcastSongs
+  fetchPodcastSongs
 } from "../../redux/actions/podcastActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import "../UserPlaylists/UserPlaylists.css";
 
 const UserPodcasts = (props) => {  
- props.fetchPodcastMenu()
+  useEffect(() => {
+   props.fetchPodcastMenu()
+  }, [props.newPodcastData])
+
+//  props.fetchPodcastMenu()
+
   const renderPodcasts = () => {
     return props.podcastMenu.map(podcast => {
       const getPodcastSongs = () => {
-        // props.fetchPodcastSongs(
-        //   podcast.owner.id,
-        //   podcast.id,
-        // );
-        props.updateHeaderTitle(podcast.name);
+        props.fetchPodcastSongs(
+          // podcast.owner.id,
+          podcast.id,
+        );
+        props.updateHeaderTitle(podcast.podcastName);
       };
 
       return (
         <li
           onClick={getPodcastSongs}
           className={
-            props.title === podcast.name
+            props.title === podcast.podcastName
               ? "active side-menu-item"
               : "side-menu-item"
           }
           key={podcast.id}
         >
-          {podcast.name}
+          {podcast.podcastName}
         </li>
       );
     });
@@ -40,7 +45,6 @@ const UserPodcasts = (props) => {
     return (
       <div className="user-playlist-container">
         <h3 className="user-playlist-header">Podcasts</h3>
-        {console.log(props.podcastMenu)}
         {props.podcastMenu && renderPodcasts()}
       </div>
     );
@@ -52,7 +56,7 @@ UserPodcasts.propTypes = {
   title: PropTypes.string,
   podcastMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   fetchPodcastMenu: PropTypes.func,
-  // fetchPodcastSongs: PropTypes.func,
+  fetchPodcastSongs: PropTypes.func,
   updateHeaderTitle: PropTypes.func
 };
 
@@ -62,7 +66,8 @@ const mapStateToProps = state => {
       ? state.podcastReducer.podcastMenu
       : "",
     // token: state.tokenReducer.token ? state.tokenReducer.token : "",
-    title: state.uiReducer.title
+    title: state.uiReducer.title,
+    newPodcastData: state.createPodcastReducer.newPodcastData
   };
 };
 
@@ -70,7 +75,7 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       fetchPodcastMenu,
-    //   fetchPodcastSongs,
+      fetchPodcastSongs,
       updateHeaderTitle
     },
     dispatch

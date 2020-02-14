@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component,useState, useEffect } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -10,6 +10,7 @@ import {
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
+import AddToPodcastModal from '../Modals/AddToPodcastModal'
 import { addSongToLibrary } from "../../redux/actions/userActions";
 
 //class SongList extends Component {
@@ -31,7 +32,8 @@ const LikedSongs = ({
   songId,
   //songAddedId,
   //addSongToLibrary,
-  fetchPlaylistSongsPending
+  fetchPlaylistSongsPending,
+  fetchPlaylistPending
   //searchSongsPending,
   //searchSongsError
 }) => {
@@ -68,6 +70,38 @@ const LikedSongs = ({
     //   searchSongs(token);
     // }
   }, [token]);
+
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
+  // useEffect(()=>{
+
+  // },[likedSongs])
+
+  const openModal = e => {
+    setModal(true);
+    // let trackName =
+    //   e.target.parentElement.parentElement.parentElement.parentElement
+    //     .children[2].children[0].innerText;
+    // console.log(trackName);
+    // setTrackURI(
+    //   songs.filter(song => song.track.name === trackName)[0].track.uri
+    // );
+  };
+
+  const addModalClose = () => {
+    setModal(false);
+  };
+
+  const [addPodcastModalShow, setPodcastModal] = useState(false);
+
+  const openPodcastModal = e => {
+    setPodcastModal(true)
+  }
+
+  const addPodcastModalClose = () => {
+    setPodcastModal(false);
+  };
 
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
@@ -210,17 +244,30 @@ const LikedSongs = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        // onClick={openModal}
+                        onClick={openModal}
                       >
-                        + &nbsp; Add To Playlist
+                        + &nbsp; Spotify Playlist
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        href="#"
+                        className="options-dropdown"
+                        onClick={openPodcastModal}
+                      >
+                        + &nbsp; Podcast
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                  {/* <AddToPlaylistModal
+                  <AddToPlaylistModal
                   onHide={addModalClose}
                   show={addModalShow}
                   trackURI={trackURI}
-                  /> */}
+                />
+
+                <AddToPodcastModal
+                  onHide={addPodcastModalClose}
+                  show={addPodcastModalShow}
+                  // trackURI={trackURI}
+                />
                 </>
               )}
             </li>
@@ -255,6 +302,7 @@ const LikedSongs = ({
       {songs &&
         !fetchSongsPending &&
         !fetchPlaylistSongsPending &&
+        !fetchPlaylistPending &&
         renderSongs()}
 
       {/* {songs && !searchSongsPending && !searchSongsError && renderSongs()} */}
@@ -300,6 +348,7 @@ LikedSongs.propTypes = {
   fetchSongsError: PropTypes.bool,
   fetchSongsPending: PropTypes.bool,
   fetchPlaylistSongsPending: PropTypes.bool,
+  fetchPlaylistPending: PropTypes.bool,
   fetchPlaylistSongsError: PropTypes.bool,
   browseAlbumPending: PropTypes.bool,
   browseAlbumError: PropTypes.bool,
@@ -328,6 +377,7 @@ const mapStateToProps = state => {
     fetchSongsError: state.songsReducer.fetchSongsError,
     fetchSongsPending: state.songsReducer.fetchSongsPending,
     fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
+    fetchPlaylistPending: state.playlistReducer.fetchPlaylistPending,
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
     browseAlbumPending: state.songsReducer.browseAlbumPending,
     browseAlbumError: state.songsReducer.browseAlbumError,

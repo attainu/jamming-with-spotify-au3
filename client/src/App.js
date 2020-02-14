@@ -20,7 +20,7 @@ import Footer from "./components/Footer";
 // import ArtWork from "./components/ArtWork";
 import "./App.css";
 import { connect } from "react-redux";
-import { CreatePodcast } from "./components/CreatePodcast";
+import CreatePodcast from "./components/CreatePodcast";
 //import { Redirect } from "react-router-dom";
 
 class App extends Component {

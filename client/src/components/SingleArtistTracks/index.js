@@ -6,6 +6,7 @@ import { bindActionCreators } from "redux";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import { fetchArtistSongs } from "../../redux/actions/artistActions";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
+import AddToPodcastModal from "../Modals/AddToPodcastModal";
 import {
   addSongToLibrary,
   removeSongFromLibrary
@@ -49,8 +50,18 @@ const SingleArtistTracks = ({
     );
   };
 
-  let addModalClose = () => {
+  const addModalClose = () => {
     setModal(false);
+  };
+
+  const [addPodcastModalShow, setPodcastModal] = useState(false);
+
+  const openPodcastModal = e => {
+    setPodcastModal(true)
+  }
+
+  const addPodcastModalClose = () => {
+    setPodcastModal(false);
   };
 
   const msToMinutesAndSeconds = ms => {
@@ -145,7 +156,7 @@ const SingleArtistTracks = ({
               >
                 + &nbsp; Spotify Playlist
               </Dropdown.Item>
-              <Dropdown.Item href="#" className="options-dropdown">
+              <Dropdown.Item href="#" className="options-dropdown" onClick={openPodcastModal}>
                 + &nbsp; Podcast
               </Dropdown.Item>
             </DropdownButton>
@@ -155,6 +166,12 @@ const SingleArtistTracks = ({
             onHide={addModalClose}
             show={addModalShow}
             trackURI={trackURI}
+          />
+
+          <AddToPodcastModal
+            onHide={addPodcastModalClose}
+            show={addPodcastModalShow}
+            // trackURI={trackURI}
           />
         </li>
       );

@@ -162,6 +162,28 @@ export const songsReducer = (state = defaultState, action) => {
         fetchPlaylistSongsPending: true
       };
 
+    case "FETCH_PODCASTS_SONGS_PENDING":
+      return {
+        ...state,
+        fetchPodcastSongsPending: true
+      };
+
+    case "FETCH_PODCASTS_SONGS_SUCCESS":
+      return {
+        ...state,
+        songs: action.songs,
+        viewType: "podcast",
+        fetchPodcastSongsError: false,
+        fetchPodcastSongsPending: false
+      };
+
+    case "FETCH_PODCASTS_SONGS_ERROR":
+      return {
+        ...state,
+        fetchPodcastSongsError: true,
+        fetchPodcastSongsPending: true
+      };
+
     case "FETCH_SONGS_PENDING":
       return {
         ...state,
@@ -205,6 +227,29 @@ export const songsReducer = (state = defaultState, action) => {
         ...state,
         savePlaylistTrackError: true,
         savePlaylistTrackPending: false
+      };
+
+    case "SAVE_PODCAST_TRACK_PENDING":
+      return {
+        ...state,
+        saveTrackToPodcastPending: true
+      };
+
+    case "SAVE_PODCAST_TRACK_SUCCESS":
+      return {
+        ...state,
+        //songs: action.songs,
+        addedTrack: action.addedTrack,
+        saveTrackToPodcastPending: false,
+        saveTrackToPodcastError: false
+        //viewType: "songs"
+      };
+
+    case "SAVE_PODCAST_TRACK_ERROR":
+      return {
+        ...state,
+        saveTrackToPodcastError: true,
+        saveTrackToPodcastPending: false
       };
 
     // case "BROWSE_ALBUM_PENDING":

@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -12,6 +12,7 @@ import {
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
+import AddToPodcastModal from '../Modals/AddToPodcastModal'
 import { addSongToLibrary } from "../../redux/actions/userActions";
 
 //class SongList extends Component {
@@ -34,6 +35,7 @@ const SongList = ({
   songAddedId,
   addSongToLibrary,
   fetchPlaylistSongsPending,
+  fetchPodcastSongsPending,
   searchSongsPending,
   searchSongsError
 }) => {
@@ -69,6 +71,38 @@ const SongList = ({
       searchSongs(token);
     }
   }, [token, likedSongs]);
+
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
+  // useEffect(()=>{
+
+  // },[likedSongs])
+
+  const openModal = e => {
+    setModal(true);
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[2].children[0].innerText;
+    console.log(trackName);
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+  };
+
+  const addModalClose = () => {
+    setModal(false);
+  };
+
+  const [addPodcastModalShow, setPodcastModal] = useState(false);
+
+  const openPodcastModal = e => {
+    setPodcastModal(true)
+  }
+
+  const addPodcastModalClose = () => {
+    setPodcastModal(false);
+  };
 
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
@@ -153,19 +187,19 @@ const SongList = ({
           )} */}
 
               <div className="song-title">
-                <p>{song.track.name}</p>
+                <p>{song.track.name ? song.track.name : ""}</p>
               </div>
 
               <div className="song-artist">
-                <p>{song.track.artists[0].name}</p>
+                <p>{song.track.artists ? song.track.artists[0].name: ""}</p>
               </div>
 
               <div className="song-album">
-                <p>{song.track.album.name}</p>
+                <p>{song.track.album ? song.track.album.name : ""}</p>
               </div>
 
               <div className="song-added">
-                <p>{song.track.album.release_date}</p>
+                <p>{song.track.album ? song.track.album.release_date : ""}</p>
                 {/* <p>{moment(song.added_at).format("YYYY-MM-DD")}</p> */}
               </div>
 
@@ -212,17 +246,31 @@ const SongList = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        // onClick={openModal}
+                        onClick={openModal}
                       >
-                        + &nbsp; Add To Playlist
+                        + &nbsp; Spotify Playlist
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        href="#"
+                        className="options-dropdown"
+                        onClick={openPodcastModal}
+                        style={{marginTop : "10px"}}
+                      >
+                        + &nbsp; Podcast
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                  {/* <AddToPlaylistModal
+                  <AddToPlaylistModal
                   onHide={addModalClose}
                   show={addModalShow}
                   trackURI={trackURI}
-                  /> */}
+                />
+
+                <AddToPodcastModal
+                  onHide={addPodcastModalClose}
+                  show={addPodcastModalShow}
+                  // trackURI={trackURI}
+                />
                 </>
               )}
             </li>
@@ -257,6 +305,7 @@ const SongList = ({
       {songs &&
         !fetchSongsPending &&
         !fetchPlaylistSongsPending &&
+        !fetchPodcastSongsPending &&
         renderSongs()}
 
       {songs && !searchSongsPending && !searchSongsError && renderSongs()}
@@ -303,6 +352,8 @@ SongList.propTypes = {
   fetchSongsPending: PropTypes.bool,
   fetchPlaylistSongsPending: PropTypes.bool,
   fetchPlaylistSongsError: PropTypes.bool,
+  fetchPodcasttSongsPending: PropTypes.bool,
+  fetchPodcastSongsError: PropTypes.bool,
   browseAlbumPending: PropTypes.bool,
   browseAlbumError: PropTypes.bool,
   //fetchPlaylistSongs: PropTypes.func
@@ -331,6 +382,8 @@ const mapStateToProps = state => {
     fetchSongsPending: state.songsReducer.fetchSongsPending,
     fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
+    fetchPodcastSongsPending: state.songsReducer.fetchPodcastSongsPending,
+    fetchPodcastSongsError: state.songsReducer.fetchPodcastSongsError,
     browseAlbumPending: state.songsReducer.browseAlbumPending,
     browseAlbumError: state.songsReducer.browseAlbumError,
     //releaseAlbum: state.albumReducer.releaseAlbum,

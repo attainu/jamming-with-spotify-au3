@@ -2,20 +2,17 @@ const podcasts = require('../databaseConfig/database')
 
 // Post a podcast
 module.exports.create = (req, res) => {  
-    console.log(req.body)
 
     podcasts.create({  
-     name: req.body.name,
+     podcastName: req.body.name,
      description: req.body.description
     })
  
-  .then(data => {  
-      console.log('podcast', data)  
+  .then(() => {  
     res.send(200).send('OK')
   })
 
   .catch((err) => {
-    console.log(err.name)
     res.statusMessage = err.name
     res.status(400).end()
   })
@@ -26,7 +23,6 @@ module.exports.findAll = (req, res) => {
   
   podcasts.findAll()
    .then((data)=>{
-     console.log('all podcasts', data)
     if(!data){
         res.status(400).send('notok')
     }else{
@@ -40,29 +36,47 @@ module.exports.findAll = (req, res) => {
   })
 };
 
-// // Find a Customer by Id
-// exports.findById = (req, res) => {  
-//   Customer.findById(req.params.customerId).then(customer => {
-//     res.send(customer);
-//   })
-// };
+// Find a podcast by Id
+module.exports.findById = (req, res) => {  
+ podcasts.findAll({
+   where:{
+     id: req.params.podcastId
+   }
+ })
+  .then(podcast => {
+    res.send(podcast);
+  })
+  .catch(err=>{
+    res.statusMessage = err.name
+      res.status(400).end()
+  })
+};
 
-// // Update a Customer
-// exports.update = (req, res) => {
-//     const id = req.params.customerId;
-//     Customer.update( { firstname: req.body.firstname, lastname: req.body.lastname, age: req.body.age }, 
-//              { where: {id: req.params.customerId} }
-//              ).then(() => {
-//              res.status(200).send("updated successfully a customer with id = " + id);
-//              });
-//   };
+// Update a podcast with tracks
+
+module.exports.update = (req, res) => {
+    const id = req.params.podcastId;
+    const tracks = req.body
+    
+    podcasts.update( { tracks: [req.body] }, 
+             { where: {id: req.params.podcastId} }
+             )
+             .then(() => {
+              // console.log('track',req.body)
+             res.status(200).send(req.body);
+             })
+             .catch(err=>{
+              res.statusMessage = err.name
+                res.status(400).end()
+            })
+  };
   
-//   // Delete a Customer by Id
-//   exports.delete = (req, res) => {
-//     const id = req.params.customerId;
-//     Customer.destroy({
-//       where: { id: id }
-//     }).then(() => {
-//       res.status(200).send('deleted successfully a customer with id = ' + id);
-//     });
-//   };
+  // Delete a podcast by Id
+  module.exports.delete = (req, res) => {
+    const id = req.params.podcastId;
+    podcasts.destroy({
+      where: { id: id }
+    }).then(() => {
+      res.status(200).send('ok');
+    });
+  };

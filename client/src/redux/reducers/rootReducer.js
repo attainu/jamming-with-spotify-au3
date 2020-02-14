@@ -11,7 +11,7 @@ import {
   categoryPlaylistReducer,
   createPlaylistReducer,
 } from "./playlistReducer";
-import {createPodcastReducer, podcastReducer} from './podcastReducer'
+import {createPodcastReducer, podcastReducer, deletePodcastReducer} from './podcastReducer'
 import soundReducer from "./soundReducer";
 
 export default combineReducers({
@@ -26,6 +26,7 @@ export default combineReducers({
   playlistReducer,
   podcastReducer,
   categoryPlaylistReducer,
+  deletePodcastReducer,
   createPlaylistReducer,
   createPodcastReducer,
   soundReducer

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 //import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -6,6 +6,9 @@ import { bindActionCreators } from "redux";
 import { fetchAlbumTracks } from "../../redux/actions/albumActions";
 import "../SongList/SongList.css";
 import { addSongToLibrary } from "../../redux/actions/userActions";
+import { Dropdown, DropdownButton } from "react-bootstrap";
+import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
+import AddToPodcastModal from "../Modals/AddToPodcastModal";
 
 const SingleAlbumTracks = ({
   songs,
@@ -23,6 +26,40 @@ const SingleAlbumTracks = ({
   pauseSong,
   audioControl,
 }) => {
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
+  const openModal = e => {
+    setModal(true);
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[2].children[0].innerText;
+    console.log(trackName);
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+  };
+
+  const addModalClose = () => {
+    setModal(false);
+  };
+
+  const [addPodcastModalShow, setPodcastModal] = useState(false);
+  const [trackDetails, setTrackDetails] = useState("");
+
+  const openPodcastModal = e => {
+    setPodcastModal(true)
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[2].children[0].innerText;
+    let selectedTrack = (songs.filter(song => song.track.name === trackName)[0].track);
+    console.log(selectedTrack);
+    setTrackDetails(selectedTrack)
+  }
+
+  const addPodcastModalClose = () => {
+    setPodcastModal(false);
+  };
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
@@ -76,7 +113,7 @@ const SingleAlbumTracks = ({
               addSongToLibrary(token, song.track.id);
             }}
           >
-            {songAddedId === song.track.id ? (
+           {songAddedId === song.track.id ? (
               <i className="fa fa-check add-song" aria-hidden="true" />
             ) : (
               <i className="fa fa-plus add-song" aria-hidden="true" />
@@ -104,8 +141,40 @@ const SingleAlbumTracks = ({
           </div>
 
           <div className="song-length">
-            <p>{msToMinutesAndSeconds(song.duration_ms)}</p>
+            <p>{msToMinutesAndSeconds(song.track.duration_ms)}</p>
           </div>
+          <div className="add-song-playlist">
+          <DropdownButton
+              id="dropdown-button-drop-right"
+              title=""
+              drop="right"
+              variant="secondary"
+              key="right"
+            >
+              <Dropdown.Item
+                href="#"
+                className="options-dropdown"
+                onClick={openModal}
+              >
+                + &nbsp; Spotify Playlist
+              </Dropdown.Item>
+              <Dropdown.Item href="#" className="options-dropdown" onClick={openPodcastModal}>
+                + &nbsp; Podcast
+              </Dropdown.Item>
+            </DropdownButton>
+          </div>
+
+          <AddToPlaylistModal
+            onHide={addModalClose}
+            show={addModalShow}
+            trackURI={trackURI}
+          />
+
+          <AddToPodcastModal
+            onHide={addPodcastModalClose}
+            show={addPodcastModalShow}
+            trackDetails={trackDetails}
+          />
         </li>
       );
   }): null

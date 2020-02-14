@@ -6,12 +6,21 @@ module.exports = (sequelize,Sequelize) =>{
         primaryKey: true,
         autoIncrement : true
       },
-      name: {
+      podcastName: {
         type: Sequelize.STRING,
         allowNull: false,
        },
       description: {
         type: Sequelize.TEXT
+      },
+      images: {
+        type: Sequelize.ARRAY(Sequelize.TEXT) 
+      },
+      tracks: {
+        type: Sequelize.ARRAY(Sequelize.TEXT) 
+      },
+      totalTracks: {
+        type: Sequelize.INTEGER
       }
     })
     return podcast
