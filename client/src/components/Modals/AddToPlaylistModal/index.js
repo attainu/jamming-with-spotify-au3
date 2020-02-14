@@ -22,6 +22,10 @@ const AddToPlaylistModal = ({
 }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
 
+  let ownPlaylists = playlistMenu.filter(
+    playlist => playlist.owner.id === userId
+  );
+
   const handleChange = e => {
     console.log(e.target.value);
     setSelectedPlaylist(e.target.value);
@@ -50,7 +54,7 @@ const AddToPlaylistModal = ({
             <Form.Label>Select Playlist</Form.Label>
             <Form.Control as="select" onChange={handleChange}>
               <option value="Select">Select</option>
-              {playlistMenu.map((playlist, index) => {
+              {ownPlaylists.map((playlist, index) => {
                 return (
                   <option key={index} value={playlist.name}>
                     {playlist.name}

@@ -89,3 +89,31 @@ export const createPlaylistReducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const unFollowPlaylistReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "UNFOLLOW_PLAYLIST_PENDING":
+      return {
+        ...state,
+        unFollowPlaylistPending: true
+      };
+
+    case "UNFOLLOW_PLAYLIST_SUCCESS":
+      return {
+        ...state,
+        delResponse: action.delResponse,
+        unFollowPlaylistPending: false,
+        unFollowPlaylistError: false
+      };
+
+    case "UNFOLLOW_PLAYLIST_ERROR":
+      return {
+        ...state,
+        unFollowPlaylistPending: false,
+        unFollowPlaylistError: true
+      };
+
+    default:
+      return state;
+  }
+};

@@ -1,30 +1,36 @@
-import React, {useState, useEffect} from "react";
+import React, { useState } from "react";
 //import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { fetchAlbumTracks } from "../../redux/actions/albumActions";
-import "../SongList/SongList.css";
-import { addSongToLibrary } from "../../redux/actions/userActions";
-import { Dropdown, DropdownButton } from "react-bootstrap";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
+import {
+  addSongToLibrary,
+  removeSongFromLibrary
+} from "../../redux/actions/userActions";
+import { fetchSongs } from "../../redux/actions/songActions";
+import "../SongList/SongList.css";
 import AddToPodcastModal from "../Modals/AddToPodcastModal";
 
 const SingleAlbumTracks = ({
-  songs,
   token,
+  songs,
   viewType,
   fetchAlbumTracksPending,
   fetchAlbumTracksError,
+  addSongToLibrary,
+  removeSongFromLibrary,
   albumName,
   albums,
-  songId,
-  songPaused,
+  likedSongs,
   songPlaying,
-  songAddedId,
+  songPaused,
   resumeSong,
   pauseSong,
   audioControl,
+  songId
 }) => {
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
@@ -33,11 +39,9 @@ const SingleAlbumTracks = ({
     setModal(true);
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
-        .children[2].children[0].innerText;
+     .children[3].children[0].innerText;
     console.log(trackName);
-    setTrackURI(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
+    setTrackURI(songs.filter(song => song.name === trackName)[0].uri);
   };
 
   const addModalClose = () => {
@@ -66,60 +70,74 @@ const SingleAlbumTracks = ({
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
 
+  function toggleButton(e, token, songID) {
+    console.log(e.target);
+    if (e.target.classList.contains("fa-check")) {
+      e.target.className = "fa fa-plus";
+      removeSongFromLibrary(token, songID);
+    } else if (e.target.classList.contains("fa-plus")) {
+      e.target.className = "fa fa-check";
+      addSongToLibrary(token, songID);
+    }
+    fetchSongs(token);
+  }
+
   const renderSongs = () => {
     const selected_album = albums
       ? albums.filter(item => item.album.name === albumName)
       : [];
-
-      return songs
-      ? songs.map((song, i) => {
-          const buttonClass =
-            song.track.id === songId && !songPaused
-              ? "fa-pause-circle-o"
-              : "fa-play-circle-o";
+    return songs.map((song, i) => {
+      let songID = song.id;
+      console.log("SongID", songId);
+      const buttonClass =
+        song.id === songId && !songPaused
+          ? "fa-pause-circle-o"
+          : "fa-play-circle-o";
 
       return (
-        <li className={
-          song.track.id === songId
-            ? "active user-song-item"
-            : "user-song-item"
-        } key={i}>
-
-        
-        <div
-          onClick={() => {
-            song.track.id === songId &&
-            songPlaying &&
-            songPaused
-              ? resumeSong()
-              : songPlaying &&
-                !songPaused &&
-                song.id === songId
-              ? pauseSong()
-              : audioControl(song);
-          }}
-          className="play-song"
+        <li
+          className={
+            song.id === songId ? "active user-song-item" : "user-song-item"
+          }
+          key={i}
         >
-          <i
-            className={`fa ${buttonClass} play-btn`}
-            aria-hidden="true"
-          />
-        </div>
-
-        {viewType === "Album" && (
-          <p
-            className="add-song"
+          <div
             onClick={() => {
-              addSongToLibrary(token, song.track.id);
+              song.id === songId && songPlaying && songPaused
+                ? resumeSong()
+                : songPlaying && !songPaused && song.id === songId
+                ? pauseSong()
+                : audioControl(song);
             }}
+            className="play-song"
           >
-           {songAddedId === song.track.id ? (
-              <i className="fa fa-check add-song" aria-hidden="true" />
-            ) : (
-              <i className="fa fa-plus add-song" aria-hidden="true" />
-            )}
-          </p>
-        )}
+            <i className={`fa ${buttonClass} play-btn`} aria-hidden="true" />
+          </div>
+
+          {viewType === "Album" && (
+            <>
+              <p className="fav-song">
+                <i className="fa fa-heart-o" aria-hidden="true" />
+              </p>
+              &nbsp;
+              <p className="add-song">
+                {/* {songAddedId === songID || */}
+                {likedSongs.findIndex(song => song.id === songID) > -1 ? (
+                  <i
+                    className={"fa fa-check"}
+                    aria-hidden="true"
+                    onClick={e => toggleButton(e, token, songID)}
+                  />
+                ) : (
+                  <i
+                    className="fa fa-plus"
+                    aria-hidden="true"
+                    onClick={e => toggleButton(e, token, songID)}
+                  />
+                )}
+              </p>
+            </>
+          )}
 
           <div className="song-title">
             <p>{song.track.name}</p>
@@ -164,6 +182,27 @@ const SingleAlbumTracks = ({
             </DropdownButton>
           </div>
 
+          <div className="add-song-playlist">
+            <DropdownButton
+              id="dropdown-button-drop-right"
+              title=""
+              drop="right"
+              variant="secondary"
+              key="right"
+            >
+              <Dropdown.Item
+                href="#"
+                className="options-dropdown"
+                onClick={openModal}
+              >
+                + &nbsp; Spotify Playlist
+              </Dropdown.Item>
+              <Dropdown.Item href="#" className="options-dropdown">
+                + &nbsp; Podcast
+              </Dropdown.Item>
+            </DropdownButton>
+          </div>
+
           <AddToPlaylistModal
             onHide={addModalClose}
             show={addModalShow}
@@ -177,10 +216,11 @@ const SingleAlbumTracks = ({
           />
         </li>
       );
-  }): null
+  })
   };
 
   console.log("View Type:", viewType);
+
   return (
     <div>
       <div className="song-header-container">
@@ -231,10 +271,13 @@ const mapStateToProps = state => {
     viewType: state.albumTracksReducer.viewType,
     albumName: state.uiReducer.title,
     albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
+    likedSongs: state.songsReducer.likedSongs
+      ? state.songsReducer.likedSongs
+      : [],
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
-    songAddedId: state.userReducer.songId || "",
+    songAddedId: state.userReducer.songId || ""
   };
 };
 
@@ -242,7 +285,9 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       fetchAlbumTracks,
-      addSongToLibrary
+      addSongToLibrary,
+      removeSongFromLibrary,
+      fetchSongs
     },
     dispatch
   );

@@ -311,10 +311,11 @@ const MainHeader = ({
         headerTitle === "Recently Played" ||
         headerTitle === "Albums" ||
         headerTitle === "Artists" ||
+        headerTitle === "Search Results..." ||
         headerTitle === "Top Tracks") && (
         <div>
           <h3 className="header-title">{headerTitle}</h3>
-          {headerTitle !== "Artists" && (
+          {headerTitle !== "Artists" && headerTitle !== "Albums" && (
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"

@@ -109,14 +109,28 @@ class App extends Component {
     const { playSong, stopSong } = this.props;
     console.log("Play Song", song);
     if (this.audio === undefined) {
-      playSong(song.track);
-      this.audio = new Audio(song.track.preview_url);
+      song.track ? playSong(song.track) : playSong(song);
+      this.audio = song.track
+        ? new Audio(song.track.preview_url)
+        : new Audio(song.preview_url);
+      // song
+      //   ? playSong(song)
+      //   : song.track === undefined
+      //   ? playSong(null)
+      //   : playSong(song.track);
+      // this.audio = song
+      //   ? new Audio(song.preview_url)
+      //   : song.track
+      //   ? new Audio(song.track.preview_url)
+      //   : null;
       this.audio.play();
     } else {
       stopSong();
       this.audio.pause();
-      playSong(song.track);
-      this.audio = new Audio(song.track.preview_url);
+      song.track ? playSong(song.track) : playSong(song);
+      this.audio = song.track
+        ? new Audio(song.track.preview_url)
+        : new Audio(song.preview_url);
       this.audio.play();
     }
   };

@@ -35,10 +35,6 @@ const SingleArtistTracks = ({
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
 
-  // useEffect(()=>{
-
-  // },[likedSongs])
-
   const openModal = e => {
     setModal(true);
     let trackName =
@@ -70,6 +66,18 @@ const SingleArtistTracks = ({
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
 
+  function toggleButton(e, token, songID) {
+    console.log(e.target);
+    if (e.target.classList.contains("fa-check")) {
+      e.target.className = "fa fa-plus";
+      removeSongFromLibrary(token, songID);
+    } else if (e.target.classList.contains("fa-plus")) {
+      e.target.className = "fa fa-check";
+      addSongToLibrary(token, songID);
+    }
+    fetchSongs(token);
+  }
+
   const renderSongs = () => {
     return artistSongs.map((song, i) => {
       let songID = song.track.id;
@@ -77,6 +85,7 @@ const SingleArtistTracks = ({
         song.track.id === songId && !songPaused
           ? "fa-pause-circle-o"
           : "fa-play-circle-o";
+
       return (
         <li
           className={
@@ -99,25 +108,28 @@ const SingleArtistTracks = ({
             <i className={`fa ${buttonClass} play-btn`} aria-hidden="true" />
           </div>
           {viewType === "Artist" && (
-            <p
-              className="add-song"
-              onClick={() => {
-                addSongToLibrary(token, songID);
-              }}
-            >
-              {songAddedId === songID ||
-              likedSongs.findIndex(song => song.track.id === songID) > -1 ? (
-                <i
-                  className="fa fa-check remove-song"
-                  aria-hidden="true"
-                  onClick={() => {
-                    removeSongFromLibrary(token, songID);
-                  }}
-                />
-              ) : (
-                <i className="fa fa-plus add-song" aria-hidden="true" />
-              )}
-            </p>
+            <>
+              <p className="fav-song">
+                <i className="fa fa-heart-o" aria-hidden="true" />
+              </p>
+              &nbsp;
+              <p className="add-song">
+                {/* {songAddedId === songID || */}
+                {likedSongs.findIndex(song => song.track.id === songID) > -1 ? (
+                  <i
+                    className={"fa fa-check"}
+                    aria-hidden="true"
+                    onClick={e => toggleButton(e, token, songID)}
+                  />
+                ) : (
+                  <i
+                    className="fa fa-plus"
+                    aria-hidden="true"
+                    onClick={e => toggleButton(e, token, songID)}
+                  />
+                )}
+              </p>
+            </>
           )}
 
           <div className="song-title">
@@ -181,7 +193,7 @@ const SingleArtistTracks = ({
   //render() {
   // console.log("View Type:", this.props.viewType);
   return (
-    <div>
+    <div className="song-container">
       <div className="song-header-container">
         <div className="song-title-header">
           <p>Title</p>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -13,13 +13,19 @@ import {
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import AddToPodcastModal from '../Modals/AddToPodcastModal'
-import { addSongToLibrary } from "../../redux/actions/userActions";
+import {
+  addSongToLibrary,
+  removeSongFromLibrary
+} from "../../redux/actions/userActions";
+import { removeTrackFromPlaylist } from "../../redux/actions/playlistActions";
 
 //class SongList extends Component {
 const SongList = ({
   userId,
   token,
+  headerTitle,
   songs,
+  playlistMenu,
   likedSongs,
   fetchSongsError,
   fetchSongsPending,
@@ -33,12 +39,15 @@ const SongList = ({
   audioControl,
   songId,
   songAddedId,
+  removeTrackFromPlaylist,
   addSongToLibrary,
+  removeSongFromLibrary,
   fetchPlaylistSongsPending,
   fetchPodcastSongsPending,
   searchSongsPending,
   searchSongsError
 }) => {
+ 
   // componentWillReceiveProps(nextProps) {
   //   if (
   //     nextProps.token !== "" &&
@@ -63,8 +72,8 @@ const SongList = ({
     if (
       token !== "" &&
       !fetchSongsError &&
-      fetchSongsPending &&
-      viewType === "songs"
+      fetchSongsPending
+      // viewType === "songs"
     ) {
       fetchSongs(token);
     } else {
@@ -83,8 +92,11 @@ const SongList = ({
     setModal(true);
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
-        .children[2].children[0].innerText;
+        .children[3].children[0].innerText;
     console.log(trackName);
+    console.log(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
     setTrackURI(
       songs.filter(song => song.track.name === trackName)[0].track.uri
     );
@@ -104,11 +116,44 @@ const SongList = ({
     setPodcastModal(false);
   };
 
+  const handleRemoveTrack = e => {
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[3].children[0].innerText;
+    console.log(trackName);
+    console.log(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+
+    let playlistID = playlistMenu.filter(
+      playlist => playlist.name === headerTitle
+    )[0].id;
+
+    console.log(playlistID);
+
+    removeTrackFromPlaylist(playlistID, trackURI, token);
+  }
+
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
+
+  function toggleButton(e, token, songID) {
+    console.log(e.target);
+    if (e.target.classList.contains("fa-check")) {
+      e.target.className = "fa fa-plus";
+      removeSongFromLibrary(token, songID);
+    } else if (e.target.classList.contains("fa-plus")) {
+      e.target.className = "fa fa-check";
+      addSongToLibrary(token, songID);
+    }
+    //fetchSongs(token);
+  }
 
   const renderSongs = () => {
     return songs
@@ -146,20 +191,29 @@ const SongList = ({
               </div>
 
               {viewType !== "Liked Songs" && (
-                <p
-                  className="add-song"
-                  onClick={() => {
-                    addSongToLibrary(token, song.track.id);
-                  }}
-                >
-                  {songAddedId === songID ||
-                  likedSongs.findIndex(song => song.track.id === songID) >
+                <>
+                  <p className="fav-song">
+                    <i className="fa fa-heart-o" aria-hidden="true" />
+                  </p>
+                  &nbsp;
+                  <p className="add-song">
+                    {/* {songAddedId === songID || */}
+                    {likedSongs.findIndex(song => song.track.id === songID) >
                     -1 ? (
-                    <i className="fa fa-check add-song" aria-hidden="true" />
-                  ) : (
-                    <i className="fa fa-plus add-song" aria-hidden="true" />
-                  )}
-                </p>
+                      <i
+                        className={"fa fa-check"}
+                        aria-hidden="true"
+                        onClick={e => toggleButton(e, token, songID)}
+                      />
+                    ) : (
+                      <i
+                        className="fa fa-plus"
+                        aria-hidden="true"
+                        onClick={e => toggleButton(e, token, songID)}
+                      />
+                    )}
+                  </p>
+                </>
               )}
 
               {/* {viewType === "songs" && (
@@ -215,7 +269,7 @@ const SongList = ({
 
               {song.added_by ? (
                 song.added_by.id === userId ? (
-                  <div className="remove-song">
+                  <div className="remove-song-playlist">
                     <DropdownButton
                       id="dropdown-button-drop-right"
                       title=""
@@ -226,7 +280,7 @@ const SongList = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        // onClick={openModal}
+                        onClick={handleRemoveTrack}
                       >
                         - &nbsp; Remove from Playlist
                       </Dropdown.Item>
@@ -282,7 +336,7 @@ const SongList = ({
   //render() {
   console.log("View Type:", viewType);
   return (
-    <div>
+    <div className="song-container">
       <div className="song-header-container">
         <div className="song-title-header">
           <p>Title</p>
@@ -337,6 +391,7 @@ const SongList = ({
 SongList.propTypes = {
   viewType: PropTypes.string,
   token: PropTypes.string,
+  headerTitle: PropTypes.string,
   songId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   songAddedId: PropTypes.string,
   songs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
@@ -344,10 +399,8 @@ SongList.propTypes = {
   searchSongsError: PropTypes.bool,
   searchSongsPending: PropTypes.bool,
   searchSongs: PropTypes.func,
-  //fetchRecentlyPlayed: PropTypes.func,
   fetchTopTracksPending: PropTypes.bool,
   fetchTopTracksError: PropTypes.bool,
-  //fetchTopTracks: PropTypes.func,
   fetchSongsError: PropTypes.bool,
   fetchSongsPending: PropTypes.bool,
   fetchPlaylistSongsPending: PropTypes.bool,
@@ -356,6 +409,7 @@ SongList.propTypes = {
   fetchPodcastSongsError: PropTypes.bool,
   browseAlbumPending: PropTypes.bool,
   browseAlbumError: PropTypes.bool,
+  playlistMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   //fetchPlaylistSongs: PropTypes.func
   fetchSongs: PropTypes.func,
   audioControl: PropTypes.func,
@@ -370,6 +424,7 @@ const mapStateToProps = state => {
   return {
     userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
+    headerTitle: state.uiReducer.title,
     songs: state.songsReducer.songs ? state.songsReducer.songs : [],
     likedSongs: state.songsReducer.likedSongs
       ? state.songsReducer.likedSongs
@@ -386,6 +441,7 @@ const mapStateToProps = state => {
     fetchPodcastSongsError: state.songsReducer.fetchPodcastSongsError,
     browseAlbumPending: state.songsReducer.browseAlbumPending,
     browseAlbumError: state.songsReducer.browseAlbumError,
+    playlistMenu: state.playlistReducer.playlistMenu,
     //releaseAlbum: state.albumReducer.releaseAlbum,
     //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
     songPlaying: state.songsReducer.songPlaying,
@@ -403,7 +459,9 @@ const mapDispatchToProps = dispatch => {
       addSongToLibrary,
       //fetchRecentlyPlayed,
       //fetchTopTracks,
+      removeTrackFromPlaylist,
       addSongToLibrary,
+      removeSongFromLibrary,
       searchSongs
     },
     dispatch

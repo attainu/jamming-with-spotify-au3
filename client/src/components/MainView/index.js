@@ -55,10 +55,11 @@ const MainView = ({
       ) : viewType === "Albums" ? (
         <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (
-        <SingleAlbumTracks resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-        
+        <SingleAlbumTracks
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : viewType === "Category Playlist" ? null : (
         <SongList
           resumeSong={resumeSong}
