@@ -36,6 +36,25 @@ export const saveAlbumSuccess = savedAlbum => {
   };
 };
 
+export const unFollowAlbumPending = () => {
+  return {
+    type: "UNFOLLOW_ALBUM_PENDING"
+  };
+};
+
+export const unFollowAlbumError = () => {
+  return {
+    type: "UNFOLLOW_ALBUM_ERROR"
+  };
+};
+
+export const unFollowAlbumSuccess = unFollowedAlbum => {
+  return {
+    type: "UNFOLLOW_ALBUM_SUCCESS",
+    unFollowedAlbum
+  };
+};
+
 export const addAlbum = album => {
   return {
     type: "ADD_ALBUM",
@@ -129,18 +148,43 @@ export const saveAlbum = (albumId, accessToken) => {
     dispatch(saveAlbumPending());
 
     fetch(request)
-      .then(res => {
-        if (res.statusText === "Unauthorized") {
-          window.location.href = "./";
-        }
-        return res.json();
-      })
+      // .then(res => {
+      //   if (res.statusText === "Unauthorized") {
+      //     window.location.href = "./";
+      //   }
+      //   return res.json();
+      // })
       .then(res => {
         console.log("Save Album", res);
-        dispatch(saveAlbumSuccess(res.items));
+        dispatch(saveAlbumSuccess(res));
       })
       .catch(err => {
         dispatch(saveAlbumError(err));
+      });
+  };
+};
+
+export const unFollowAlbum = (albumId, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/me/albums?ids=${albumId}`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        }),
+        method: "DELETE"
+      }
+    );
+    dispatch(unFollowAlbumPending());
+
+    fetch(request)
+      .then(res => {
+        console.log("Unfollow Album", res);
+        dispatch(unFollowAlbumSuccess(res));
+      })
+      .catch(err => {
+        dispatch(unFollowAlbumError(err));
       });
   };
 };

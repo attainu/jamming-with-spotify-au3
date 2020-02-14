@@ -64,3 +64,11 @@
   color: rgb(179, 179, 179);
   font-family: "Proxima Thin", Georgia, sans-serif;
 }
+
+.album-unfollow-btn {
+  color: #1db954;
+}
+
+.album-unfollow-btn:hover {
+  color: wheat;
+}

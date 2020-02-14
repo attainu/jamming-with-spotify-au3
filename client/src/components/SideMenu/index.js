@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import "./SideMenu.css";
 import { connect } from "react-redux";
@@ -25,8 +25,14 @@ const SideMenu = ({
   fetchTopTracks,
   token,
   title,
-  artistIds
+  artistIds,
+  unFollowedAlbum,
+  savedAlbum
 }) => {
+  useEffect(() => {
+    fetchAlbums(token);
+  }, [savedAlbum, unFollowedAlbum]);
+
   const handleClick = name => {
     updateHeaderTitle(name);
     updateViewType(name);
@@ -127,7 +133,9 @@ const mapStateToProps = state => {
     artistIds: state.artistsReducer.artistIds
       ? state.artistsReducer.artistIds
       : "",
-    title: state.uiReducer.title
+    title: state.uiReducer.title,
+    unFollowedAlbum: state.unFollowAlbumReducer.unFollowedAlbum,
+    savedAlbum: state.saveAlbumReducer.savedAlbum
   };
 };
 

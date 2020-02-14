@@ -8,7 +8,8 @@ import browseReducer from "./browseReducer";
 import {
   albumsReducer,
   albumTracksReducer,
-  saveAlbumReducer
+  saveAlbumReducer,
+  unFollowAlbumReducer
 } from "./albumsReducer";
 import {
   playlistReducer,
@@ -30,6 +31,7 @@ export default combineReducers({
   albumsReducer,
   albumTracksReducer,
   saveAlbumReducer,
+  unFollowAlbumReducer,
   playlistReducer,
   categoryPlaylistReducer,
   createPlaylistReducer,

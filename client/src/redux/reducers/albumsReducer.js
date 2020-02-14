@@ -91,3 +91,31 @@ export const saveAlbumReducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const unFollowAlbumReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "UNFOLLOW_ALBUM_PENDING":
+      return {
+        ...state,
+        unFollowAlbumPending: true
+      };
+
+    case "UNFOLLOW_ALBUM_SUCCESS":
+      return {
+        ...state,
+        unFollowedAlbum: action.unFollowedAlbum,
+        unFollowAlbumPending: false,
+        unFollowAlbumError: false
+      };
+
+    case "UNFOLLOW_ALBUM_ERROR":
+      return {
+        ...state,
+        unFollowAlbumPending: false,
+        unFollowAlbumError: true
+      };
+
+    default:
+      return state;
+  }
+};
