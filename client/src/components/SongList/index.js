@@ -295,7 +295,34 @@ const SongList = ({
                     />
                   </>
                 )
-              ) : null}
+              ) : (
+                <>
+                  <div className="add-song-playlist">
+                    <DropdownButton
+                      id="dropdown-button-drop-right"
+                      title=""
+                      drop="right"
+                      variant="secondary"
+                      key="right"
+                    >
+                      <Dropdown.Item
+                        href="#"
+                        className="options-dropdown"
+                        onClick={openModal}
+                      >
+                        + &nbsp; Spotify Playlist
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </div>
+                  {addModalShow && (
+                    <AddToPlaylistModal
+                      onHide={addModalClose}
+                      show={addModalShow}
+                      trackURI={trackURI}
+                    />
+                  )}
+                </>
+              )}
             </li>
           );
         })

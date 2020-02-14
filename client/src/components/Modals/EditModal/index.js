@@ -3,11 +3,19 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
-import { createPlaylist } from "../../../redux/actions/playlistActions";
+import { editPlaylist } from "../../../redux/actions/playlistActions";
 
-const PlaylistModal = ({ onHide, show, userId, token, createPlaylist }) => {
-  const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [newPlaylistDesc, setNewPlaylistDesc] = useState("");
+const EditModal = ({
+  onHide,
+  show,
+  playlistId,
+  playlistName,
+  playlistDesc,
+  editPlaylist,
+  token
+}) => {
+  const [newPlaylistName, setNewPlaylistName] = useState(playlistName);
+  const [newPlaylistDesc, setNewPlaylistDesc] = useState(playlistDesc);
 
   const handleChange = e => {
     if (e.target.nodeName === "INPUT") setNewPlaylistName(e.target.value);
@@ -21,14 +29,15 @@ const PlaylistModal = ({ onHide, show, userId, token, createPlaylist }) => {
       description: newPlaylistDesc,
       public: false
     });
-    createPlaylist(userId, jsonBody, token);
+    console.log(playlistId, jsonBody, token);
+    editPlaylist(playlistId, jsonBody, token);
     onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide} style={{ color: "black", opacity: 0.9 }}>
       <Modal.Header closeButton>
-        <Modal.Title>NEW PLAYLIST</Modal.Title>
+        <Modal.Title>EDIT PLAYLIST</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form>
@@ -39,7 +48,6 @@ const PlaylistModal = ({ onHide, show, userId, token, createPlaylist }) => {
               className="form-control"
               name="playlist-name"
               value={newPlaylistName}
-              //onKeyUp={keyChange}
               onChange={handleChange}
             />
           </div>
@@ -80,10 +88,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      createPlaylist
+      editPlaylist
     },
     dispatch
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlaylistModal);
+export default connect(mapStateToProps, mapDispatchToProps)(EditModal);

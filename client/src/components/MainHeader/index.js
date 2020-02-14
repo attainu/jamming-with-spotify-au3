@@ -11,7 +11,8 @@ import {
 import {
   fetchPlaylistSongs,
   addPlaylistItem,
-  fetchPlaylistsMenu
+  fetchPlaylistsMenu,
+  unFollowPlaylist
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
@@ -30,7 +31,7 @@ const MainHeader = ({
   songPaused,
   headerTitle,
   viewType,
-  //viewTypeAlbum,
+  playlistMenu,
   albums,
   playlists,
   categoryPlaylists,
@@ -43,8 +44,11 @@ const MainHeader = ({
   let currentAlbum;
   let currentArtist;
 
+  const handleFollow = () => {
+    //unFollowPlaylist(playlistId, token);
+  };
+
   if (viewType === "playlist") {
-    //let currentPlaylists = fetchPlaylistsMenu(userId, token);
     currentPlaylist = playlists.filter(playlist => {
       return playlist.name === headerTitle;
     })[0];
@@ -96,6 +100,15 @@ const MainHeader = ({
               - {currentPlaylist.tracks.total}{" "}
               {currentPlaylist.tracks.total > 1 ? "songs" : "song"}
             </p>
+            {playlistMenu.findIndex(
+              playlist => playlist.name === headerTitle
+            ) === -1 ? (
+              <button className="follow-btn" onClick={handleFollow}>
+                FOLLOW
+              </button>
+            ) : (
+              <span className="following-text">FOLLOWING</span>
+            )}
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
@@ -212,10 +225,10 @@ const MainHeader = ({
               {currentAlbum.total_tracks > 1 ? "songs" : "song"}
             </p>
             <button
-              // onClick={!songPaused ? pauseSong : resumeSong}
+              onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
             >
-              {/* {songPaused ? "PLAY" : "PAUSE"} */}
+              {songPaused ? "PLAY" : "PAUSE"}
             </button>
           </div>
         </div>
@@ -329,7 +342,7 @@ const mapStateToProps = state => {
     songPaused: state.songsReducer.songPaused,
     headerTitle: state.uiReducer.title,
     viewType: state.songsReducer.viewType,
-    //viewTypeAlbum: state.albumTracksReducer.viewType,
+    playlistMenu: state.playlistReducer.playlistMenu,
     playlists: state.playlistReducer.playlists,
     categoryPlaylists: state.categoryPlaylistReducer.categoryPlaylists,
     releaseAlbum: state.albumsReducer.releaseAlbum,

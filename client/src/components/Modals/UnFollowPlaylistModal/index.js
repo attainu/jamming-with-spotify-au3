@@ -38,10 +38,10 @@ const UnFollowPlaylistModal = ({
       <Modal.Footer>
         <ButtonToolbar>
           <Button variant="danger mr-2" onClick={onHide}>
-            Close
+            CLOSE
           </Button>
           <Button variant="success" onClick={handleClick}>
-            Delete
+            UNFOLLOW
           </Button>
         </ButtonToolbar>
       </Modal.Footer>

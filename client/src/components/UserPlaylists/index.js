@@ -7,6 +7,7 @@ import {
   fetchPlaylistSongs
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
+import EditModal from "../Modals/EditModal";
 import UnFollowModal from "../Modals/UnFollowPlaylistModal";
 import "./UserPlaylists.css";
 
@@ -20,6 +21,7 @@ const UserPlaylists = ({
   fetchPlaylistSongs,
   fetchPlaylistsMenu,
   updateHeaderTitle,
+  updatedPlaylistResponse,
   delResponse
 }) => {
   // componentWillReceiveProps(nextProps) {
@@ -29,21 +31,54 @@ const UserPlaylists = ({
   // }
 
   const [addModalShow, setModal] = useState(false);
+  const [editModalShow, setEditModal] = useState(false);
   const [playlistName, setplaylistName] = useState("");
+  //const [playlistNameEdit, setplaylistNameEdit] = useState("");
+  const [playlistDesc, setplaylistDesc] = useState("");
   const [playlistId, setplaylistId] = useState("");
 
   const openModal = e => {
+    let playlistname, playlistid;
     setModal(true);
-    setplaylistName(
-      e.target.parentElement.parentElement.previousSibling.innerText
-    );
-    setplaylistId(
-      e.target.parentElement.parentElement.previousSibling.getAttribute(
+    if (e.target.parentElement.parentElement.classList.contains("delete-btn")) {
+      playlistname = e.target.parentElement.parentElement.previousSibling.previousSibling.innerText.trim();
+      playlistid = e.target.parentElement.parentElement.previousSibling.previousSibling.getAttribute(
         "data-key"
+      );
+    } else if (
+      e.target.parentElement.parentElement.classList.contains(
+        "delete-other-btn"
       )
-    );
+    ) {
+      playlistname = e.target.parentElement.parentElement.previousSibling.innerText.trim();
+      playlistid = e.target.parentElement.parentElement.previousSibling.getAttribute(
+        "data-key"
+      );
+    }
 
-    setTimeout(() => console.log(playlistId, playlistName));
+    setplaylistName(playlistname);
+    setplaylistId(playlistid);
+
+    setTimeout(() => console.log(playlistName, playlistDesc));
+  };
+
+  const openEditModal = e => {
+    setEditModal(true);
+    let playlistname = e.target.parentElement.parentElement.previousSibling.innerText.trim();
+    setplaylistName(playlistname);
+    let playlistdesc = playlistMenu.filter(
+      playlist => playlist.name === playlistname
+    )[0].description;
+    setplaylistDesc(playlistdesc);
+    let playlistid = e.target.parentElement.parentElement.previousSibling.getAttribute(
+      "data-key"
+    );
+    setplaylistId(playlistid);
+    console.log(playlistid, playlistname, playlistdesc);
+  };
+
+  let editModalClose = () => {
+    setEditModal(false);
   };
 
   let addModalClose = () => {
@@ -54,7 +89,7 @@ const UserPlaylists = ({
     if (userId !== "" && token !== "") {
       fetchPlaylistsMenu(userId, token);
     }
-  }, [userId, token, newPlaylistData, delResponse]);
+  }, [userId, token, newPlaylistData, updatedPlaylistResponse, delResponse]);
 
   const renderPlaylists = () => {
     return playlistMenu.map(playlist => {
@@ -81,17 +116,49 @@ const UserPlaylists = ({
               &nbsp;&nbsp;
             </li>
 
-            {playlist.owner.id === userId && (
-              <div className="delete-btn">
+            {playlist.owner.id === userId ? (
+              <>
+                <div className="edit-btn">
+                  <span>
+                    <i className="fa fa-edit" onClick={openEditModal}></i>
+                  </span>
+                  {playlistId && playlistName && playlistDesc && (
+                    <EditModal
+                      onHide={editModalClose}
+                      show={editModalShow}
+                      playlistId={playlistId}
+                      playlistDesc={playlistDesc}
+                      playlistName={playlistName}
+                    />
+                  )}
+                </div>
+                <div className="delete-btn">
+                  <span>
+                    <i className="fa fa-minus-circle" onClick={openModal}></i>
+                  </span>
+                  {playlistName && playlistId && (
+                    <UnFollowModal
+                      onHide={addModalClose}
+                      show={addModalShow}
+                      playlistId={playlistId}
+                      playlistName={playlistName}
+                    />
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="delete-other-btn">
                 <span>
-                  <i className="fa fa-times-circle" onClick={openModal}></i>
+                  <i className="fa fa-minus-circle" onClick={openModal}></i>
                 </span>
-                <UnFollowModal
-                  onHide={addModalClose}
-                  show={addModalShow}
-                  playlistId={playlistId}
-                  playlistName={playlistName}
-                />
+                {playlistName && playlistId && (
+                  <UnFollowModal
+                    onHide={addModalClose}
+                    show={addModalShow}
+                    playlistId={playlistId}
+                    playlistName={playlistName}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -127,6 +194,7 @@ const mapStateToProps = state => {
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
     title: state.uiReducer.title,
     newPlaylistData: state.createPlaylistReducer.newPlaylistData,
+    updatedPlaylistResponse: state.editPlaylistReducer.updatedPlaylistResponse,
     delResponse: state.unFollowPlaylistReducer.delResponse
   };
 };

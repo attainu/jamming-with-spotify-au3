@@ -30,11 +30,16 @@
   color: #fff;
 }
 
-.user-playlist-item:hover > .delete-btn {
+.user-playlist-item:hover > .delete-btn,
+.user-playlist-item:hover > .delete-other-btn,
+.user-playlist-item:hover > .edit-btn {
   opacity: 1;
+  margin-left: 8px;
 }
 
-.delete-btn {
+.delete-btn,
+.delete-other-btn,
+.edit-btn {
   opacity: 0;
 }
 

@@ -84,6 +84,25 @@ export const createPlaylistError = () => {
   };
 };
 
+export const editPlaylistPending = () => {
+  return {
+    type: "EDIT_PLAYLIST_PENDING"
+  };
+};
+
+export const editPlaylistSuccess = response => {
+  return {
+    type: "EDIT_PLAYLIST_SUCCESS",
+    response
+  };
+};
+
+export const editPlaylistError = () => {
+  return {
+    type: "EDIT_PLAYLIST_ERROR"
+  };
+};
+
 export const saveTrackToPlaylistPending = () => {
   return {
     type: "SAVE_PLAYLIST_TRACK_PENDING"
@@ -249,10 +268,10 @@ export const createPlaylist = (userId, playlistData, accessToken) => {
     dispatch(createPlaylistPending());
     fetch(request)
       .then(res => {
-        if (res.ok) {
-          return res.json();
+        if (!res.ok) {
+          dispatch(createPlaylistError());
         }
-        dispatch(createPlaylistError("Request failed!"));
+        return res.json();
         //throw new Error("Request failed!");
       })
       .then(res => {
@@ -262,6 +281,39 @@ export const createPlaylist = (userId, playlistData, accessToken) => {
       // .then(res => dispatch(fetchPlaylistsMenu(userId, accessToken)))
       .catch(err => {
         dispatch(createPlaylistError(err));
+      });
+  };
+};
+
+export const editPlaylist = (playlistId, playlistData, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/playlists/${playlistId}`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        }),
+        method: "PUT",
+        body: playlistData
+      }
+    );
+
+    dispatch(editPlaylistPending());
+
+    fetch(request)
+      .then(res => {
+        return res;
+
+        //dispatch(editPlaylistError("Request failed!"));
+        //throw new Error("Request failed!");
+      })
+      .then(res => {
+        console.log("playlist successfully updated.", res);
+        dispatch(editPlaylistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(editPlaylistError(err));
       });
   };
 };
@@ -303,27 +355,48 @@ export const saveTrackToPlaylist = (playlistId, trackURI, accessToken) => {
 
 export const removeTrackFromPlaylist = (playlistId, trackURI, accessToken) => {
   return dispatch => {
+    // let method = "delete";
+    // let url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+    // let headers = {
+    //   Authorization: "Bearer " + accessToken,
+    //   "Content-Type": "application/json",
+    //   Accept: "application/json"
+    // };
+    // let data = {
+    //   tracks: [
+    //     {
+    //       // "positions": [2],
+    //       uri: trackURI
+    //     }
+    //   ]
+    // };
     const request = new Request(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
       {
         method: "DELETE",
         headers: new Headers({
           Authorization: "Bearer " + accessToken,
-          Accept: "application/json",
+          // Accept: "application/json",
           "Content-Type": "application/json"
         }),
-        data: JSON.stringify({
+        data: {
           tracks: [
             {
-              uri: trackURI
+              uri: JSON.stringify(trackURI)
               //positions: [0]
             }
           ]
-        })
+        }
       }
     );
 
     console.log(request);
+
+    // let request = new Request(url, {
+    //   method: method,
+    //   headers: headers,
+    //   data: JSON.stringify(data)
+    // });
 
     dispatch(removeTrackFromPlaylistPending());
 

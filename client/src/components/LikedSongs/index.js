@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -11,12 +11,14 @@ import {
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import { addSongToLibrary } from "../../redux/actions/userActions";
+import { fetchPlaylistsMenu } from "../../redux/actions/playlistActions";
 
 //class SongList extends Component {
 const LikedSongs = ({
   userId,
   token,
   songs,
+  playlistMenu,
   likedSongs,
   fetchSongsError,
   fetchSongsPending,
@@ -30,7 +32,6 @@ const LikedSongs = ({
   audioControl,
   songId,
   //songAddedId,
-  //addSongToLibrary,
   fetchPlaylistSongsPending
   //searchSongsPending,
   //searchSongsError
@@ -55,6 +56,9 @@ const LikedSongs = ({
   //   }
   // }
 
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
   useEffect(() => {
     if (
       token !== "" &&
@@ -68,6 +72,25 @@ const LikedSongs = ({
     //   searchSongs(token);
     // }
   }, [token]);
+
+  const openModal = e => {
+    setModal(true);
+    //fetchPlaylistsMenu(userId, token);
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[2].children[0].innerText;
+    console.log(trackName);
+    console.log(
+      likedSongs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      likedSongs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+  };
+
+  let addModalClose = () => {
+    setModal(false);
+  };
 
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
@@ -206,17 +229,20 @@ const LikedSongs = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        // onClick={openModal}
+                        onClick={openModal}
                       >
-                        + &nbsp; Add To Playlist
+                        + &nbsp; Spotify Playlist
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                  {/* <AddToPlaylistModal
-                  onHide={addModalClose}
-                  show={addModalShow}
-                  trackURI={trackURI}
-                  /> */}
+                  {playlistMenu && (
+                    <AddToPlaylistModal
+                      onHide={addModalClose}
+                      show={addModalShow}
+                      trackURI={trackURI}
+                      playlistMenu={playlistMenu}
+                    />
+                  )}
                 </>
               )}
             </li>
@@ -325,10 +351,7 @@ const mapStateToProps = state => {
     fetchSongsPending: state.songsReducer.fetchSongsPending,
     fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
-    browseAlbumPending: state.songsReducer.browseAlbumPending,
-    browseAlbumError: state.songsReducer.browseAlbumError,
-    //releaseAlbum: state.albumReducer.releaseAlbum,
-    //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
+    playlistMenu: state.playlistReducer.playlistMenu,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
