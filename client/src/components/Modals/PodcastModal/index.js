@@ -6,7 +6,7 @@ import { ButtonToolbar, Button, Modal } from "react-bootstrap";
 // import CreatePodcast from "../../CreatePodcast";
 import {createPodcast, fetchPodcastMenu} from '../../../redux/actions/podcastActions'
 
-const PodcastModal = ({ onHide, show, createPodcast }) => {
+const PodcastModal = ({ onHide, show, createPodcast, userName }) => {
   const [newPodcastName, setNewPodcastName] = useState("");
   const [newPodcastDesc, setNewPodcastDesc] = useState("");
   //const [addModalShow, setModal] = useState(false);
@@ -21,6 +21,7 @@ const PodcastModal = ({ onHide, show, createPodcast }) => {
     let jsonBody = {
       name: newPodcastName,
       description: newPodcastDesc,
+      createdBy: userName,
       public: false
     }
     createPodcast(jsonBody);
@@ -73,7 +74,8 @@ const PodcastModal = ({ onHide, show, createPodcast }) => {
 
 const mapStateToProps = state => {
   return {
-    newPodcastData: state.createPodcastReducer.newPodcastData
+    newPodcastData: state.createPodcastReducer.newPodcastData,
+    userName : state.userReducer.user ? state.userReducer.user.display_name : "",
   };
 };
 

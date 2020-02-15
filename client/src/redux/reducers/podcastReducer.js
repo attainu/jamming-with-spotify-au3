@@ -72,6 +72,7 @@ export const deletePodcastReducer = (state = {}, action) => {
     case "DELETE_PODCAST_SUCCESS":
       return {
         ...state,
+        delResponse: action.delResponse,
         deletePodcastError: false,
         deletePodcastPending: false
       };

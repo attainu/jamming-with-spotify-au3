@@ -253,3 +253,96 @@ export const fetchTopTracks = accessToken => {
       });
   };
 };
+
+//adding favourites
+
+export const addFavouritesPending = () => {
+  return {
+    type: "ADD_FAVOURITES_PENDING"
+  };
+};
+
+export const addFavouritesSuccess = (res) => {
+  return {
+    type: "ADD_FAVOURITES_SUCCESS",
+    res
+  };
+};
+
+export const addFavouritesError = () => {
+  return {
+    type: "ADD_FAVOURITES_ERROR"
+  };
+};
+
+export const addFavourites = (data) => {
+  return dispatch => {
+    const request = new Request(
+      `http://localhost:8888/favourites`,
+      {
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        method: "POST",
+        body: JSON.stringify(data)
+      }
+    );
+
+    dispatch(addFavouritesPending());
+    fetch(request)
+      .then(res => {
+        console.log(res)
+        if (res.ok) {
+          return res;
+        }
+        dispatch(addFavouritesError("Request failed!"));
+      })
+      .then(res => {
+        console.log("favourite added", res);
+        dispatch(addFavouritesSuccess(res));
+      })
+      .catch(err => {
+        dispatch(addFavouritesError(err));
+      });
+  };
+};
+
+export const fetchFavouritesPending = () => {
+  return {
+    type: "FETCH_FAVOURITES_PENDING"
+  };
+};
+
+export const fetchFavouritesSuccess = songs => {
+  return {
+    type: "FETCH_FAVOURITES_SUCCESS",
+    songs
+  };
+};
+
+export const fetchFavouritesError = () => {
+  return {
+    type: "FETCH_FAVOURITES_ERROR"
+  };
+};
+
+export const fetchFavourites = (data) => {
+  return dispatch => {
+    const request = new Request(
+      `http://localhost:8888/getAllfavourites`,
+    );
+
+    dispatch(fetchFavouritesPending());
+    fetch(request)
+      .then(res => {
+       return res.json()
+      })
+      .then(res => {
+        console.log("favourites", res);
+        dispatch(fetchFavouritesSuccess(res));
+      })
+      .catch(err => {
+        dispatch(fetchFavouritesError(err));
+      });
+  };
+};

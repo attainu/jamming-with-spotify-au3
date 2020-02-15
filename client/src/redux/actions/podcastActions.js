@@ -202,9 +202,10 @@ export const deletePodcastPending = () => {
   };
 };
 
-export const deletePodcastSuccess = () => {
+export const deletePodcastSuccess = (delResponse) => {
   return {
     type: "DELETE_PODCAST_SUCCESS",
+    delResponse
   };
 };
 

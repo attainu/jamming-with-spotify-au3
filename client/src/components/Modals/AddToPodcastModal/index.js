@@ -48,13 +48,13 @@ const AddToPodcastModal = ({
             <Form.Label>Select Podcast</Form.Label>
             <Form.Control as="select" onChange={handleChange}>
               <option value="Select">Select</option>
-              {podcastMenu.map((podcast, index) => {
+              {podcastMenu ?  podcastMenu.map((podcast, index) => {
                 return (
                   <option key={index} value={podcast.podcastName}>
                     {podcast.podcastName}
                   </option>
                 );
-              })}
+              }) : null }
             </Form.Control>
           </Form.Group>
         </Form>

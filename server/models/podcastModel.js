@@ -13,14 +13,17 @@ module.exports = (sequelize,Sequelize) =>{
       description: {
         type: Sequelize.TEXT
       },
-      images: {
-        type: Sequelize.ARRAY(Sequelize.TEXT) 
-      },
+      // images: {
+      //   type: Sequelize.ARRAY(Sequelize.TEXT) 
+      // },
       tracks: {
         type: Sequelize.ARRAY(Sequelize.TEXT) 
       },
       totalTracks: {
         type: Sequelize.INTEGER
+      },
+      createdBy: {
+        type: Sequelize.STRING
       }
     })
     return podcast

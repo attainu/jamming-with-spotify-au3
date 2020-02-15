@@ -296,6 +296,49 @@ export const songsReducer = (state = defaultState, action) => {
         savePlaylistTrackPending: false
       };
 
+      case "ADD_FAVOURITES_PENDING":
+        return {
+          ...state,
+          addFavouritesPending: true
+        };
+  
+      case "ADD_FAVOURITES_SUCCESS":
+        return {
+          ...state,
+          newFavSong: action.res,
+          addFavouritesError: false,
+          addFavouritesPending: false,
+        };
+  
+      case "ADD_FAVOURITES_ERROR":
+        return {
+          ...state,
+          addFavouritesError: true,
+          addFavouritesPending: false
+        };
+
+      case "FETCH_FAVOURITES_PENDING":
+        return {
+          ...state,
+          fetchFavouritesPending: true
+        };
+  
+      case "FETCH_FAVOURITES_SUCCESS":
+        return {
+          ...state,
+          favouriteSongs: action.songs,
+          fetchFavouritesError: false,
+          fetchFavouritesPending: false,
+          viewType: "Favourite Songs"
+        };
+  
+      case "FETCH_FAVOURITES_ERROR":
+        return {
+          ...state,
+          fetchFavouritesError: true,
+          fetchFavouritesPending: false
+        };
+
     default:
       return state;
   }

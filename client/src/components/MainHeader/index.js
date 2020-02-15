@@ -15,11 +15,6 @@ import {
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
-import {
-  fetchPodcastMenu,
-  // fetchPodcastSongs
-} from "../../redux/actions/podcastActions";
-import {deletePodcast} from '../../redux/actions/podcastActions'
 import "./MainHeader.css";
 
 const MainHeader = ({
@@ -40,13 +35,11 @@ const MainHeader = ({
   playlists,
   podcasts,
   categoryPlaylists,
-  deletePodcast,
   token,
   userId,
   userName,
   artists,
-  releaseAlbum,
-  newPodcastData
+  releaseAlbum
 }) => {
   let currentPlaylist;
   let currentPodcast
@@ -87,15 +80,6 @@ const MainHeader = ({
     })[0];
     console.log(currentArtist);
   }
-
-  const deletePodcastFunc = (e) => {
-    console.log(e.target.value)
-    deletePodcast(e.target.value)
-  }
-
-  useEffect(() => {
-    fetchPodcastMenu()
-   }, [newPodcastData]) 
    
   return (
     <div className="section-title">
@@ -133,13 +117,13 @@ const MainHeader = ({
         </div>
       )}
 
-      {viewType === "podcast"  && (
+      {viewType === "podcast"  && currentPodcast && (
         <div className="playlist-title-container">
           <div className="playlist-image-container">
             <img
               className="playlist-image"
               src={
-                !currentPodcast.images
+               !currentPodcast.images
                   ? defaultCover
                   : currentPodcast.images[0].url
               }
@@ -163,8 +147,6 @@ const MainHeader = ({
             >
               {songPaused ? "PLAY" : "PAUSE"}
             </button>
-
-            <button className="main-pause-play-btn ml-3" value={currentPodcast.id} onClick={deletePodcastFunc}>DELETE</button>
           </div>
         </div>
       )}
@@ -307,6 +289,7 @@ const MainHeader = ({
       )}
 
       {(headerTitle === "Liked Songs" ||
+        headerTitle === "Favourites" ||
         headerTitle === "Songs" ||
         headerTitle === "Recently Played" ||
         headerTitle === "Albums" ||
@@ -393,7 +376,6 @@ const mapStateToProps = state => {
     songPaused: state.songsReducer.songPaused,
     headerTitle: state.uiReducer.title,
     viewType: state.songsReducer.viewType,
-    //viewTypeAlbum: state.albumTracksReducer.viewType,
     playlists: state.playlistReducer.playlists,
     podcasts:  state.podcastReducer.podcasts,
     categoryPlaylists: state.categoryPlaylistReducer.categoryPlaylists,
@@ -405,7 +387,6 @@ const mapStateToProps = state => {
     userName: state.userReducer.user ? state.userReducer.user.display_name : "",
     token: state.tokenReducer.token,
     albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
-    newPodcastData: state.createPodcastReducer.newPodcastData
   };
 };
 
@@ -419,9 +400,8 @@ const mapDispatchToProps = dispatch => {
       addPlaylistItem,
       updateHeaderTitle,
       updateViewType,
-      fetchFeatured,
-      deletePodcast
-    },
+      fetchFeatured
+      },
     dispatch
   );
 };

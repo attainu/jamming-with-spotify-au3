@@ -80,6 +80,8 @@ class SongControls extends Component {
       this.props.viewType === "New Release Album"
     ) {
       songs = this.props.albumSongs;
+    } else if(this.props.viewType === "Favourite Songs"){
+      songs = this.props.favouriteSongs
     } else {
       songs = this.props.songs;
     }
@@ -109,6 +111,8 @@ class SongControls extends Component {
     ) {
       songs = this.props.albumSongs;
       console.log(songs);
+    } else if(this.props.viewType === "Favourite Songs"){
+      songs = this.props.favouriteSongs
     } else {
       songs = this.props.songs;
     }
@@ -234,6 +238,7 @@ SongControls.propTypes = {
   pauseSong: PropTypes.func,
   songs: PropTypes.array,
   likedSongs: PropTypes.array,
+  favouriteSongs: PropTypes.array,
   songDetails: PropTypes.object,
   audioControl: PropTypes.func
 };
@@ -241,23 +246,26 @@ SongControls.propTypes = {
 const mapStateToProps = state => {
   return {
     songName: state.songsReducer.songDetails
+      ? state.songsReducer.songDetails.name 
       ? state.songsReducer.songDetails.name
-      : "",
+      : state.songsReducer.songDetails.trackName
+      : "" ,
+
     artistName: state.songsReducer.songDetails
       ? state.songsReducer.songDetails.track
         ? state.songsReducer.songDetails.track.artists
           ? state.songsReducer.songDetails.track.artists[0].name
           : state.songsReducer.songDetails.artists[0].name
-        : state.songsReducer.songDetails.artists[0].name
+        :  state.songsReducer.songDetails.artistName 
       : "",
     // state.songsReducer.songDetails.track
     //   ? state.songsReducer.songDetails.track.artists[0].name
     //   : state.songsReducer.songDetails.artists[0].name,
     albumImage: state.songsReducer.songDetails
       ? state.songsReducer.songDetails.album
-        ? state.songsReducer.songDetails.album.images[0].url
-        : defaultImage
-      : null,
+        ? state.songsReducer.songDetails.album.images[0].url 
+        : state.songsReducer.songDetails.albumName
+      : defaultImage,
     songPlaying: state.songsReducer.songPlaying,
     timeElapsed: state.songsReducer.timeElapsed,
     songPaused: state.songsReducer.songPaused,
@@ -267,6 +275,7 @@ const mapStateToProps = state => {
       ? state.albumTracksReducer.albumTracks
       : [],
     likedSongs: state.songsReducer.likedSongs,
+    favouriteSongs : state.songsReducer.favouriteSongs,
     viewType: state.songsReducer.viewType
   };
 };

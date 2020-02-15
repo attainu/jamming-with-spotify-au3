@@ -1,6 +1,7 @@
 module.exports = function(app) {
 
     const podcasts = require('../controllers/podcastController');
+    const favourites = require('../controllers/favouritesController')
 
     // Create a new playlist
     app.post('/podcasts', podcasts.create);
@@ -16,4 +17,10 @@ module.exports = function(app) {
 
     // Delete a playlist with Id
     app.delete('/podcasts/:podcastId', podcasts.delete);
+
+    //Add favourites
+    app.post('/favourites', favourites.create)
+
+    //Get all favourites
+    app.get('/getAllFavourites', favourites.findAll)
 }

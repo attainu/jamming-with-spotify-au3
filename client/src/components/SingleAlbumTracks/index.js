@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 //import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -10,7 +10,11 @@ import {
   addSongToLibrary,
   removeSongFromLibrary
 } from "../../redux/actions/userActions";
-import { fetchSongs } from "../../redux/actions/songActions";
+import {
+  fetchSongs,
+  fetchFavourites,
+  addFavourites
+} from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPodcastModal from "../Modals/AddToPodcastModal";
 
@@ -18,6 +22,8 @@ const SingleAlbumTracks = ({
   token,
   songs,
   viewType,
+  fetchFavourites,
+  addFavourites,
   fetchAlbumTracksPending,
   fetchAlbumTracksError,
   addSongToLibrary,
@@ -27,6 +33,7 @@ const SingleAlbumTracks = ({
   likedSongs,
   songPlaying,
   songPaused,
+  favouriteSongs,
   resumeSong,
   pauseSong,
   audioControl,
@@ -64,6 +71,13 @@ const SingleAlbumTracks = ({
   const addPodcastModalClose = () => {
     setPodcastModal(false);
   };
+
+  useEffect(() => {
+   if(favouriteSongs.length === 0) {
+     fetchFavourites()
+    }
+  }, [favouriteSongs]);
+
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
@@ -82,10 +96,29 @@ const SingleAlbumTracks = ({
     fetchSongs(token);
   }
 
+  var selected_album = albums
+  ? albums.filter(item => item.album.name === albumName)
+  : [];
+
+  const addToFavSongs = (e) => {
+    let selectedTrackId = e.target.id
+    let selectedTrack = songs.filter(song => song.track.id == selectedTrackId)[0].track
+    console.log(selectedTrack)
+    e.target.className = "fa fa-heart"
+    e.target.style.color = "red"
+    
+      let data = {
+      trackName: selectedTrack.name,
+      trackId: selectedTrack.id,
+      albumName: albumName,
+      artistName: selectedTrack.artists[0].name,
+      albumReleaseDate : selected_album[0] ? selected_album[0].album.release_date : "---",
+      duration: msToMinutesAndSeconds(selectedTrack.duration_ms)
+    }
+    console.log('jsonbody' , data)
+    addFavourites(data)
+ }
   const renderSongs = () => {
-    const selected_album = albums
-      ? albums.filter(item => item.album.name === albumName)
-      : [];
     return songs.map((song, i) => {
       let songID = song.id;
       console.log("SongID", songId);
@@ -116,9 +149,23 @@ const SingleAlbumTracks = ({
 
           {viewType === "Album" && (
             <>
-              <p className="fav-song">
-                <i className="fa fa-heart-o" aria-hidden="true" />
-              </p>
+             <p className="fav-song" >
+              {favouriteSongs.findIndex(song => song.trackId === songID) > -1 ? (
+                  <i
+                    className="fa fa-heart"
+                    aria-hidden="true"
+                    style={{color: "red"}}
+                    // onClick={e => toggleButton(e, token, songID)}
+                  />
+                ) : (
+                  <i
+                    className="fa fa-heart-o"
+                    aria-hidden="true"
+                    id = {song.track.id}
+                    onClick={addToFavSongs}
+                  />
+                )}
+             </p>
               &nbsp;
               <p className="add-song">
                 {/* {songAddedId === songID || */}
@@ -161,27 +208,7 @@ const SingleAlbumTracks = ({
           <div className="song-length">
             <p>{msToMinutesAndSeconds(song.track.duration_ms)}</p>
           </div>
-          <div className="add-song-playlist">
-          <DropdownButton
-              id="dropdown-button-drop-right"
-              title=""
-              drop="right"
-              variant="secondary"
-              key="right"
-            >
-              <Dropdown.Item
-                href="#"
-                className="options-dropdown"
-                onClick={openModal}
-              >
-                + &nbsp; Spotify Playlist
-              </Dropdown.Item>
-              <Dropdown.Item href="#" className="options-dropdown" onClick={openPodcastModal}>
-                + &nbsp; Podcast
-              </Dropdown.Item>
-            </DropdownButton>
-          </div>
-
+         
           <div className="add-song-playlist">
             <DropdownButton
               id="dropdown-button-drop-right"
@@ -197,7 +224,10 @@ const SingleAlbumTracks = ({
               >
                 + &nbsp; Spotify Playlist
               </Dropdown.Item>
-              <Dropdown.Item href="#" className="options-dropdown">
+              <Dropdown.Item 
+               href="#"
+               className="options-dropdown" 
+               onClick={openPodcastModal}>
                 + &nbsp; Podcast
               </Dropdown.Item>
             </DropdownButton>
@@ -268,6 +298,7 @@ const mapStateToProps = state => {
       : [],
     fetchAlbumTracksError: state.albumTracksReducer.fetchAlbumTracksError,
     fetchAlbumTracksPending: state.albumTracksReducer.fetchAlbumTracksPending,
+    favouriteSongs : state.songsReducer.favouriteSongs ? state.songsReducer.favouriteSongs : [] ,
     viewType: state.albumTracksReducer.viewType,
     albumName: state.uiReducer.title,
     albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
@@ -287,7 +318,9 @@ const mapDispatchToProps = dispatch => {
       fetchAlbumTracks,
       addSongToLibrary,
       removeSongFromLibrary,
-      fetchSongs
+      fetchSongs,
+      fetchFavourites,
+      addFavourites
     },
     dispatch
   );

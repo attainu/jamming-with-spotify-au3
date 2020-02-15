@@ -1,7 +1,6 @@
 .user-playlist-container {
-  padding: 20px 20px 280px 20px;
   color: rgb(179, 179, 179);
-  margin: 0;
+  margin: 20px;
 }
 
 .user-playlist-header {
@@ -10,7 +9,6 @@
   font-family: "Proxima Thin", Georgia, sans-serif;
   font-size: 13px;
   margin: 0;
-  padding: 0 0 5px 0;
   letter-spacing: 1px;
 }
 

@@ -10,11 +10,11 @@ import Profile from "../Profile";
 import BrowseView from "../BrowseView";
 import "./MainView.css";
 import LikedSongs from "../LikedSongs";
+import FavouriteSongs from '../FavouriteSongs'
 
 const MainView = ({
   headerTitle,
   viewType,
-  //viewTypeAlbum,
   audioControl,
   resumeSong,
   pauseSong
@@ -52,6 +52,12 @@ const MainView = ({
           pauseSong={pauseSong}
           audioControl={audioControl}
         />
+      ) : viewType === "Favourite Songs" ? (
+        <FavouriteSongs
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : viewType === "Albums" ? (
         <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (
@@ -82,7 +88,6 @@ const mapStateToProps = state => {
   return {
     headerTitle: state.uiReducer.title,
     viewType: state.songsReducer.viewType
-    //viewTypeAlbum: state.albumTracksReducer.viewType
   };
 };
 

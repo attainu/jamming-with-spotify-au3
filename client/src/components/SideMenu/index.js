@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
   fetchSongs,
+  fetchFavourites,
   fetchRecentlyPlayed,
   fetchTopTracks,
   updateViewType
@@ -20,6 +21,7 @@ const SideMenu = ({
   fetchFeatured,
   fetchRecentlyPlayed,
   fetchSongs,
+  fetchFavourites,
   fetchAlbums,
   fetchArtists,
   fetchTopTracks,
@@ -53,6 +55,10 @@ const SideMenu = ({
         action: fetchSongs
       },
       {
+        name: "Favourites",
+        action: fetchFavourites
+      },
+      {
         name: "Albums",
         action: fetchAlbums
       },
@@ -72,6 +78,7 @@ const SideMenu = ({
           }
           onClick={() => {
             if (item.getArtists) item.action(token, artistIds);
+            else if(item.name === "Favourites") item.action()
             else item.action(token);
 
             handleClick(item.name);
@@ -111,6 +118,7 @@ SideMenu.propTypes = {
   fetchFeatured: PropTypes.func,
   fetchRecentlyPlayed: PropTypes.func,
   fetchSongs: PropTypes.func,
+  fetchFavourites: PropTypes.func,
   fetchAlbums: PropTypes.func,
   fetchArtists: PropTypes.func,
   fetchTopTracks: PropTypes.func,
@@ -136,6 +144,7 @@ const mapDispatchToProps = dispatch => {
       fetchRecentlyPlayed,
       fetchSongs,
       fetchAlbums,
+      fetchFavourites,
       fetchArtists,
       fetchTopTracks,
       fetchFeatured,

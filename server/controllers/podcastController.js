@@ -1,11 +1,12 @@
-const podcasts = require('../databaseConfig/database')
+const {podcastModel} = require('../databaseConfig/database')
 
 // Post a podcast
 module.exports.create = (req, res) => {  
 
-    podcasts.create({  
+    podcastModel.create({  
      podcastName: req.body.name,
-     description: req.body.description
+     description: req.body.description,
+     userName: req.body.userName
     })
  
   .then(() => {  
@@ -21,7 +22,7 @@ module.exports.create = (req, res) => {
 // FETCH all podcasts
 module.exports.findAll = (req, res) => {
   
-  podcasts.findAll()
+  podcastModel.findAll()
    .then((data)=>{
     if(!data){
         res.status(400).send('notok')
@@ -38,7 +39,7 @@ module.exports.findAll = (req, res) => {
 
 // Find a podcast by Id
 module.exports.findById = (req, res) => {  
- podcasts.findAll({
+  podcastModel.findAll({
    where:{
      id: req.params.podcastId
    }
@@ -58,7 +59,7 @@ module.exports.update = (req, res) => {
     const id = req.params.podcastId;
     const tracks = req.body
     
-    podcasts.update( { tracks: [req.body] }, 
+    podcastModel.update( { tracks: [req.body] }, 
              { where: {id: req.params.podcastId} }
              )
              .then(() => {
@@ -74,7 +75,7 @@ module.exports.update = (req, res) => {
   // Delete a podcast by Id
   module.exports.delete = (req, res) => {
     const id = req.params.podcastId;
-    podcasts.destroy({
+    podcastModel.destroy({
       where: { id: id }
     }).then(() => {
       res.status(200).send('ok');

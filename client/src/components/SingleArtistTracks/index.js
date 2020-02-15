@@ -12,12 +12,19 @@ import {
   removeSongFromLibrary
 } from "../../redux/actions/userActions";
 import "../SongList/SongList.css";
-import { fetchSongs } from "../../redux/actions/songActions";
+import {
+  fetchSongs,
+  fetchFavourites,
+  addFavourites
+} from "../../redux/actions/songActions";
 
 const SingleArtistTracks = ({
   token,
   artistSongs,
   viewType,
+  favouriteSongs,
+  addFavourites,
+  fetchFavourites,
   fetchArtistSongsPending,
   fetchArtistSongsError,
   addSongToLibrary,
@@ -59,6 +66,31 @@ const SingleArtistTracks = ({
   const addPodcastModalClose = () => {
     setPodcastModal(false);
   };
+
+  useEffect(() => {
+    if(favouriteSongs.length === 0) {
+      fetchFavourites()
+     }
+   }, [favouriteSongs]);
+
+  const addToFavSongs = (e) => {
+    let selectedTrackId = e.target.id
+    let selectedTrack = songs.filter(song => song.track.id == selectedTrackId)[0].track
+    console.log(selectedTrack)
+    e.target.className = "fa fa-heart"
+    e.target.style.color = "red"
+    
+      let data = {
+      trackName: selectedTrack.name,
+      trackId: selectedTrack.id,
+      albumName: selectedTrack.album.name,
+      artistName: selectedTrack.artists[0].name,
+      albumReleaseDate : selectedTrack.album.release_date,
+      duration: msToMinutesAndSeconds(selectedTrack.duration_ms)
+    }
+    console.log('jsonbody' , data)
+    addFavourites(data)
+  }
 
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
@@ -109,9 +141,23 @@ const SingleArtistTracks = ({
           </div>
           {viewType === "Artist" && (
             <>
-              <p className="fav-song">
-                <i className="fa fa-heart-o" aria-hidden="true" />
-              </p>
+              <p className="fav-song" >
+              {favouriteSongs.findIndex(song => song.trackId === songID) > -1 ? (
+                  <i
+                    className="fa fa-heart"
+                    aria-hidden="true"
+                    style={{color: "red"}}
+                    // onClick={e => toggleButton(e, token, songID)}
+                  />
+                ) : (
+                  <i
+                    className="fa fa-heart-o"
+                    aria-hidden="true"
+                    id = {song.track.id}
+                    onClick={addToFavSongs}
+                  />
+                )}
+             </p>
               &nbsp;
               <p className="add-song">
                 {/* {songAddedId === songID || */}
@@ -237,6 +283,7 @@ const mapStateToProps = state => {
     artistSongs: state.songsReducer.songs ? state.songsReducer.songs : "",
     fetchArtistSongsError: state.songsReducer.fetchArtistSongsError,
     fetchArtistSongsPending: state.songsReducer.fetchArtistSongsPending,
+    favouriteSongs : state.songsReducer.favouriteSongs ? state.songsReducer.favouriteSongs : [] ,
     viewType: state.songsReducer.viewType,
     songs: state.songsReducer.songs,
     likedSongs: state.songsReducer.likedSongs
@@ -255,7 +302,9 @@ const mapDispatchToProps = dispatch => {
       fetchArtistSongs,
       addSongToLibrary,
       removeSongFromLibrary,
-      fetchSongs
+      fetchSongs,
+      fetchFavourites,
+      addFavourites
     },
     dispatch
   );
