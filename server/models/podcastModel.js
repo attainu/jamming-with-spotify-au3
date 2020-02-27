@@ -13,14 +13,8 @@ module.exports = (sequelize,Sequelize) =>{
       description: {
         type: Sequelize.TEXT
       },
-      // images: {
-      //   type: Sequelize.ARRAY(Sequelize.TEXT) 
-      // },
       tracks: {
-        type: Sequelize.ARRAY(Sequelize.TEXT) 
-      },
-      totalTracks: {
-        type: Sequelize.INTEGER
+        type: Sequelize.ARRAY(Sequelize.JSON)
       },
       createdBy: {
         type: Sequelize.STRING

@@ -10,7 +10,8 @@ module.exports.create = (req, res) => {
         artistName:req.body.artistName,
         albumName: req.body.albumName,
         albumReleaseDate: req.body.albumReleaseDate,
-        duration: req.body.duration
+        duration: req.body.duration,
+        userName: req.body.userName
     })
  
   .then(() => {  
@@ -28,7 +29,8 @@ module.exports.findAll = (req, res) => {
   
     favouriteModel.findAll({
       where:{
-          isFavourite: true
+          isFavourite: true,
+          userName: req.params.userName
       }
   })
    .then((data)=>{

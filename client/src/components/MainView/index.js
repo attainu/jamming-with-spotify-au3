@@ -11,6 +11,7 @@ import BrowseView from "../BrowseView";
 import "./MainView.css";
 import LikedSongs from "../LikedSongs";
 import FavouriteSongs from '../FavouriteSongs'
+import PodcastSongs from '../PodcastSongs'
 
 const MainView = ({
   headerTitle,
@@ -58,7 +59,13 @@ const MainView = ({
           pauseSong={pauseSong}
           audioControl={audioControl}
         />
-      ) : viewType === "Albums" ? (
+      ) :viewType === "podcast" ? (
+         <PodcastSongs
+         resumeSong={resumeSong}
+         pauseSong={pauseSong}
+         audioControl={audioControl}
+         />
+      ): viewType === "Albums" ? (
         <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (
         <SingleAlbumTracks

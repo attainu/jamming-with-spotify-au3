@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
+// import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal, Form } from "react-bootstrap";
@@ -12,11 +12,8 @@ import {
 const AddToPodcastModal = ({
   onHide,
   show,
-  userId,
   podcastMenu,
   saveTrackToPodcast,
-  fetchPodcastMenu,
-  fetchPodcastSongs,
   trackDetails
 }) => {
   const [selectedPodcast, setSelectedPodcast] = useState("");
@@ -75,7 +72,7 @@ const AddToPodcastModal = ({
 
 const mapStateToProps = state => {
   return {
-    userId: state.userReducer.user ? state.userReducer.user.id : "",
+    // userId: state.userReducer.user ? state.userReducer.user.id : "",
     // token: state.tokenReducer.token ? state.tokenReducer.token : "",
     podcastMenu: state.podcastReducer.podcastMenu
   };

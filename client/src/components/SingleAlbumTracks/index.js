@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-//import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Dropdown, DropdownButton } from "react-bootstrap";
@@ -8,7 +7,8 @@ import { fetchAlbumTracks } from "../../redux/actions/albumActions";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import {
   addSongToLibrary,
-  removeSongFromLibrary
+  removeSongFromLibrary,
+  fetchUser
 } from "../../redux/actions/userActions";
 import {
   fetchSongs,
@@ -37,7 +37,8 @@ const SingleAlbumTracks = ({
   resumeSong,
   pauseSong,
   audioControl,
-  songId
+  songId,
+  userName 
 }) => {
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
@@ -60,11 +61,8 @@ const SingleAlbumTracks = ({
 
   const openPodcastModal = e => {
     setPodcastModal(true)
-    let trackName =
-      e.target.parentElement.parentElement.parentElement.parentElement
-        .children[2].children[0].innerText;
-    let selectedTrack = (songs.filter(song => song.track.name === trackName)[0].track);
-    console.log(selectedTrack);
+    let selectedId = e.target.id
+    let selectedTrack = songs.filter(song => song.track.id === selectedId)[0].track
     setTrackDetails(selectedTrack)
   }
 
@@ -103,7 +101,6 @@ const SingleAlbumTracks = ({
   const addToFavSongs = (e) => {
     let selectedTrackId = e.target.id
     let selectedTrack = songs.filter(song => song.track.id == selectedTrackId)[0].track
-    console.log(selectedTrack)
     e.target.className = "fa fa-heart"
     e.target.style.color = "red"
     
@@ -113,9 +110,9 @@ const SingleAlbumTracks = ({
       albumName: albumName,
       artistName: selectedTrack.artists[0].name,
       albumReleaseDate : selected_album[0] ? selected_album[0].album.release_date : "---",
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms)
+      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+      userName: userName
     }
-    console.log('jsonbody' , data)
     addFavourites(data)
  }
   const renderSongs = () => {
@@ -155,7 +152,6 @@ const SingleAlbumTracks = ({
                     className="fa fa-heart"
                     aria-hidden="true"
                     style={{color: "red"}}
-                    // onClick={e => toggleButton(e, token, songID)}
                   />
                 ) : (
                   <i
@@ -168,7 +164,6 @@ const SingleAlbumTracks = ({
              </p>
               &nbsp;
               <p className="add-song">
-                {/* {songAddedId === songID || */}
                 {likedSongs.findIndex(song => song.id === songID) > -1 ? (
                   <i
                     className={"fa fa-check"}
@@ -202,7 +197,6 @@ const SingleAlbumTracks = ({
             <p>
               {selected_album[0] ? selected_album[0].album.release_date : "---"}
             </p>
-            {/* <p>{moment(song.added_at).format("YYYY-MM-DD")}</p> */}
           </div>
 
           <div className="song-length">
@@ -227,7 +221,8 @@ const SingleAlbumTracks = ({
               <Dropdown.Item 
                href="#"
                className="options-dropdown" 
-               onClick={openPodcastModal}>
+               onClick={openPodcastModal}
+               id={song.track.id}>
                 + &nbsp; Podcast
               </Dropdown.Item>
             </DropdownButton>
@@ -308,7 +303,8 @@ const mapStateToProps = state => {
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
-    songAddedId: state.userReducer.songId || ""
+    songAddedId: state.userReducer.songId || "",
+    userName : state.userReducer.user ? state.userReducer.user.display_name : ""
   };
 };
 
@@ -320,7 +316,8 @@ const mapDispatchToProps = dispatch => {
       removeSongFromLibrary,
       fetchSongs,
       fetchFavourites,
-      addFavourites
+      addFavourites,
+      fetchUser
     },
     dispatch
   );

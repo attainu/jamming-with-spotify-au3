@@ -1,4 +1,4 @@
-import React, { Component,useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -13,9 +13,8 @@ import {
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import AddToPodcastModal from '../Modals/AddToPodcastModal'
-// import { addSongToLibrary } from "../../redux/actions/userActions";
+import {fetchUser} from '../../redux/actions/userActions'
 
-//class SongList extends Component {
 const LikedSongs = ({
   userId,
   token,
@@ -38,53 +37,29 @@ const LikedSongs = ({
   audioControl,
   songId,
   newFavSong,
-  //songAddedId,
-  //addSongToLibrary,
   fetchPlaylistSongsPending,
-  fetchPlaylistPending
-  //searchSongsPending,
-  //searchSongsError
+  fetchPlaylistPending,
+  userName
 }) => {
-  // componentWillReceiveProps(nextProps) {
-  //   if (
-  //     nextProps.token !== "" &&
-  //     !nextProps.fetchSongsError &&
-  //     nextProps.fetchSongsPending &&
-  //     nextProps.viewType === "songs"
-  //   ) {
-  //     this.props.fetchSongs(nextProps.token);
-  //   }
-  // if (
-  //   nextProps.token !== "" &&
-  //   !nextProps.searchSongsError &&
-  //   nextProps.searchSongsPending &&
-  //   nextProps.viewType === "songs"
-  // )
-  //   else {
-  //     this.props.searchSongs(nextProps.token);
-  //   }
-  // }
   useEffect(() => {
     if (
       token !== "" &&
       !fetchSongsError &&
       !fetchSongsPending &&
-      viewType === "Liked Songs"
+      viewType === "Liked Songs" 
     ) {
       fetchSongs(token) 
     }
   }, [token]);
 
+  // useEffect(() => {
+  //   if(favouriteSongs.length === 0){
+  //     // fetchFavourites()
+  //   }
+  // }, [favouriteSongs.length, viewType])
+
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
-
-  useEffect(() => {  
-    if( favouriteSongs.length === 0  && 
-       viewType !== "Favourite Songs" &&
-       viewType === "Liked Songs"
-    )
-    fetchFavourites()
-  }, [favouriteSongs]);
 
   const openModal = e => {
     setModal(true);
@@ -102,9 +77,13 @@ const LikedSongs = ({
   };
 
   const [addPodcastModalShow, setPodcastModal] = useState(false);
+  const [trackDetails, setTrackDetails] = useState("");
 
   const openPodcastModal = e => {
     setPodcastModal(true)
+    let selectedId = e.target.id
+    let selectedTrack = likedSongs.filter(song => song.track.id === selectedId)[0].track
+    setTrackDetails(selectedTrack)
   }
 
   const addPodcastModalClose = () => {
@@ -124,7 +103,8 @@ const LikedSongs = ({
        albumName: selectedTrack.album.name,
        artistName: selectedTrack.artists[0].name,
        albumReleaseDate : selectedTrack.album.release_date,
-       duration: msToMinutesAndSeconds(selectedTrack.duration_ms)
+       duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+       userName: userName
      }
      console.log('jsonbody' , data)
      addFavourites(data)
@@ -258,7 +238,7 @@ const LikedSongs = ({
                         href="#"
                         className="options-dropdown"
                         onClick={openPodcastModal}
-                      >
+                        id={song.track.id}>
                         + &nbsp; Podcast
                       </Dropdown.Item>
                     </DropdownButton>
@@ -272,7 +252,7 @@ const LikedSongs = ({
                 <AddToPodcastModal
                   onHide={addPodcastModalClose}
                   show={addPodcastModalShow}
-                  // trackURI={trackURI}
+                  trackDetails = {trackDetails}
                 />
                 </>
               )}
@@ -397,7 +377,8 @@ const mapStateToProps = state => {
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
     songAddedId: state.userReducer.songId || "",
-    viewType: state.songsReducer.viewType
+    viewType: state.songsReducer.viewType,
+    userName : state.userReducer.user ? state.userReducer.user.display_name : ""
   };
 };
 
@@ -406,7 +387,8 @@ const mapDispatchToProps = dispatch => {
     {
       fetchSongs,
       addFavourites,
-      fetchFavourites
+      fetchFavourites,
+      fetchUser
       //fetchRecentlyPlayed,
       //fetchTopTracks,
       //addSongToLibrary,

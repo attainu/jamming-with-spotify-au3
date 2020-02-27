@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -55,7 +55,6 @@ const MainHeader = ({
   }
 
   if (viewType === "podcast") {
-    //let currentPlaylists = fetchPlaylistsMenu(userId, token);
     currentPodcast = podcasts.filter(podcast => {
       return podcast.podcastName === headerTitle;
     })[0];
@@ -86,7 +85,7 @@ const MainHeader = ({
       {viewType === "playlist" && (
         <div className="playlist-title-container">
           <div className="playlist-image-container">
-            <img
+            <img alt="playlistImg"
               className="playlist-image"
               src={
                 !currentPlaylist.images[0]
@@ -120,7 +119,7 @@ const MainHeader = ({
       {viewType === "podcast"  && currentPodcast && (
         <div className="playlist-title-container">
           <div className="playlist-image-container">
-            <img
+            <img alt="plaulistImg"
               className="playlist-image"
               src={
                !currentPodcast.images
@@ -173,7 +172,7 @@ const MainHeader = ({
                   onClick={() => getPlaylistSongs()}
                 >
                   <div className="playlist-image-container">
-                    <img
+                    <img alt="playlistImg"
                       className="playlist-image"
                       src={
                         currentPlaylist.images[0]
@@ -240,7 +239,7 @@ const MainHeader = ({
       {viewType === "New Release Album" && (
         <div className="playlist-title-container">
           <div className="playlist-image-container">
-            <img
+            <img alt="playlistImg"
               className="playlist-image"
               src={currentAlbum.images[0] ? currentAlbum.images[0].url : null}
             />

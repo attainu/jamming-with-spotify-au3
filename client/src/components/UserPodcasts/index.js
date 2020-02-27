@@ -7,6 +7,7 @@ import {
   fetchPodcastSongs,
   deletePodcast
 } from "../../redux/actions/podcastActions";
+import {fetchUser} from '../../redux/actions/userActions'
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import DeletePodcastModal from "../Modals/DeletePodcast";
 import "../UserPlaylists/UserPlaylists.css";
@@ -39,7 +40,7 @@ const UserPodcasts = (props) => {
   useEffect(() => {
    props.fetchPodcastMenu(props.userName)
    console.log(props)
-  }, [props.newPodcastData, props.delResponse])
+  }, [props.userName,props.newPodcastData, props.delResponse])
 
   const renderPodcasts = () => {
     return props.podcastMenu.map(podcast => {
@@ -116,6 +117,7 @@ const mapDispatchToProps = dispatch => {
     {
       fetchPodcastMenu,
       fetchPodcastSongs,
+      fetchUser,
       updateHeaderTitle,
       deletePodcast
     },

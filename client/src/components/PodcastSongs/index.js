@@ -3,120 +3,72 @@ import { DropdownButton, Dropdown } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import {
-  searchSongs,
-  fetchSongs,
-  fetchFavourites,
-  addFavourites
-} from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
-import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
-import AddToPodcastModal from '../Modals/AddToPodcastModal'
 import {
   addSongToLibrary,
   removeSongFromLibrary,
   fetchUser
 } from "../../redux/actions/userActions";
-import { removeTrackFromPlaylist } from "../../redux/actions/playlistActions";
-import { fetchPlaylistsMenu} from "../../redux/actions/playlistActions";
+import {
+    fetchSongs,
+    fetchFavourites,
+    addFavourites
+  } from "../../redux/actions/songActions";
+import { fetchPodcastMenu, deleteTrackFromPodcast} from "../../redux/actions/podcastActions";
 
-const SongList = ({
-  userId,
+const PodcastSongs = ({
   token,
   headerTitle,
   songs,
-  playlistMenu,
+  podcastMenu,
   likedSongs,
-  fetchSongsError,
-  fetchSongsPending,
   favouriteSongs,
   fetchFavourites,
+  fetchSongsPending,
   addFavourites,
   viewType,
-  fetchSongs,
-  searchSongs,
+  albumName,
+  albums,
   songPlaying,
   songPaused,
   resumeSong,
   pauseSong,
   audioControl,
   songId,
-  songAddedId,
-  removeTrackFromPlaylist,
+  userName,
+  deleteTrackFromPodcast,
   addSongToLibrary,
   removeSongFromLibrary,
-  fetchPlaylistSongsPending,
-  searchSongsPending,
-  userName,
-  searchSongsError
+  fetchPodcastSongsPending
 }) => {
-
+ 
   useEffect(() => {
-    if (
-      token !== "" &&
-      !fetchSongsError &&
-      fetchSongsPending
-    ) {
-      fetchSongs(token);
-    } else if(favouriteSongs.length === 0) {
+   if(favouriteSongs.length === 0) {
      fetchFavourites()
-    }else {
-      searchSongs(token);
     }
-  }, [token, likedSongs, favouriteSongs]);
+  }, [favouriteSongs]);
 
-  const [addModalShow, setModal] = useState(false);
-  const [trackURI, setTrackURI] = useState("");
-
-  const openModal = e => {
-    setModal(true);
-    let trackName =
-      e.target.parentElement.parentElement.parentElement.parentElement
-        .children[3].children[0].innerText;
-    console.log(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
-    setTrackURI(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
-  };
-
-  const addModalClose = () => {
-    setModal(false);
-  };
-
-  const [addPodcastModalShow, setPodcastModal] = useState(false);
-  const [trackDetails, setTrackDetails] = useState("");
-
-  const openPodcastModal = e => {
-    setPodcastModal(true)
-    let selectedId = e.target.id
-    let selectedTrack = songs.filter(song => song.track.id === selectedId)[0].track
-    setTrackDetails(selectedTrack)
-  }
-
-  const addPodcastModalClose = () => {
-    setPodcastModal(false);
-  };
 
   const handleRemoveTrack = e => {
-    let trackName =
-      e.target.parentElement.parentElement.parentElement.parentElement
-        .children[3].children[0].innerText;
-    console.log(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
-    setTrackURI(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
+    let trackID = e.target.id
 
-    let playlistID = playlistMenu.filter(
-      playlist => playlist.name === headerTitle
+    let podcastId = podcastMenu.filter(
+      item => item.podcastName === headerTitle
     )[0].id;
 
-    console.log(playlistID);
+    let selectedTrack = songs.filter(song => song.id == trackID)
 
-    removeTrackFromPlaylist(playlistID, trackURI, token);
+    let data = {
+      trackName: selectedTrack.name,
+      trackId: selectedTrack.id,
+      albumName: selectedTrack.album ? selectedTrack.ablum.name : "",
+      artistName: selectedTrack.artists ? selectedTrack.artists[0].name : "",
+      albumReleaseDate : selectedTrack.album ? selectedTrack.album.release_date : "",
+      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+      userName: userName
+    }
+
+    deleteTrackFromPodcast(podcastId, trackID, data);
   }
 
   const addToFavSongs = (e) => {
@@ -137,7 +89,6 @@ const SongList = ({
     }
     addFavourites(data)
  }
-
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
@@ -145,7 +96,6 @@ const SongList = ({
   };
 
   function toggleButton(e, token, songID) {
-    console.log(e.target);
     if (e.target.classList.contains("fa-check")) {
       e.target.className = "fa fa-plus";
       removeSongFromLibrary(token, songID);
@@ -155,19 +105,25 @@ const SongList = ({
     }
   }
 
+  var selected_album = albums
+  ? albums.filter(item => item.album.name === albumName)
+  : [];
+
+  const currentPodcast = podcastMenu ? podcastMenu.filter(item => item.podcastName === headerTitle)[0] : []
+
   const renderSongs = () => {
     return songs
       ? songs.map((song, i) => {
-          let songID = song.track.id;
+          let songID = song.id;
           const buttonClass =
-            song.track.id === songId && !songPaused
+            song.id === songId && !songPaused
               ? "fa-pause-circle-o"
               : "fa-play-circle-o";
 
           return (
             <li
               className={
-                song.track.id === songId
+                song.id === songId
                   ? "active user-song-item"
                   : "user-song-item"
               }
@@ -175,9 +131,9 @@ const SongList = ({
             >
               <div
                 onClick={() => {
-                  song.track.id === songId && songPlaying && songPaused
+                  song.id === songId && songPlaying && songPaused
                     ? resumeSong()
-                    : songPlaying && !songPaused && song.track.id === songId
+                    : songPlaying && !songPaused && song.id === songId
                     ? pauseSong()
                     : audioControl(song);
                 }}
@@ -202,7 +158,7 @@ const SongList = ({
                       <i
                         className="fa fa-heart-o"
                         aria-hidden="true"
-                        id = {song.track.id}
+                        id = {song.id}
                         onClick={addToFavSongs}
                       />
                     )}
@@ -229,33 +185,31 @@ const SongList = ({
               )}
 
               <div className="song-title">
-                <p>{song.track.name ? song.track.name : ""}</p>
+                <p>{song.name ? song.name : ""}</p>
               </div>
 
               <div className="song-artist">
-                <p>{song.track.artists ? song.track.artists[0].name: ""}</p>
+                <p>{song.artists ? song.artists[0].name: ""}</p>
               </div>
 
               <div className="song-album">
-                <p>{song.track.album ? song.track.album.name : ""}</p>
+                <p>{song.album ? song.album.name : albumName}</p>
               </div>
 
               <div className="song-added">
-                <p>{song.track.album ? song.track.album.release_date : ""}</p>
+                <p>{song.album ? song.album.release_date : selected_album[0] ? selected_album[0].album.release_date : "---"}</p>
               </div>
 
               <div className="song-length">
                 <p>
                   {msToMinutesAndSeconds(
-                    song.track.duration_ms
-                      ? song.track.duration_ms
-                      : song.duration_ms
+                    song.duration_ms
                   )}
                 </p>
               </div>
 
-              {song.added_by ? (
-                song.added_by.id === userId ? (
+              {currentPodcast ? (
+                currentPodcast.createdBy === userName ? (
                   <div className="remove-song-playlist">
                     <DropdownButton
                       id="dropdown-button-drop-right"
@@ -268,8 +222,9 @@ const SongList = ({
                         href="#"
                         className="options-dropdown"
                         onClick={handleRemoveTrack}
+                        id={song.id}
                       >
-                        - &nbsp; Remove from Playlist
+                        - &nbsp; Remove from Podcast
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
@@ -287,30 +242,11 @@ const SongList = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        onClick={openModal}
                       >
                         + &nbsp; Spotify Playlist
                       </Dropdown.Item>
-                      <Dropdown.Item
-                        href="#"
-                        className="options-dropdown"
-                        onClick={openPodcastModal}
-                        id={song.track.id}>
-                        + &nbsp; Podcast
-                      </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                  <AddToPlaylistModal
-                  onHide={addModalClose}
-                  show={addModalShow}
-                  trackURI={trackURI}
-                />
-
-                <AddToPodcastModal
-                  onHide={addPodcastModalClose}
-                  show={addPodcastModalShow}
-                  trackDetails = {trackDetails}
-                />
                 </>
               )}
             </li>
@@ -343,16 +279,14 @@ const SongList = ({
       </div>
       {songs &&
         !fetchSongsPending &&
-        !fetchPlaylistSongsPending &&
+        !fetchPodcastSongsPending &&
         renderSongs()}
-
-      {songs && !searchSongsPending && !searchSongsError && renderSongs()}
 
     </div>
   );
 };
 
-SongList.propTypes = {
+PodcastSongs.propTypes = {
   viewType: PropTypes.string,
   token: PropTypes.string,
   headerTitle: PropTypes.string,
@@ -360,19 +294,11 @@ SongList.propTypes = {
   songAddedId: PropTypes.string,
   songs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   likedSongs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-  searchSongsError: PropTypes.bool,
-  searchSongsPending: PropTypes.bool,
-  searchSongs: PropTypes.func,
-  fetchTopTracksPending: PropTypes.bool,
-  fetchTopTracksError: PropTypes.bool,
   fetchSongsError: PropTypes.bool,
   fetchSongsPending: PropTypes.bool,
-  fetchPlaylistSongsPending: PropTypes.bool,
-  fetchPlaylistSongsError: PropTypes.bool,
-  browseAlbumPending: PropTypes.bool,
-  browseAlbumError: PropTypes.bool,
-  playlistMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-  //fetchPlaylistSongs: PropTypes.func
+  fetchPodcastSongsPending: PropTypes.bool,
+  fetchPodcastSongsError: PropTypes.bool,
+  podcastMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   fetchSongs: PropTypes.func,
   audioControl: PropTypes.func,
   songPaused: PropTypes.bool,
@@ -384,54 +310,42 @@ SongList.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
     headerTitle: state.uiReducer.title,
-    songs: state.songsReducer.songs ? state.songsReducer.songs : [],
-    likedSongs: state.songsReducer.likedSongs
-      ? state.songsReducer.likedSongs
-      : [],
+    songs: state.songsReducer.songs ? state.songsReducer.songs.songs : [],
+    likedSongs: state.songsReducer.likedSongs ? state.songsReducer.likedSongs : [],
     favouriteSongs : state.songsReducer.favouriteSongs ? state.songsReducer.favouriteSongs : [] ,
-    searchSongsError: state.songsReducer.searchSongsError,
-    searchSongsPending: state.songsReducer.searchSongsPending,
-    fetchTopTracksError: state.songsReducer.fetchTopTracksError,
-    fetchTopTracksPending: state.songsReducer.fetchTopTracksPending,
     fetchSongsError: state.songsReducer.fetchSongsError,
     fetchSongsPending: state.songsReducer.fetchSongsPending,
-    fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
-    fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
-    browseAlbumPending: state.songsReducer.browseAlbumPending,
-    browseAlbumError: state.songsReducer.browseAlbumError,
-    playlistMenu: state.playlistReducer.playlistMenu,
-    //releaseAlbum: state.albumReducer.releaseAlbum,
-    //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
+    fetchPodcastSongsPending: state.songsReducer.fetchPodcastSongsPending,
+    fetchPodcastSongsError: state.songsReducer.fetchPodcastSongsError,
+    podcastMenu: state.podcastReducer.podcastMenu,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
     songAddedId: state.userReducer.songId || "",
     viewType: state.songsReducer.viewType,
+    albumName: state.uiReducer.title,
+    albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
     userName : state.userReducer.user ? state.userReducer.user.display_name : ""
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
-    {
+    { 
       fetchSongs,
       addFavourites,
       addSongToLibrary,
       fetchFavourites,
-      fetchPlaylistsMenu,
-      fetchUser,
-      //fetchRecentlyPlayed,
-      //fetchTopTracks,
-      removeTrackFromPlaylist,
+      fetchPodcastMenu,
+      deleteTrackFromPodcast,
       addSongToLibrary,
       removeSongFromLibrary,
-      searchSongs
+      fetchUser
     },
     dispatch
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SongList);
+export default connect(mapStateToProps, mapDispatchToProps)(PodcastSongs);

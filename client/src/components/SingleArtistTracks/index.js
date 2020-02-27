@@ -1,5 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
-//import moment from "moment";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -9,7 +8,8 @@ import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import AddToPodcastModal from "../Modals/AddToPodcastModal";
 import {
   addSongToLibrary,
-  removeSongFromLibrary
+  removeSongFromLibrary,
+  fetchUser
 } from "../../redux/actions/userActions";
 import "../SongList/SongList.css";
 import {
@@ -37,7 +37,8 @@ const SingleArtistTracks = ({
   pauseSong,
   audioControl,
   songId,
-  songAddedId
+  songAddedId,
+  userName
 }) => {
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
@@ -58,9 +59,13 @@ const SingleArtistTracks = ({
   };
 
   const [addPodcastModalShow, setPodcastModal] = useState(false);
+  const [trackDetails, setTrackDetails] = useState("");
 
   const openPodcastModal = e => {
     setPodcastModal(true)
+    let selectedId = e.target.id
+    let selectedTrack = songs.filter(song => song.track.id === selectedId)[0].track
+    setTrackDetails(selectedTrack)
   }
 
   const addPodcastModalClose = () => {
@@ -75,8 +80,7 @@ const SingleArtistTracks = ({
 
   const addToFavSongs = (e) => {
     let selectedTrackId = e.target.id
-    let selectedTrack = songs.filter(song => song.track.id == selectedTrackId)[0].track
-    console.log(selectedTrack)
+    let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
     e.target.className = "fa fa-heart"
     e.target.style.color = "red"
     
@@ -86,9 +90,9 @@ const SingleArtistTracks = ({
       albumName: selectedTrack.album.name,
       artistName: selectedTrack.artists[0].name,
       albumReleaseDate : selectedTrack.album.release_date,
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms)
+      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+      userName: userName
     }
-    console.log('jsonbody' , data)
     addFavourites(data)
   }
 
@@ -147,7 +151,6 @@ const SingleArtistTracks = ({
                     className="fa fa-heart"
                     aria-hidden="true"
                     style={{color: "red"}}
-                    // onClick={e => toggleButton(e, token, songID)}
                   />
                 ) : (
                   <i
@@ -160,7 +163,6 @@ const SingleArtistTracks = ({
              </p>
               &nbsp;
               <p className="add-song">
-                {/* {songAddedId === songID || */}
                 {likedSongs.findIndex(song => song.track.id === songID) > -1 ? (
                   <i
                     className={"fa fa-check"}
@@ -192,7 +194,6 @@ const SingleArtistTracks = ({
 
           <div className="song-added">
             <p>{song.track.album.release_date}</p>
-            {/* <p>{moment(song.added_at).format("YYYY-MM-DD")}</p> */}
           </div>
 
           <div className="song-length">
@@ -214,7 +215,10 @@ const SingleArtistTracks = ({
               >
                 + &nbsp; Spotify Playlist
               </Dropdown.Item>
-              <Dropdown.Item href="#" className="options-dropdown" onClick={openPodcastModal}>
+              <Dropdown.Item href="#"
+               className="options-dropdown"
+                onClick={openPodcastModal}
+                id={song.track.id}>
                 + &nbsp; Podcast
               </Dropdown.Item>
             </DropdownButton>
@@ -229,15 +233,13 @@ const SingleArtistTracks = ({
           <AddToPodcastModal
             onHide={addPodcastModalClose}
             show={addPodcastModalShow}
-            // trackURI={trackURI}
+            trackDetails={trackDetails}
           />
         </li>
       );
     });
   };
 
-  //render() {
-  // console.log("View Type:", this.props.viewType);
   return (
     <div className="song-container">
       <div className="song-header-container">
@@ -292,7 +294,8 @@ const mapStateToProps = state => {
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
-    songAddedId: state.userReducer.songId || ""
+    songAddedId: state.userReducer.songId || "",
+    userName : state.userReducer.user ? state.userReducer.user.display_name : ""
   };
 };
 
@@ -304,7 +307,8 @@ const mapDispatchToProps = dispatch => {
       removeSongFromLibrary,
       fetchSongs,
       fetchFavourites,
-      addFavourites
+      addFavourites,
+      fetchUser
     },
     dispatch
   );

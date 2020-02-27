@@ -1,4 +1,4 @@
-import React, { Component,useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -6,6 +6,7 @@ import { bindActionCreators } from "redux";
 import {
   fetchFavourites
 } from "../../redux/actions/songActions";
+import {fetchUser} from '../../redux/actions/userActions'
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import AddToPodcastModal from '../Modals/AddToPodcastModal'
@@ -25,6 +26,7 @@ const FavouriteSongs = ({
   pauseSong,
   audioControl,
   songId,
+  userName,
   fetchPlaylistSongsPending,
   fetchPlaylistPending,
   newFavSong
@@ -37,7 +39,7 @@ const FavouriteSongs = ({
       !fetchFavouritesPending &&
       viewType === "Favourite Songs"
     ) {
-      fetchFavourites();
+      fetchFavourites(userName);
     }
   }, [newFavSong]);
 
@@ -252,14 +254,16 @@ const mapStateToProps = state => {
     songAddedId: state.userReducer.songId || "",
     viewType: state.songsReducer.viewType,
     newFavSong: state.songsReducer.newFavSong ?  state.songsReducer.newFavSong : "",
-    userId: state.userReducer.user ? state.userReducer.user.id : ""
+    userId: state.userReducer.user ? state.userReducer.user.id : "",
+    userName: state.userReducer.user ? state.userReducer.user.display_name : ""
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      fetchFavourites
+      fetchFavourites,
+      fetchUser
     },
     dispatch
   );

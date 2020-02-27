@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
 // import CreatePodcast from "../../CreatePodcast";
 import {createPodcast, fetchPodcastMenu} from '../../../redux/actions/podcastActions'
+import {fetchUser} from '../../../redux/actions/userActions'
 
 const PodcastModal = ({ onHide, show, createPodcast, userName }) => {
   const [newPodcastName, setNewPodcastName] = useState("");
@@ -83,7 +84,8 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       createPodcast,
-      fetchPodcastMenu
+      fetchPodcastMenu,
+      fetchUser
     },
     dispatch
   );

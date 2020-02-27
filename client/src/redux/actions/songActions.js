@@ -326,10 +326,10 @@ export const fetchFavouritesError = () => {
   };
 };
 
-export const fetchFavourites = (data) => {
+export const fetchFavourites = (userName) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/getAllfavourites`,
+      `http://localhost:8888/getAllfavourites/${userName}`,
     );
 
     dispatch(fetchFavouritesPending());

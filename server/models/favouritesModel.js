@@ -6,6 +6,9 @@ module.exports = (sequelize,Sequelize) =>{
         primaryKey: true,
         autoIncrement : true
       },
+      userName: {
+         type: Sequelize.STRING
+      },
       isFavourite : {
         type: Sequelize.BOOLEAN,
         allowNull : false,

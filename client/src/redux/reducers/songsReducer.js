@@ -238,11 +238,9 @@ export const songsReducer = (state = defaultState, action) => {
     case "SAVE_PODCAST_TRACK_SUCCESS":
       return {
         ...state,
-        //songs: action.songs,
-        addedTrack: action.addedTrack,
+        updatePodcastRes: action.saveTrackRes,
         saveTrackToPodcastPending: false,
         saveTrackToPodcastError: false
-        //viewType: "songs"
       };
 
     case "SAVE_PODCAST_TRACK_ERROR":
@@ -252,27 +250,6 @@ export const songsReducer = (state = defaultState, action) => {
         saveTrackToPodcastPending: false
       };
 
-    // case "BROWSE_ALBUM_PENDING":
-    //   return {
-    //     ...state,
-    //     browseAlbumPending: true
-    //   };
-
-    // case "BROWSE_ALBUM_SUCCESS":
-    //   return {
-    //     ...state,
-    //     songs: action.songs,
-    //     viewType: "Songs",
-    //     browseAlbumError: false,
-    //     browseAlbumPending: false
-    //   };
-
-    // case "BROWSE_ALBUM_ERROR":
-    //   return {
-    //     ...state,
-    //     browseAlbumError: true,
-    //     browseAlbumPending: false
-    //   };
     case "REMOVE_PLAYLIST_TRACK_PENDING":
       return {
         ...state,
@@ -282,11 +259,9 @@ export const songsReducer = (state = defaultState, action) => {
     case "REMOVE_PLAYLIST_TRACK_SUCCESS":
       return {
         ...state,
-        //songs: action.songs,
         removedTrack: action.removedTrack,
         savePlaylistTrackPending: false,
         savePlaylistTrackError: false
-        //viewType: "songs"
       };
 
     case "REMOVE_PLAYLIST_TRACK_ERROR":
@@ -296,48 +271,69 @@ export const songsReducer = (state = defaultState, action) => {
         savePlaylistTrackPending: false
       };
 
-      case "ADD_FAVOURITES_PENDING":
-        return {
-          ...state,
-          addFavouritesPending: true
-        };
-  
-      case "ADD_FAVOURITES_SUCCESS":
-        return {
-          ...state,
-          newFavSong: action.res,
-          addFavouritesError: false,
-          addFavouritesPending: false,
-        };
-  
-      case "ADD_FAVOURITES_ERROR":
-        return {
-          ...state,
-          addFavouritesError: true,
-          addFavouritesPending: false
-        };
+    case "DELETE_TRACK_FROM_PODCAST_PENDING":
+      return {
+        ...state,
+        savePodcastTrackPending: true
+      };
 
-      case "FETCH_FAVOURITES_PENDING":
-        return {
-          ...state,
-          fetchFavouritesPending: true
-        };
+    case "DELETE_TRACK_FROM_PODCAST_SUCCESS":
+      return {
+        ...state,
+        delTrackRes: action.delTrackRes,
+        savePodcastTrackPending: false,
+        savePodcastTrackError: false
+      };
+
+    case "DELETE_TRACK_FROM_PODCAST_ERROR":
+      return {
+        ...state,
+        savePodcastTrackError: true,
+        savePodcastTrackPending: false
+      };
+
+    case "ADD_FAVOURITES_PENDING":
+      return {
+        ...state,
+        addFavouritesPending: true
+      };
+
+    case "ADD_FAVOURITES_SUCCESS":
+      return {
+        ...state,
+        newFavSong: action.res,
+        addFavouritesError: false,
+        addFavouritesPending: false,
+      };
+
+    case "ADD_FAVOURITES_ERROR":
+      return {
+        ...state,
+        addFavouritesError: true,
+        addFavouritesPending: false
+      };
+
+    case "FETCH_FAVOURITES_PENDING":
+      return {
+        ...state,
+        fetchFavouritesPending: true
+      };
+
+    case "FETCH_FAVOURITES_SUCCESS":
+      return {
+        ...state,
+        favouriteSongs: action.songs,
+        fetchFavouritesError: false,
+        fetchFavouritesPending: false,
+        viewType: "Favourite Songs"
+      };
   
-      case "FETCH_FAVOURITES_SUCCESS":
-        return {
-          ...state,
-          favouriteSongs: action.songs,
-          fetchFavouritesError: false,
-          fetchFavouritesPending: false,
-          viewType: "Favourite Songs"
-        };
-  
-      case "FETCH_FAVOURITES_ERROR":
-        return {
-          ...state,
-          fetchFavouritesError: true,
-          fetchFavouritesPending: false
-        };
+    case "FETCH_FAVOURITES_ERROR":
+      return {
+        ...state,
+        fetchFavouritesError: true,
+        fetchFavouritesPending: false
+      };
 
     default:
       return state;

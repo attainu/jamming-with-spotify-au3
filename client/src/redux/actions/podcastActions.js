@@ -69,19 +69,16 @@ export const fetchPodcastsMenuError = () => {
   };
 };
 
-export const fetchPodcastMenu = () => {
+export const fetchPodcastMenu = (userName) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/podcasts`
+      `http://localhost:8888/podcasts/${userName}`
     );
 
     dispatch(fetchPodcastsMenuPending());
 
     fetch(request)
       .then(res => {
-        // if (res.statusText === "Unauthorized") {
-        //   window.location.href = "./";
-        // }
         return res.json();
       })
       .then(res => {
@@ -89,6 +86,7 @@ export const fetchPodcastMenu = () => {
         dispatch(fetchPodcastsMenuSuccess(res));
       })
       .catch(err => {
+        console.log(err)
         dispatch(fetchPodcastsMenuError(err));
       });
   };
@@ -116,27 +114,20 @@ export const fetchPodcastSongsError = () => {
 export const fetchPodcastSongs = (podcastId) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/podcasts/${podcastId}`
+      `http://localhost:8888/podcast/${podcastId}`
     );
 
     dispatch(fetchPodcastSongsPending());
 
     fetch(request)
       .then(res => {
-        // if (res.statusText === "Unauthorized") {
-        //   window.location.href = "./";
-        // }
         return res.json();
       })
       .then(res => {
-        res = res.map(item => {
-          return {
-            track: item
-          };
-        });
         dispatch(fetchPodcastSongsSuccess(res));
       })
       .catch(err => {
+        console.log('error', err)
         dispatch(fetchPodcastSongsError(err));
       });
   };
@@ -148,10 +139,10 @@ export const saveTrackToPodcastPending = () => {
   };
 };
 
-export const saveTrackToPodcastSuccess = addedTrack => {
+export const saveTrackToPodcastSuccess = saveTrackRes => {
   return {
     type: "SAVE_PODCAST_TRACK_SUCCESS",
-    addedTrack
+    saveTrackRes
   };
 };
 
@@ -164,17 +155,15 @@ export const saveTrackToPodcastError = () => {
 export const saveTrackToPodcast = (podcastId, trackDetails) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/podcasts/${podcastId}`,
+      `http://localhost:8888/updatePodcast/${podcastId}`,
       {
         headers: new Headers({
-          "Content-Type": "application/json",
-          // 'Access-Control-Allow-Origin' : 'http://localhost:3000'
+          "Content-Type": "application/json"
         }),
         method: "PUT",
         body: JSON.stringify(trackDetails)
       }
     );
-
     dispatch(saveTrackToPodcastPending());
 
     fetch(request)
@@ -182,10 +171,6 @@ export const saveTrackToPodcast = (podcastId, trackDetails) => {
         return res
       })
       .then(res => {
-        
-        res = {
-          track : res
-        }
         console.log("tracks stored inside podcast", res);
         dispatch(saveTrackToPodcastSuccess(res));
         
@@ -240,6 +225,51 @@ export const deletePodcast = (podcastId) => {
       })
       .catch(err => {
         dispatch(deletePodcastError(err));
+      });
+  };
+};
+
+export const deleteTrackFromPodcastPending = () => {
+  return {
+    type: "DELETE_TRACK_FROM_PODCAST_PENDING"
+  };
+};
+
+export const deleteTrackFromPodcastSuccess = (delTrackRes) => {
+  return {
+    type: "DELETE_TRACK_FROM_PODCAST_SUCCESS",
+    delTrackRes
+  };
+};
+
+export const deleteTrackFromPodcastError = () => {
+  return {
+    type: "DELETE_TRACK_FROM_PODCAST_ERROR"
+  };
+};
+
+export const deleteTrackFromPodcast = (podcastId, trackId, data) => {
+  return dispatch => {
+    const request = new Request(
+      `http://localhost:8888/podcast/${podcastId}/${trackId}`,
+      {
+        method: "DELETE",
+        body: JSON.stringify(data)
+      }
+    );
+
+    dispatch(deleteTrackFromPodcastPending());
+
+    fetch(request)
+      .then(res => {
+          return res
+      })
+      .then(res => {
+        console.log("res ",  res);
+        dispatch(deleteTrackFromPodcastSuccess(res));
+      })
+      .catch(err => {
+        dispatch(deleteTrackFromPodcastError(err));
       });
   };
 };

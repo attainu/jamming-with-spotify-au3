@@ -34,4 +34,4 @@ sequelize.sync()
 const podcastModel = podcast(sequelize,Sequelize);
 const favouriteModel = favourite(sequelize, Sequelize)
 
-module.exports = {podcastModel, favouriteModel};
+module.exports = {podcastModel, favouriteModel, sequelize};
