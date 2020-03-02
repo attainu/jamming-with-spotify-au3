@@ -14,7 +14,7 @@ import {
     fetchFavourites,
     addFavourites
   } from "../../redux/actions/songActions";
-import { fetchPodcastMenu, deleteTrackFromPodcast} from "../../redux/actions/podcastActions";
+import { fetchPodcastMenu, deleteTrackFromPodcast, fetchPodcastSongs} from "../../redux/actions/podcastActions";
 
 const PodcastSongs = ({
   token,
@@ -23,7 +23,6 @@ const PodcastSongs = ({
   podcastMenu,
   likedSongs,
   favouriteSongs,
-  fetchFavourites,
   fetchSongsPending,
   addFavourites,
   viewType,
@@ -35,40 +34,28 @@ const PodcastSongs = ({
   pauseSong,
   audioControl,
   songId,
+  delTrackRes,
   userName,
   deleteTrackFromPodcast,
   addSongToLibrary,
   removeSongFromLibrary,
-  fetchPodcastSongsPending
+  fetchPodcastSongsPending,
+  savePodcastTrackError,
+  fetchPodcastSongsError
 }) => {
  
-  useEffect(() => {
-   if(favouriteSongs.length === 0) {
-     fetchFavourites()
-    }
-  }, [favouriteSongs]);
+  var podcastId = podcastMenu.length > 0 ?  podcastMenu.filter(
+    item => item.podcastName === headerTitle
+  )[0].id : ""
 
+
+  useEffect(() => {
+    fetchPodcastSongs(podcastId)
+  }, [delTrackRes]);
 
   const handleRemoveTrack = e => {
     let trackID = e.target.id
-
-    let podcastId = podcastMenu.filter(
-      item => item.podcastName === headerTitle
-    )[0].id;
-
-    let selectedTrack = songs.filter(song => song.id == trackID)
-
-    let data = {
-      trackName: selectedTrack.name,
-      trackId: selectedTrack.id,
-      albumName: selectedTrack.album ? selectedTrack.ablum.name : "",
-      artistName: selectedTrack.artists ? selectedTrack.artists[0].name : "",
-      albumReleaseDate : selectedTrack.album ? selectedTrack.album.release_date : "",
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
-      userName: userName
-    }
-
-    deleteTrackFromPodcast(podcastId, trackID, data);
+    deleteTrackFromPodcast(podcastId, trackID)
   }
 
   const addToFavSongs = (e) => {
@@ -319,6 +306,7 @@ const mapStateToProps = state => {
     fetchSongsPending: state.songsReducer.fetchSongsPending,
     fetchPodcastSongsPending: state.songsReducer.fetchPodcastSongsPending,
     fetchPodcastSongsError: state.songsReducer.fetchPodcastSongsError,
+    savePodcastTrackError : state.songsReducer.savePodcastTrackError,
     podcastMenu: state.podcastReducer.podcastMenu,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
@@ -327,7 +315,8 @@ const mapStateToProps = state => {
     viewType: state.songsReducer.viewType,
     albumName: state.uiReducer.title,
     albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
-    userName : state.userReducer.user ? state.userReducer.user.display_name : ""
+    userName : state.userReducer.user ? state.userReducer.user.display_name : "",
+    delTrackRes : state.songsReducer.delTrackRes ? state.songsReducer.delTrackRes : ""
   };
 };
 
@@ -339,6 +328,7 @@ const mapDispatchToProps = dispatch => {
       addSongToLibrary,
       fetchFavourites,
       fetchPodcastMenu,
+      fetchPodcastSongs,
       deleteTrackFromPodcast,
       addSongToLibrary,
       removeSongFromLibrary,

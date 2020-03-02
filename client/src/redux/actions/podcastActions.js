@@ -82,7 +82,6 @@ export const fetchPodcastMenu = (userName) => {
         return res.json();
       })
       .then(res => {
-        console.log(res);
         dispatch(fetchPodcastsMenuSuccess(res));
       })
       .catch(err => {
@@ -171,7 +170,6 @@ export const saveTrackToPodcast = (podcastId, trackDetails) => {
         return res
       })
       .then(res => {
-        console.log("tracks stored inside podcast", res);
         dispatch(saveTrackToPodcastSuccess(res));
         
       })
@@ -220,7 +218,6 @@ export const deletePodcast = (podcastId) => {
       })
 
       .then(res => {
-        console.log("deleted podcast", res);
         dispatch(deletePodcastSuccess(res));
       })
       .catch(err => {
@@ -248,13 +245,12 @@ export const deleteTrackFromPodcastError = () => {
   };
 };
 
-export const deleteTrackFromPodcast = (podcastId, trackId, data) => {
+export const deleteTrackFromPodcast = (podcastId, trackId) => {
   return dispatch => {
     const request = new Request(
       `http://localhost:8888/podcast/${podcastId}/${trackId}`,
       {
-        method: "DELETE",
-        body: JSON.stringify(data)
+        method: "DELETE"
       }
     );
 
@@ -265,7 +261,6 @@ export const deleteTrackFromPodcast = (podcastId, trackId, data) => {
           return res
       })
       .then(res => {
-        console.log("res ",  res);
         dispatch(deleteTrackFromPodcastSuccess(res));
       })
       .catch(err => {

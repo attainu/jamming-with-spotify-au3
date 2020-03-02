@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { DropdownButton, Dropdown } from "react-bootstrap";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -8,17 +7,12 @@ import {
 } from "../../redux/actions/songActions";
 import {fetchUser} from '../../redux/actions/userActions'
 import "../SongList/SongList.css";
-import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
-import AddToPodcastModal from '../Modals/AddToPodcastModal'
-// import { addSongToLibrary } from "../../redux/actions/userActions";
 
 const FavouriteSongs = ({
   favouriteSongs,
   fetchFavouritesError,
   fetchFavouritesPending,
   viewType,
-  userId,
-  addFavourites,
   fetchFavourites,
   songPlaying,
   songPaused,
@@ -27,10 +21,7 @@ const FavouriteSongs = ({
   audioControl,
   songId,
   userName,
-  fetchPlaylistSongsPending,
-  fetchPlaylistPending,
   newFavSong
-//   addSongToLibrary
 }) => {
  
   useEffect(() => {
@@ -42,34 +33,6 @@ const FavouriteSongs = ({
       fetchFavourites(userName);
     }
   }, [newFavSong]);
-
-  const [addModalShow, setModal] = useState(false);
-  const [trackURI, setTrackURI] = useState("");
-
-  const openModal = e => {
-    setModal(true);
-    // let trackName =
-    //   e.target.parentElement.parentElement.parentElement.parentElement
-    //     .children[2].children[0].innerText;
-    // console.log(trackName);
-    // setTrackURI(
-    //   songs.filter(song => song.track.name === trackName)[0].track.uri
-    // );
-  };
-
-  const addModalClose = () => {
-    setModal(false);
-  };
-
-  const [addPodcastModalShow, setPodcastModal] = useState(false);
-
-  const openPodcastModal = e => {
-    setPodcastModal(true)
-  }
-
-  const addPodcastModalClose = () => {
-    setPodcastModal(false);
-  };
 
   const renderSongs = () => {
     return favouriteSongs
@@ -124,66 +87,6 @@ const FavouriteSongs = ({
               <div className="song-length">
                 <p>{song.duration}</p>
               </div>
-
-              {song.added_by ? (
-                song.added_by.id === userId ? (
-                  <div className="remove-song-playlist">
-                    <DropdownButton
-                      id="dropdown-button-drop-right"
-                      title=""
-                      drop="right"
-                      variant="secondary"
-                      key="right"
-                    >
-                      <Dropdown.Item
-                        href="#"
-                        className="options-dropdown"
-                        // onClick={openModal}
-                      >
-                        - &nbsp; Remove from Playlist
-                      </Dropdown.Item>
-                    </DropdownButton>
-                  </div>
-                ) : null
-              ) : (
-                <>
-                  <div className="add-song-playlist">
-                    <DropdownButton
-                      id="dropdown-button-drop-right"
-                      title=""
-                      drop="right"
-                      variant="secondary"
-                      key="right"
-                    >
-                      <Dropdown.Item
-                        href="#"
-                        className="options-dropdown"
-                        onClick={openModal}
-                      >
-                        + &nbsp; Spotify Playlist
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        href="#"
-                        className="options-dropdown"
-                        onClick={openPodcastModal}
-                      >
-                        + &nbsp; Podcast
-                      </Dropdown.Item>
-                    </DropdownButton>
-                  </div>
-                  <AddToPlaylistModal
-                  onHide={addModalClose}
-                  show={addModalShow}
-                  trackURI={trackURI}
-                />
-
-                <AddToPodcastModal
-                  onHide={addPodcastModalClose}
-                  show={addPodcastModalShow}
-                  // trackURI={trackURI}
-                />
-                </>
-              )}
             </li>
           );
         })
@@ -235,7 +138,6 @@ FavouriteSongs.propTypes = {
   songPlaying: PropTypes.bool,
   resumeSong: PropTypes.func,
   pauseSong: PropTypes.func
-  // addSongToLibrary: PropTypes.func
 };
 
 const mapStateToProps = state => {
