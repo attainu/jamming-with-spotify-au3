@@ -110,11 +110,9 @@ export const fetchPodcastSongsError = () => {
   };
 };
 
-export const fetchPodcastSongs = (podcastId) => {
+export const fetchPodcastSongs = podcastId => {
   return dispatch => {
-    const request = new Request(
-      `http://localhost:8888/podcast/${podcastId}`
-    );
+    const request = new Request(`http://localhost:8888/podcast/${podcastId}`);
 
     dispatch(fetchPodcastSongsPending());
 
@@ -126,7 +124,7 @@ export const fetchPodcastSongs = (podcastId) => {
         dispatch(fetchPodcastSongsSuccess(res));
       })
       .catch(err => {
-        console.log('error', err)
+        console.log("error", err);
         dispatch(fetchPodcastSongsError(err));
       });
   };
@@ -167,11 +165,10 @@ export const saveTrackToPodcast = (podcastId, trackDetails) => {
 
     fetch(request)
       .then(res => {
-        return res
+        return res;
       })
       .then(res => {
         dispatch(saveTrackToPodcastSuccess(res));
-        
       })
       .catch(err => {
         dispatch(saveTrackToPodcastError(err));
@@ -185,7 +182,7 @@ export const deletePodcastPending = () => {
   };
 };
 
-export const deletePodcastSuccess = (delResponse) => {
+export const deletePodcastSuccess = delResponse => {
   return {
     type: "DELETE_PODCAST_SUCCESS",
     delResponse
@@ -211,10 +208,10 @@ export const deletePodcast = (podcastId) => {
 
     fetch(request)
       .then(res => {
-        if(res.ok){
-          return res
+        if (res.ok) {
+          return res;
         }
-        dispatch(deletePodcastError('Response error'))
+        dispatch(deletePodcastError("Response error"));
       })
 
       .then(res => {
@@ -232,7 +229,7 @@ export const deleteTrackFromPodcastPending = () => {
   };
 };
 
-export const deleteTrackFromPodcastSuccess = (delTrackRes) => {
+export const deleteTrackFromPodcastSuccess = delTrackRes => {
   return {
     type: "DELETE_TRACK_FROM_PODCAST_SUCCESS",
     delTrackRes
@@ -258,7 +255,7 @@ export const deleteTrackFromPodcast = (podcastId, trackId) => {
 
     fetch(request)
       .then(res => {
-          return res
+        return res;
       })
       .then(res => {
         dispatch(deleteTrackFromPodcastSuccess(res));

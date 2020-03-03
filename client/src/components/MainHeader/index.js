@@ -11,10 +11,13 @@ import {
 import {
   fetchPlaylistSongs,
   addPlaylistItem,
-  fetchPlaylistsMenu
+  fetchPlaylistsMenu,
+  unFollowPlaylist
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
+import { followPlaylist } from "../../redux/actions/playlistActions";
+import { saveAlbum, fetchAlbums } from "../../redux/actions/albumActions";
 import "./MainHeader.css";
 
 const MainHeader = ({
@@ -24,14 +27,16 @@ const MainHeader = ({
   fetchNewReleases,
   fetchFeatured,
   fetchPlaylistSongs,
+  followPlaylist,
   addPlaylistItem,
   updateHeaderTitle,
   updateViewType,
   songPaused,
   headerTitle,
   viewType,
-  //viewTypeAlbum,
+  playlistMenu,
   albums,
+  searchAlbumList,
   playlists,
   podcasts,
   categoryPlaylists,
@@ -39,15 +44,27 @@ const MainHeader = ({
   userId,
   userName,
   artists,
-  releaseAlbum
+  releaseAlbum,
+  saveAlbum,
+  fetchAlbums
 }) => {
   let currentPlaylist;
   let currentPodcast
   let currentAlbum;
   let currentArtist;
 
+  const handleFollow = playlistId => {
+    console.log(playlistId);
+    followPlaylist(playlistId, token);
+  };
+
+  const handleAlbumSave = albumId => {
+    console.log(albumId);
+    saveAlbum(albumId, token);
+    fetchAlbums(token);
+  };
+
   if (viewType === "playlist") {
-    //let currentPlaylists = fetchPlaylistsMenu(userId, token);
     currentPlaylist = playlists.filter(playlist => {
       return playlist.name === headerTitle;
     })[0];
@@ -64,7 +81,13 @@ const MainHeader = ({
   if (viewType === "Album") {
     currentAlbum = albums.filter(item => {
       return item.album.name === headerTitle;
-    })[0];
+    })[0]
+      ? albums.filter(item => {
+          return item.album.name === headerTitle;
+        })[0]
+      : searchAlbumList.filter(item => {
+          return item.name === headerTitle;
+        })[0];
     console.log(currentAlbum);
   }
 
@@ -106,6 +129,18 @@ const MainHeader = ({
               - {currentPlaylist.tracks.total}{" "}
               {currentPlaylist.tracks.total > 1 ? "songs" : "song"}
             </p>
+            {playlistMenu.findIndex(
+              playlist => playlist.name === headerTitle
+            ) === -1 ? (
+              <button
+                className="follow-btn"
+                onClick={() => handleFollow(currentPlaylist.id)}
+              >
+                FOLLOW
+              </button>
+            ) : (
+              <span className="following-text">FOLLOWING</span>
+            )}
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
@@ -212,27 +247,61 @@ const MainHeader = ({
             <img
               alt="albumName"
               className="current-album-image"
-              src={currentAlbum.album.images[0].url}
+              src={
+                currentAlbum.album
+                  ? currentAlbum.album.images[0].url
+                  : currentAlbum.images[0].url
+              }
             />
             <div className="current-album-info">
               <p>Album from your library</p>
-              <h3>{currentAlbum.album.name}</h3>
+              <h3>
+                {currentAlbum.album
+                  ? currentAlbum.album.name
+                  : currentAlbum.name}
+              </h3>
               <p className="created-by">
                 By:{" "}
                 <span className="lighter-text">
-                  {currentAlbum.album.artists[0].name}{" "}
+                  {currentAlbum.album
+                    ? currentAlbum.album.artists[0].name
+                    : currentAlbum.artists[0].name}{" "}
                 </span>{" "}
-                - {currentAlbum.album.total_tracks}{" "}
-                {currentAlbum.album.total_tracks > 1 ? "songs" : "song"}
+                -{" "}
+                {currentAlbum.album
+                  ? currentAlbum.album.total_tracks
+                  : currentAlbum.total_tracks}{" "}
+                {currentAlbum.album
+                  ? currentAlbum.album.total_tracks > 1
+                    ? "songs"
+                    : "song"
+                  : currentAlbum.total_tracks > 1
+                  ? "songs"
+                  : "song"}
               </p>
+              {albums.findIndex(item => item.album.name === headerTitle) ===
+              -1 ? (
+                <button
+                  className="follow-btn"
+                  onClick={() =>
+                    currentAlbum.album
+                      ? handleAlbumSave(currentAlbum.album.id)
+                      : handleAlbumSave(currentAlbum.id)
+                  }
+                >
+                  + LIBRARY
+                </button>
+              ) : (
+                <span className="following-text">SAVED TO LIBRARY</span>
+              )}
+              <button
+                onClick={!songPaused ? pauseSong : resumeSong}
+                className="main-pause-play-btn album-button"
+              >
+                {songPaused ? "PLAY" : "PAUSE"}
+              </button>
             </div>
           </div>
-          <button
-            onClick={!songPaused ? pauseSong : resumeSong}
-            className="main-pause-play-btn album-button"
-          >
-            {songPaused ? "PLAY" : "PAUSE"}
-          </button>
         </div>
       )}
 
@@ -255,6 +324,17 @@ const MainHeader = ({
               - {currentAlbum.total_tracks}{" "}
               {currentAlbum.total_tracks > 1 ? "songs" : "song"}
             </p>
+            {albums.findIndex(item => item.album.name === headerTitle) ===
+            -1 ? (
+              <button
+                className="follow-btn"
+                onClick={() => handleAlbumSave(currentAlbum.id)}
+              >
+                + LIBRARY
+              </button>
+            ) : (
+              <span className="following-text">SAVED TO LIBRARY</span>
+            )}
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
               className="main-pause-play-btn"
@@ -375,6 +455,7 @@ const mapStateToProps = state => {
     songPaused: state.songsReducer.songPaused,
     headerTitle: state.uiReducer.title,
     viewType: state.songsReducer.viewType,
+    playlistMenu: state.playlistReducer.playlistMenu,
     playlists: state.playlistReducer.playlists,
     podcasts:  state.podcastReducer.podcasts,
     categoryPlaylists: state.categoryPlaylistReducer.categoryPlaylists,
@@ -386,6 +467,7 @@ const mapStateToProps = state => {
     userName: state.userReducer.user ? state.userReducer.user.display_name : "",
     token: state.tokenReducer.token,
     albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
+    searchAlbumList: state.searchAlbumReducer.searchAlbumList
   };
 };
 
@@ -399,8 +481,11 @@ const mapDispatchToProps = dispatch => {
       addPlaylistItem,
       updateHeaderTitle,
       updateViewType,
-      fetchFeatured
-      },
+      fetchFeatured,
+      followPlaylist,
+      saveAlbum,
+      fetchAlbums
+    },
     dispatch
   );
 };

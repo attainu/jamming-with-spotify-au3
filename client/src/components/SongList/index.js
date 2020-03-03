@@ -50,6 +50,28 @@ const SongList = ({
   userName,
   searchSongsError
 }) => {
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (
+  //     nextProps.token !== "" &&
+  //     !nextProps.fetchSongsError &&
+  //     nextProps.fetchSongsPending &&
+  //     nextProps.viewType === "songs"
+  //   ) {
+  //     this.props.fetchSongs(nextProps.token);
+  //   }
+  // if (
+  //   nextProps.token !== "" &&
+  //   !nextProps.searchSongsError &&
+  //   nextProps.searchSongsPending &&
+  //   nextProps.viewType === "songs"
+  // )
+  //   else {
+  //     this.props.searchSongs(nextProps.token);
+  //   }
+  // }
 
   useEffect(() => {
     if (
@@ -423,8 +445,6 @@ const mapDispatchToProps = dispatch => {
       fetchFavourites,
       fetchPlaylistsMenu,
       fetchUser,
-      //fetchRecentlyPlayed,
-      //fetchTopTracks,
       removeTrackFromPlaylist,
       removeSongFromLibrary,
       searchSongs

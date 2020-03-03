@@ -23,10 +23,10 @@ const mapStateToProps = state => {
     displayName: state.userReducer.user
       ? state.userReducer.user.display_name
       : "",
-    userImage:
-      state.userReducer.user && state.userReducer.user.images[0]
-        ? state.userReducer.user.images[0].url
-        : default_avatar
+    userImage: default_avatar
+    //state.userReducer.user
+    //? default_avatar
+    //: state.userReducer.user.images[0].url
   };
 };
 

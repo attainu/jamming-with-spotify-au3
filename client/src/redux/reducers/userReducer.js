@@ -19,6 +19,7 @@ export const userReducer = (state = {}, action) => {
         songAddedToLibrary: true,
         songId: action.songId
       };
+      
     case "ADD_SONG_TO_LIBRARY_ERROR":
       return {
         ...state,

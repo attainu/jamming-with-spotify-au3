@@ -13,3 +13,7 @@
   cursor: pointer;
   outline: none;
 }
+
+.logout-button:hover {
+  opacity: 0.5;
+}

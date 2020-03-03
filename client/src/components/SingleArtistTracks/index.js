@@ -271,6 +271,8 @@ const SingleArtistTracks = ({
 
 SingleArtistTracks.propTypes = {
   viewType: PropTypes.string,
+  songAddedId: PropTypes.string,
+  token: PropTypes.string,
   songs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   fetchArtistSongsError: PropTypes.bool,
   fetchArtistSongsPending: PropTypes.bool,

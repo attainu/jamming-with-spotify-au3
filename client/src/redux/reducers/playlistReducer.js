@@ -90,6 +90,62 @@ export const createPlaylistReducer = (state = {}, action) => {
   }
 };
 
+export const editPlaylistReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "EDIT_PLAYLIST_PENDING":
+      return {
+        ...state,
+        editPlaylistPending: true
+      };
+
+    case "EDIT_PLAYLIST_SUCCESS":
+      return {
+        ...state,
+        updatedPlaylistResponse: action.response,
+        editPlaylistPending: false,
+        editPlaylistError: false
+      };
+
+    case "EDIT_PLAYLIST_ERROR":
+      return {
+        ...state,
+        editPlaylistPending: false,
+        editPlaylistError: true
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const followPlaylistReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "FOLLOW_PLAYLIST_PENDING":
+      return {
+        ...state,
+        followPlaylistPending: true
+      };
+
+    case "FOLLOW_PLAYLIST_SUCCESS":
+      return {
+        ...state,
+        folResponse: action.folResponse,
+        followPlaylistPending: false,
+        followPlaylistError: false
+      };
+
+    case "FOLLOW_PLAYLIST_ERROR":
+      return {
+        ...state,
+        followPlaylistPending: false,
+        followPlaylistError: true
+      };
+
+    default:
+      return state;
+  }
+};
+
 export const unFollowPlaylistReducer = (state = {}, action) => {
   switch (action.type) {
     case "UNFOLLOW_PLAYLIST_PENDING":

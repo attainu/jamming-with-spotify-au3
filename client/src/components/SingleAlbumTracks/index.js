@@ -38,7 +38,8 @@ const SingleAlbumTracks = ({
   pauseSong,
   audioControl,
   songId,
-  userName 
+  userName,
+  songAddedId
 }) => {
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
@@ -116,9 +117,11 @@ const SingleAlbumTracks = ({
     addFavourites(data)
  }
   const renderSongs = () => {
+    const selected_album = albums
+    ? albums.filter(item => item.album.name === albumName)
+    : [];
     return songs.map((song, i) => {
       let songID = song.id;
-      console.log("SongID", songId);
       const buttonClass =
         song.id === songId && !songPaused
           ? "fa-pause-circle-o"
@@ -180,7 +183,7 @@ const SingleAlbumTracks = ({
               </p>
             </>
           )}
-
+      
           <div className="song-title">
             <p>{song.track.name}</p>
           </div>

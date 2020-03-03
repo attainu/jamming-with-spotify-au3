@@ -3,54 +3,71 @@ import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
-import { fetchAlbumTracks } from "../../redux/actions/albumActions";
+import {
+  fetchAlbums,
+  fetchAlbumTracks,
+  unFollowAlbum
+} from "../../redux/actions/albumActions";
 import { updateViewType } from "../../redux/actions/songActions";
 import "./Albums.css";
 
 const Albums = props => {
-  //fetchAlbums(props.token)
+  const removeAlbum = albumId => {
+    console.log(albumId);
+    props.unFollowAlbum(albumId, props.token);
+  };
+
   return (
-    <div className="albums-container">
-      {/* <div> */}
-      {/* <li> */}
-      {console.log(props)}
+    <>
+      <h3 className="album-following-text">FOLLOWING</h3>
+      <div className="albums-container">
+        {props.albums
+          ? props.albums.map((item, index) => {
+              const albumTracks = (token, item) => {
+                props.fetchAlbumTracks(token, item.album.id);
+                props.updateHeaderTitle(item.album.name);
+                props.updateViewType("Album");
+              };
+              return (
+                <>
+                  <div className="album-item" key={item.album.id}>
+                    <div
+                      className="album-image"
+                      onClick={() => {
+                        albumTracks(props.token, item);
+                      }}
+                    >
+                      <img src={item.album.images[0].url} alt="album"></img>
+                      <div className="play-song">
+                        <i
+                          className="fa fa-play-circle-o play-btn"
+                          aria-hidden="true"
+                        ></i>
+                      </div>
+                    </div>
 
-      {props.albums
-        ? props.albums.map((item, index) => {
-            const albumTracks = (token, item) => {
-              props.fetchAlbumTracks(token, item.album.id);
-              props.updateHeaderTitle(item.album.name);
-              props.updateViewType("Album");
-            };
-            return (
-              <div
-                className="album-item"
-                key={index}
-                onClick={() => {
-                  albumTracks(props.token, item);
-                }}
-              >
-                <div className="album-image">
-                  <img src={item.album.images[0].url} alt="album"></img>
-                  <div className="play-song">
-                    <i
-                      className="fa fa-play-circle-o play-btn"
-                      aria-hidden="true"
-                    ></i>
+                    <div className="album-details">
+                      <p className="album-name">{item.album.name}</p>
+                      <p className="artist-name">
+                        {item.album.artists[0].name}
+                      </p>
+                    </div>
+
+                    <div
+                      className="album-unfollow-btn"
+                      onClick={() => removeAlbum(item.album.id)}
+                    >
+                      <li>
+                        <p>UNFOLLOW</p>
+                      </li>
+                    </div>
                   </div>
-                </div>
-
-                <div className="album-details">
-                  <p className="album-name">{item.album.name}</p>
-                  <p className="artist-name">{item.album.artists[0].name}</p>
-                </div>
-              </div>
-            );
-          })
-        : ""}
-      {/* </li> */}
-      {/* </div> */}
-    </div>
+                </>
+              );
+            })
+          : null}
+      </div>
+    </>
   );
 };
 
@@ -71,9 +88,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
+      fetchAlbums,
       fetchAlbumTracks,
       updateHeaderTitle,
-      updateViewType
+      updateViewType,
+      unFollowAlbum
     },
     dispatch
   );

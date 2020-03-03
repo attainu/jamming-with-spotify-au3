@@ -2,14 +2,27 @@ import { combineReducers } from "redux";
 import userReducer from "./userReducer";
 import tokenReducer from "./tokenReducer";
 import { songsReducer } from "./songsReducer";
-import artistsReducer from "./artistsReducer";
+import {
+  artistsReducer,
+  searchArtistReducer,
+  followArtistReducer,
+  unfollowArtistReducer
+} from "./artistsReducer";
 import uiReducer from "./uiReducer";
 import browseReducer from "./browseReducer";
-import { albumsReducer, albumTracksReducer } from "./albumsReducer";
+import {
+  albumsReducer,
+  albumTracksReducer,
+  searchAlbumReducer,
+  saveAlbumReducer,
+  unFollowAlbumReducer
+} from "./albumsReducer";
 import {
   playlistReducer,
   categoryPlaylistReducer,
   createPlaylistReducer,
+  editPlaylistReducer,
+  followPlaylistReducer,
   unFollowPlaylistReducer
 } from "./playlistReducer";
 import {createPodcastReducer, podcastReducer, deletePodcastReducer} from './podcastReducer'
@@ -20,16 +33,24 @@ export default combineReducers({
   userReducer,
   songsReducer,
   artistsReducer,
+  searchArtistReducer,
+  followArtistReducer,
+  unfollowArtistReducer,
   uiReducer,
   browseReducer,
   albumsReducer,
   albumTracksReducer,
+  searchAlbumReducer,
+  saveAlbumReducer,
+  unFollowAlbumReducer,
   playlistReducer,
   podcastReducer,
   categoryPlaylistReducer,
   deletePodcastReducer,
   createPlaylistReducer,
   createPodcastReducer,
+  editPlaylistReducer,
+  followPlaylistReducer,
   unFollowPlaylistReducer,
   soundReducer
 });

@@ -61,3 +61,95 @@ export const albumTracksReducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const searchAlbumReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "SEARCH_ALBUM_PENDING":
+      return {
+        ...state,
+        searchAlbumPending: true
+      };
+
+    case "SEARCH_ALBUM_SUCCESS":
+      return {
+        ...state,
+        searchAlbumList: action.albums,
+        fetchAlbumsError: false,
+        fetchAlbumsPending: false
+      };
+
+    case "SEARCH_ALBUM_ERROR":
+      return {
+        ...state,
+        searchAlbumError: false,
+        searchAlbumPending: false
+      };
+
+    case "CLEAR_ALBUM_SEARCH":
+      return {
+        ...state,
+        searchAlbumList: [],
+        searchAlbumError: true,
+        searchAlbumPending: false
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const saveAlbumReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "SAVE_ALBUM_PENDING":
+      return {
+        ...state,
+        saveAlbumPending: true
+      };
+
+    case "SAVE_ALBUM_SUCCESS":
+      return {
+        ...state,
+        savedAlbum: action.savedAlbum,
+        saveAlbumPending: false,
+        saveAlbumError: false
+      };
+
+    case "SAVE_ALBUM_ERROR":
+      return {
+        ...state,
+        saveAlbumPending: false,
+        saveAlbumError: true
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const unFollowAlbumReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "UNFOLLOW_ALBUM_PENDING":
+      return {
+        ...state,
+        unFollowAlbumPending: true
+      };
+
+    case "UNFOLLOW_ALBUM_SUCCESS":
+      return {
+        ...state,
+        unFollowedAlbum: action.unFollowedAlbum,
+        unFollowAlbumPending: false,
+        unFollowAlbumError: false
+      };
+
+    case "UNFOLLOW_ALBUM_ERROR":
+      return {
+        ...state,
+        unFollowAlbumPending: false,
+        unFollowAlbumError: true
+      };
+
+    default:
+      return state;
+  }
+};

@@ -1,0 +1,48 @@
+.search-box-container {
+  position: relative;
+  top: 10px;
+}
+
+.search-box-container input {
+  background: #fff;
+  width: 200px;
+  border-radius: 10px;
+  border: none;
+  font-family: "Proxima Nova", Georgia, sans-serif;
+  padding: 4px 4px 4px 10px;
+  outline: none;
+}
+
+.search-results-container {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding: 0;
+}
+
+.artist-search-text {
+  margin-top: 25px;
+}
+
+.search {
+  margin-left: 5px;
+  cursor: pointer;
+  cursor: pointer;
+  color: white;
+  font-size: 15px;
+}
+
+button {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.artist-follow-btn {
+  color: #1db954;
+  cursor: pointer;
+}
+
+.artist-follow-btn:hover {
+  color: wheat;
+}

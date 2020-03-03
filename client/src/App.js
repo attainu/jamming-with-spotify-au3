@@ -21,6 +21,7 @@ import Footer from "./components/Footer";
 import "./App.css";
 import { connect } from "react-redux";
 import CreatePodcast from "./components/CreatePodcast";
+import SearchView from "./components/SearchView";
 //import { Redirect } from "react-router-dom";
 
 class App extends Component {
@@ -155,6 +156,7 @@ class App extends Component {
                 pauseSong={this.pauseSong}
                 resumeSong={this.resumeSong}
               />
+              <SearchView />
               <MainView
                 pauseSong={this.pauseSong}
                 resumeSong={this.resumeSong}

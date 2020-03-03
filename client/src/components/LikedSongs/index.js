@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 // import moment from "moment";
 import PropTypes from "prop-types";
@@ -14,11 +14,14 @@ import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import AddToPodcastModal from '../Modals/AddToPodcastModal'
 import {fetchUser} from '../../redux/actions/userActions'
+import { addSongToLibrary } from "../../redux/actions/userActions";
+import { fetchPlaylistsMenu } from "../../redux/actions/playlistActions";
 
 const LikedSongs = ({
   userId,
   token,
   songs,
+  playlistMenu,
   likedSongs,
   fetchSongsError,
   fetchSongsPending,
@@ -41,6 +44,29 @@ const LikedSongs = ({
   fetchPlaylistPending,
   userName
 }) => {
+  // componentWillReceiveProps(nextProps) {
+  //   if (
+  //     nextProps.token !== "" &&
+  //     !nextProps.fetchSongsError &&
+  //     nextProps.fetchSongsPending &&
+  //     nextProps.viewType === "songs"
+  //   ) {
+  //     this.props.fetchSongs(nextProps.token);
+  //   }
+  // if (
+  //   nextProps.token !== "" &&
+  //   !nextProps.searchSongsError &&
+  //   nextProps.searchSongsPending &&
+  //   nextProps.viewType === "songs"
+  // )
+  //   else {
+  //     this.props.searchSongs(nextProps.token);
+  //   }
+  // }
+
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
   useEffect(() => {
     if (
       token !== "" &&
@@ -52,27 +78,22 @@ const LikedSongs = ({
     }
   }, [token]);
 
-  // useEffect(() => {
-  //   if(favouriteSongs.length === 0){
-  //     // fetchFavourites()
-  //   }
-  // }, [favouriteSongs.length, viewType])
-
-  const [addModalShow, setModal] = useState(false);
-  const [trackURI, setTrackURI] = useState("");
-
   const openModal = e => {
     setModal(true);
-    // let trackName =
-    //   e.target.parentElement.parentElement.parentElement.parentElement
-    //     .children[2].children[0].innerText;
-    // console.log(trackName);
-    // setTrackURI(
-    //   songs.filter(song => song.track.name === trackName)[0].track.uri
-    // );
+    //fetchPlaylistsMenu(userId, token);
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[2].children[0].innerText;
+    console.log(trackName);
+    console.log(
+      likedSongs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      likedSongs.filter(song => song.track.name === trackName)[0].track.uri
+    );
   };
 
-  const addModalClose = () => {
+  let addModalClose = () => {
     setModal(false);
   };
 
@@ -243,10 +264,14 @@ const LikedSongs = ({
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                  <AddToPlaylistModal
-                  onHide={addModalClose}
-                  show={addModalShow}
-                  trackURI={trackURI}
+                  {playlistMenu && (
+                    <AddToPlaylistModal
+                      onHide={addModalClose}
+                      show={addModalShow}
+                      trackURI={trackURI}
+                      playlistMenu={playlistMenu}
+                    />
+                  )}
                 />
 
                 <AddToPodcastModal
@@ -369,10 +394,7 @@ const mapStateToProps = state => {
     fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
     fetchPlaylistPending: state.playlistReducer.fetchPlaylistPending,
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
-    browseAlbumPending: state.songsReducer.browseAlbumPending,
-    browseAlbumError: state.songsReducer.browseAlbumError,
-    //releaseAlbum: state.albumReducer.releaseAlbum,
-    //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
+    playlistMenu: state.playlistReducer.playlistMenu,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
