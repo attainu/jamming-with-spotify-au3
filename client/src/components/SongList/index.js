@@ -87,8 +87,6 @@ const SongList = ({
     }
   }, [token, likedSongs, favouriteSongs]);
 
-  const [addModalShow, setModal] = useState(false);
-  const [trackURI, setTrackURI] = useState("");
 
   const openModal = e => {
     setModal(true);

@@ -272,7 +272,6 @@ const LikedSongs = ({
                       playlistMenu={playlistMenu}
                     />
                   )}
-                />
 
                 <AddToPodcastModal
                   onHide={addPodcastModalClose}
