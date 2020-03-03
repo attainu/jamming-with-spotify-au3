@@ -75,6 +75,7 @@ const SongList = ({
       fetchSongsPending
       // viewType === "songs"
     ) {
+
       fetchSongs(token);
     } else {
       searchSongs(token);
@@ -197,6 +198,7 @@ const SongList = ({
                     )}
                   </p>
                 </>
+
               )}
 
               {/* {viewType === "songs" && (
@@ -383,6 +385,7 @@ const SongList = ({
   //}
 };
 
+
 SongList.propTypes = {
   viewType: PropTypes.string,
   token: PropTypes.string,
@@ -407,6 +410,7 @@ SongList.propTypes = {
   songPlaying: PropTypes.bool,
   resumeSong: PropTypes.func,
   pauseSong: PropTypes.func
+
 };
 
 const mapStateToProps = state => {

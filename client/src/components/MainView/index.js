@@ -25,6 +25,7 @@ const MainView = ({
         <ArtistList />
       ) : headerTitle === "Get Profile" ? (
         <Profile />
+
       ) : headerTitle === "Recently Played" ? (
         <SongList
           resumeSong={resumeSong}
@@ -59,6 +60,7 @@ const MainView = ({
           pauseSong={pauseSong}
           audioControl={audioControl}
         />
+
       ) : viewType === "Category Playlist" ? null : (
         <SongList
           resumeSong={resumeSong}
@@ -66,20 +68,6 @@ const MainView = ({
           audioControl={audioControl}
         />
       )}
-      {/* {headerTitle === "Albums" ? (
-        <AlbumList audioControl={audioControl} />
-      ) : headerTitle === "Artists" ? (
-        <ArtistList />
-      ) : headerTitle === "Browse" ? (
-        <BrowseView />
-      ) : (
-        //anything else show SongList
-        <SongList
-          resumeSong={resumeSong}
-          pauseSong={pauseSong}
-          audioControl={audioControl}
-        />
-      )} */}
     </React.Fragment>
   );
 };

@@ -132,7 +132,6 @@ export const fetchAlbumTracksPending = () => {
 
 export const fetchAlbumTracks = (accessToken, albumId) => {
   return dispatch => {
-    console.log(dispatch);
     const request = new Request(
       `https://api.spotify.com/v1/albums/${albumId}/tracks`,
       {
@@ -148,7 +147,12 @@ export const fetchAlbumTracks = (accessToken, albumId) => {
         return res.json();
       })
       .then(res => {
-        console.log(res);
+        res.items = res.items.map(item => {
+          return {
+            track: item
+          };
+        });
+        console.log(res.items);
         dispatch(fetchAlbumTracksSuccess(res.items));
       })
       .catch(err => {

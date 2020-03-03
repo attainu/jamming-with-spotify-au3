@@ -185,10 +185,10 @@ const MainHeader = ({
                       </span>{" "}
                       - {currentPlaylist.tracks.total} songs
                     </p>
-                    {/* <button
+                    <button
                       onClick={!songPaused ? pauseSong : resumeSong}
                       className="main-pause-play-btn"
-                    ></button> */}
+                    ></button>
                   </div>
                 </div>
                 <br />

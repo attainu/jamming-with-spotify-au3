@@ -12,6 +12,7 @@ import {
 } from "../../redux/actions/userActions";
 import "../SongList/SongList.css";
 import { fetchSongs } from "../../redux/actions/songActions";
+import { addSongToLibrary } from "../../redux/actions/userActions";
 
 const SingleArtistTracks = ({
   token,
@@ -119,6 +120,7 @@ const SingleArtistTracks = ({
                 )}
               </p>
             </>
+
           )}
 
           <div className="song-title">
@@ -173,6 +175,7 @@ const SingleArtistTracks = ({
     });
   };
 
+
   //render() {
   // console.log("View Type:", this.props.viewType);
   return (
@@ -206,10 +209,14 @@ const SingleArtistTracks = ({
 
 SingleArtistTracks.propTypes = {
   viewType: PropTypes.string,
+  songAddedId: PropTypes.string,
+  token: PropTypes.string,
   songs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   fetchArtistSongsError: PropTypes.bool,
   fetchArtistSongsPending: PropTypes.bool,
-  fetchArtistSongs: PropTypes.func
+  fetchArtistSongs: PropTypes.func,
+  addSongToLibrary: PropTypes.func
+
 };
 
 const mapStateToProps = state => {
@@ -227,6 +234,7 @@ const mapStateToProps = state => {
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
     songAddedId: state.userReducer.songId || ""
+
   };
 };
 
@@ -237,6 +245,7 @@ const mapDispatchToProps = dispatch => {
       addSongToLibrary,
       removeSongFromLibrary,
       fetchSongs
+
     },
     dispatch
   );
