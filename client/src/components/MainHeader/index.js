@@ -36,6 +36,7 @@ const MainHeader = ({
   viewType,
   playlistMenu,
   albums,
+  searchAlbumList,
   playlists,
   categoryPlaylists,
   token,
@@ -70,7 +71,13 @@ const MainHeader = ({
   if (viewType === "Album") {
     currentAlbum = albums.filter(item => {
       return item.album.name === headerTitle;
-    })[0];
+    })[0]
+      ? albums.filter(item => {
+          return item.album.name === headerTitle;
+        })[0]
+      : searchAlbumList.filter(item => {
+          return item.name === headerTitle;
+        })[0];
     console.log(currentAlbum);
   }
 
@@ -196,24 +203,47 @@ const MainHeader = ({
             <img
               alt="albumName"
               className="current-album-image"
-              src={currentAlbum.album.images[0].url}
+              src={
+                currentAlbum.album
+                  ? currentAlbum.album.images[0].url
+                  : currentAlbum.images[0].url
+              }
             />
             <div className="current-album-info">
               <p>Album from your library</p>
-              <h3>{currentAlbum.album.name}</h3>
+              <h3>
+                {currentAlbum.album
+                  ? currentAlbum.album.name
+                  : currentAlbum.name}
+              </h3>
               <p className="created-by">
                 By:{" "}
                 <span className="lighter-text">
-                  {currentAlbum.album.artists[0].name}{" "}
+                  {currentAlbum.album
+                    ? currentAlbum.album.artists[0].name
+                    : currentAlbum.artists[0].name}{" "}
                 </span>{" "}
-                - {currentAlbum.album.total_tracks}{" "}
-                {currentAlbum.album.total_tracks > 1 ? "songs" : "song"}
+                -{" "}
+                {currentAlbum.album
+                  ? currentAlbum.album.total_tracks
+                  : currentAlbum.total_tracks}{" "}
+                {currentAlbum.album
+                  ? currentAlbum.album.total_tracks > 1
+                    ? "songs"
+                    : "song"
+                  : currentAlbum.total_tracks > 1
+                  ? "songs"
+                  : "song"}
               </p>
               {albums.findIndex(item => item.album.name === headerTitle) ===
               -1 ? (
                 <button
                   className="follow-btn"
-                  onClick={() => handleAlbumSave(currentAlbum.album.id)}
+                  onClick={() =>
+                    currentAlbum.album
+                      ? handleAlbumSave(currentAlbum.album.id)
+                      : handleAlbumSave(currentAlbum.id)
+                  }
                 >
                   + LIBRARY
                 </button>
@@ -388,7 +418,8 @@ const mapStateToProps = state => {
       : [],
     userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token,
-    albums: state.albumsReducer.albums ? state.albumsReducer.albums : []
+    albums: state.albumsReducer.albums ? state.albumsReducer.albums : [],
+    searchAlbumList: state.searchAlbumReducer.searchAlbumList
   };
 };
 

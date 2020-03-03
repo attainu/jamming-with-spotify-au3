@@ -390,22 +390,24 @@ export const removeTrackFromPlaylist = (playlistId, trackURI, accessToken) => {
     //   ]
     // };
     const request = new Request(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${encodeURIComponent(
+        trackURI
+      )}`,
       {
         method: "DELETE",
         headers: new Headers({
           Authorization: "Bearer " + accessToken,
           // Accept: "application/json",
           "Content-Type": "application/json"
-        }),
-        data: {
-          tracks: [
-            {
-              uri: JSON.stringify(trackURI)
-              //positions: [0]
-            }
-          ]
-        }
+        })
+        // data: {
+        //   tracks: [
+        //     {
+        //       uri: JSON.stringify(trackURI)
+        //       //positions: [0]
+        //     }
+        //   ]
+        // }
       }
     );
 

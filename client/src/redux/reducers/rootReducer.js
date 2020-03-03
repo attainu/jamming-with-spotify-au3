@@ -2,12 +2,18 @@ import { combineReducers } from "redux";
 import userReducer from "./userReducer";
 import tokenReducer from "./tokenReducer";
 import { songsReducer } from "./songsReducer";
-import artistsReducer from "./artistsReducer";
+import {
+  artistsReducer,
+  searchArtistReducer,
+  followArtistReducer,
+  unfollowArtistReducer
+} from "./artistsReducer";
 import uiReducer from "./uiReducer";
 import browseReducer from "./browseReducer";
 import {
   albumsReducer,
   albumTracksReducer,
+  searchAlbumReducer,
   saveAlbumReducer,
   unFollowAlbumReducer
 } from "./albumsReducer";
@@ -26,10 +32,14 @@ export default combineReducers({
   userReducer,
   songsReducer,
   artistsReducer,
+  searchArtistReducer,
+  followArtistReducer,
+  unfollowArtistReducer,
   uiReducer,
   browseReducer,
   albumsReducer,
   albumTracksReducer,
+  searchAlbumReducer,
   saveAlbumReducer,
   unFollowAlbumReducer,
   playlistReducer,

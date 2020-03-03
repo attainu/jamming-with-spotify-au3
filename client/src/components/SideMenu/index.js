@@ -27,11 +27,17 @@ const SideMenu = ({
   title,
   artistIds,
   unFollowedAlbum,
-  savedAlbum
+  savedAlbum,
+  followedArtist,
+  unfollowedArtist
 }) => {
   useEffect(() => {
     fetchAlbums(token);
   }, [savedAlbum, unFollowedAlbum]);
+
+  useEffect(() => {
+    fetchArtists(token);
+  }, [followedArtist, unfollowedArtist]);
 
   const handleClick = name => {
     updateHeaderTitle(name);
@@ -135,7 +141,9 @@ const mapStateToProps = state => {
       : "",
     title: state.uiReducer.title,
     unFollowedAlbum: state.unFollowAlbumReducer.unFollowedAlbum,
-    savedAlbum: state.saveAlbumReducer.savedAlbum
+    savedAlbum: state.saveAlbumReducer.savedAlbum,
+    followedArtist: state.followArtistReducer.followedArtist,
+    unfollowedArtist: state.unfollowArtistReducer.unfollowedArtist
   };
 };
 

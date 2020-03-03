@@ -17,6 +17,69 @@ export const fetchArtistsError = () => {
   };
 };
 
+export const searchArtistPending = () => {
+  return {
+    type: "SEARCH_ARTIST_PENDING"
+  };
+};
+
+export const searchArtistSuccess = artists => {
+  return {
+    type: "SEARCH_ARTIST_SUCCESS",
+    artists
+  };
+};
+
+export const searchArtistError = () => {
+  return {
+    type: "SEARCH_ARTIST_ERROR"
+  };
+};
+
+export const clearArtistSearch = () => {
+  return {
+    type: "CLEAR_ARTIST_SEARCH"
+  };
+};
+
+export const followArtistPending = () => {
+  return {
+    type: "FOLLOW_ARTIST_PENDING"
+  };
+};
+
+export const followArtistSuccess = res => {
+  return {
+    type: "FOLLOW_ARTIST_SUCCESS",
+    res
+  };
+};
+
+export const followArtistError = () => {
+  return {
+    type: "FOLLOW_ARTIST_ERROR"
+  };
+};
+
+export const unfollowArtistPending = () => {
+  return {
+    type: "UNFOLLOW_ARTIST_PENDING"
+  };
+};
+
+export const unfollowArtistSuccess = res => {
+  return {
+    type: "UNFOLLOW_ARTIST_SUCCESS",
+    res
+  };
+};
+
+export const unfollowArtistError = () => {
+  return {
+    type: "UNFOLLOW_ARTIST_ERROR"
+  };
+};
+
 export const fetchArtists = (accessToken, artistIds) => {
   return dispatch => {
     const request = new Request(
@@ -97,6 +160,96 @@ export const fetchArtistSongs = (artistId, accessToken) => {
       })
       .catch(err => {
         dispatch(fetchArtistSongsError(err));
+      });
+  };
+};
+
+export const searchArtist = (artistName, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        artistName
+      )}&type=artist`,
+
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+        })
+      }
+    );
+
+    dispatch(searchArtistPending());
+
+    fetch(request)
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        console.log("Searched Artist:", res.artists.items);
+        dispatch(searchArtistSuccess(res.artists.items));
+      })
+      .catch(err => {
+        dispatch(searchArtistError(err));
+      });
+  };
+};
+
+export const followArtist = (artistId, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/me/following?type=artist&ids=${encodeURIComponent(
+        artistId
+      )}`,
+      {
+        method: "PUT",
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+        })
+      }
+    );
+
+    dispatch(followArtistPending());
+
+    fetch(request)
+      // .then(res => {
+      //   return res.json();
+      // })
+      .then(res => {
+        console.log("Successfully followed artist:", res);
+        dispatch(followArtistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(followArtistError(err));
+      });
+  };
+};
+
+export const unfollowArtist = (artistId, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/me/following?type=artist&ids=${encodeURIComponent(
+        artistId
+      )}`,
+      {
+        method: "DELETE",
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+        })
+      }
+    );
+
+    dispatch(unfollowArtistPending());
+
+    fetch(request)
+      // .then(res => {
+      //   return res.json();
+      // })
+      .then(res => {
+        console.log("Successfully followed artist:", res);
+        dispatch(unfollowArtistSuccess(res));
+      })
+      .catch(err => {
+        dispatch(unfollowArtistError(err));
       });
   };
 };

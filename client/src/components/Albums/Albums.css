@@ -65,6 +65,19 @@
   font-family: "Proxima Thin", Georgia, sans-serif;
 }
 
+.album-following-text {
+  margin-top: 25px;
+}
+
+.album-follow-btn {
+  color: #1db954;
+  cursor: pointer;
+}
+
+.album-follow-btn:hover {
+  color: wheat;
+}
+
 .album-unfollow-btn {
   color: #1db954;
 }

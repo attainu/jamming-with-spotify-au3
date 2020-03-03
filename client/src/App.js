@@ -16,9 +16,9 @@ import MainView from "./components/MainView";
 import UserPlaylists from "./components/UserPlaylists";
 import CreatePlaylist from "./components/CreatePlaylist";
 import Footer from "./components/Footer";
-// import ArtWork from "./components/ArtWork";
 import "./App.css";
 import { connect } from "react-redux";
+import SearchView from "./components/SearchView";
 //import { Redirect } from "react-router-dom";
 
 class App extends Component {
@@ -151,6 +151,7 @@ class App extends Component {
                 pauseSong={this.pauseSong}
                 resumeSong={this.resumeSong}
               />
+              <SearchView />
               <MainView
                 pauseSong={this.pauseSong}
                 resumeSong={this.resumeSong}

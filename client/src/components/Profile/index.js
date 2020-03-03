@@ -46,8 +46,8 @@ const mapStateToProps = state => {
       : "",
     userImage:
       state.userReducer.user && state.userReducer.user.images[0]
-        ? state.userReducer.user.images[0].url
-        : default_avatar,
+        ? default_avatar
+        : state.userReducer.user.images[0].url,
     userID: state.userReducer.user.id,
     email: state.userReducer.user.email,
     country: state.userReducer.user.country

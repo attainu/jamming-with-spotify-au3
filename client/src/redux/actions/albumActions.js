@@ -62,6 +62,31 @@ export const addAlbum = album => {
   };
 };
 
+export const searchAlbumPending = () => {
+  return {
+    type: "SEARCH_ALBUM_PENDING"
+  };
+};
+
+export const searchAlbumSuccess = albums => {
+  return {
+    type: "SEARCH_ALBUM_SUCCESS",
+    albums
+  };
+};
+
+export const searchAlbumError = () => {
+  return {
+    type: "SEARCH_ALBUM_ERROR"
+  };
+};
+
+export const clearAlbumSearch = () => {
+  return {
+    type: "CLEAR_ALBUM_SEARCH"
+  };
+};
+
 export const fetchAlbums = accessToken => {
   return dispatch => {
     const request = new Request(`https://api.spotify.com/v1/me/albums`, {
@@ -185,6 +210,36 @@ export const unFollowAlbum = (albumId, accessToken) => {
       })
       .catch(err => {
         dispatch(unFollowAlbumError(err));
+      });
+  };
+};
+
+export const searchAlbum = (albumName, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        albumName
+      )}&type=album`,
+
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken
+        })
+      }
+    );
+
+    dispatch(searchAlbumPending());
+
+    fetch(request)
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        console.log("Searched Album:", res.albums.items);
+        dispatch(searchAlbumSuccess(res.albums.items));
+      })
+      .catch(err => {
+        dispatch(searchAlbumError(err));
       });
   };
 };

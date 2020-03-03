@@ -64,6 +64,42 @@ export const albumTracksReducer = (state = {}, action) => {
   }
 };
 
+export const searchAlbumReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "SEARCH_ALBUM_PENDING":
+      return {
+        ...state,
+        searchAlbumPending: true
+      };
+
+    case "SEARCH_ALBUM_SUCCESS":
+      return {
+        ...state,
+        searchAlbumList: action.albums,
+        fetchAlbumsError: false,
+        fetchAlbumsPending: false
+      };
+
+    case "SEARCH_ALBUM_ERROR":
+      return {
+        ...state,
+        searchAlbumError: false,
+        searchAlbumPending: false
+      };
+
+    case "CLEAR_ALBUM_SEARCH":
+      return {
+        ...state,
+        searchAlbumList: [],
+        searchAlbumError: true,
+        searchAlbumPending: false
+      };
+
+    default:
+      return state;
+  }
+};
+
 export const saveAlbumReducer = (state = {}, action) => {
   switch (action.type) {
     case "SAVE_ALBUM_PENDING":
