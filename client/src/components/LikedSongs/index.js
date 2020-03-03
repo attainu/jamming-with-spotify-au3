@@ -92,7 +92,7 @@ const LikedSongs = ({
 
   const addToFavSongs = (e) => {
      let selectedTrackId = e.target.id
-     let selectedTrack = likedSongs.filter(song => song.track.id == selectedTrackId)[0].track
+     let selectedTrack = likedSongs.filter(song => song.track.id === selectedTrackId)[0].track
      
      e.target.className = "fa fa-heart"
      e.target.style.color = "red"

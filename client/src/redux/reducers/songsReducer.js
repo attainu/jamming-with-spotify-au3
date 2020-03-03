@@ -171,7 +171,7 @@ export const songsReducer = (state = defaultState, action) => {
     case "FETCH_PODCASTS_SONGS_SUCCESS":
       return {
         ...state,
-        songs: action.songs,
+        podcastSongs: action.songs,
         viewType: "podcast",
         fetchPodcastSongsError: false,
         fetchPodcastSongsPending: false

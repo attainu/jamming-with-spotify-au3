@@ -37,7 +37,6 @@ const FavouriteSongs = ({
   const renderSongs = () => {
     return favouriteSongs
       ? favouriteSongs.map((song, i) => {
-          let songID = song.id;
           const buttonClass =
             song.id === songId && !songPaused
               ? "fa-pause-circle-o"

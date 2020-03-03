@@ -6,7 +6,8 @@ import { ButtonToolbar, Button, Modal } from "react-bootstrap";
 // import CreatePodcast from "../../CreatePodcast";
 import {
     fetchPodcastMenu,
-    deletePodcast
+    deletePodcast,
+    fetchPodcastSongs
   } from "../../../redux/actions/podcastActions";
 
 const DeletePodcastModal = ({
@@ -58,7 +59,8 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       deletePodcast,
-      fetchPodcastMenu
+      fetchPodcastMenu,
+      fetchPodcastSongs
     },
     dispatch
   );

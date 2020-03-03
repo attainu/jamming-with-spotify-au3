@@ -137,8 +137,8 @@ const MainHeader = ({
               <span className="lighter-text">
                 {userName}
               </span>{" "}
-              - {currentPodcast.totalTracks ? currentPodcast.totalTracks : 0}{" "}
-              {currentPodcast.totalTracks > 1 ? "songs" : "song"}
+              - {currentPodcast.tracks ? currentPodcast.tracks.length : 0}{" "}
+              {currentPodcast.tracks.length > 1 ? "songs" : "song"}
             </p>
             <button
               onClick={!songPaused ? pauseSong : resumeSong}

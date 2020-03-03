@@ -60,14 +60,14 @@ class App extends Component {
   //   }, 1000);
   // }, [token]);
   componentDidMount() {
-    console.log(window.location.pathname);
+    // console.log(window.location.pathname);
 
     if (!window.location.pathname.includes("access_token") && !this.props.token)
       window.location.href = "http://localhost:8888/login";
     //<Redirect to="http://localhost:8888/login" />;
     else {
       var access_token = window.location.pathname.split("=")[1].split("&")[0];
-      console.log(access_token);
+      // console.log(access_token);
       if (access_token) {
         this.props.setToken(access_token);
       }

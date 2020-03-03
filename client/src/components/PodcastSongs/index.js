@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -46,21 +46,22 @@ const PodcastSongs = ({
  
   var podcastId = podcastMenu.length > 0 ?  podcastMenu.filter(
     item => item.podcastName === headerTitle
-  )[0].id : ""
+  )[0].id : "-1"
 
 
-  useEffect(() => {
-    fetchPodcastSongs(podcastId)
-  }, [delTrackRes]);
+  // useEffect(() => {
+  //   fetchPodcastSongs(podcastId)
+  // }, [delTrackRes,podcastId]);
 
   const handleRemoveTrack = e => {
     let trackID = e.target.id
     deleteTrackFromPodcast(podcastId, trackID)
+    fetchPodcastSongs(podcastId)
   }
 
   const addToFavSongs = (e) => {
     let selectedTrackId = e.target.id
-    let selectedTrack = songs.filter(song => song.track.id == selectedTrackId)[0].track
+    let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
     
     e.target.className = "fa fa-heart"
     e.target.style.color = "red"
@@ -299,7 +300,7 @@ const mapStateToProps = state => {
   return {
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
     headerTitle: state.uiReducer.title,
-    songs: state.songsReducer.songs ? state.songsReducer.songs.songs : [],
+    songs: state.songsReducer.podcastSongs ? state.songsReducer.podcastSongs.songs : [],
     likedSongs: state.songsReducer.likedSongs ? state.songsReducer.likedSongs : [],
     favouriteSongs : state.songsReducer.favouriteSongs ? state.songsReducer.favouriteSongs : [] ,
     fetchSongsError: state.songsReducer.fetchSongsError,
@@ -330,7 +331,6 @@ const mapDispatchToProps = dispatch => {
       fetchPodcastMenu,
       fetchPodcastSongs,
       deleteTrackFromPodcast,
-      addSongToLibrary,
       removeSongFromLibrary,
       fetchUser
     },

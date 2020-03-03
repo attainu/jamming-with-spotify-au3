@@ -1,5 +1,5 @@
 import uniqBy from "lodash/uniqBy";
-import { setArtistIds } from "./artistActions";
+// import { setArtistIds } from "./artistActions";
 
 export const updateViewType = view => {
   return {

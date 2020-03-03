@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
-import CreatePlaylist from "../../CreatePlaylist";
+// import CreatePlaylist from "../../CreatePlaylist";
 import {
   unFollowPlaylist,
   fetchPlaylistsMenu
