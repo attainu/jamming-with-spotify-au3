@@ -1,51 +1,193 @@
-import React, { Component } from "react";
-// import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { DropdownButton, Dropdown } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
   searchSongs,
-  fetchSongs
-  //   fetchRecentlyPlayed,
-  //   fetchTopTracks
+  fetchSongs,
+  fetchFavourites,
+  addFavourites
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
-import { addSongToLibrary } from "../../redux/actions/userActions";
+import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
+import AddToPodcastModal from '../Modals/AddToPodcastModal'
+import {
+  addSongToLibrary,
+  removeSongFromLibrary,
+  fetchUser
+} from "../../redux/actions/userActions";
+import { removeTrackFromPlaylist } from "../../redux/actions/playlistActions";
+import { fetchPlaylistsMenu} from "../../redux/actions/playlistActions";
 
-class SongList extends Component {
-  componentWillReceiveProps(nextProps) {
+const SongList = ({
+  userId,
+  token,
+  headerTitle,
+  songs,
+  playlistMenu,
+  likedSongs,
+  fetchSongsError,
+  fetchSongsPending,
+  favouriteSongs,
+  fetchFavourites,
+  addFavourites,
+  viewType,
+  fetchSongs,
+  searchSongs,
+  songPlaying,
+  songPaused,
+  resumeSong,
+  pauseSong,
+  audioControl,
+  songId,
+  songAddedId,
+  removeTrackFromPlaylist,
+  addSongToLibrary,
+  removeSongFromLibrary,
+  fetchPlaylistSongsPending,
+  searchSongsPending,
+  userName,
+  searchSongsError
+}) => {
+  const [addModalShow, setModal] = useState(false);
+  const [trackURI, setTrackURI] = useState("");
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (
+  //     nextProps.token !== "" &&
+  //     !nextProps.fetchSongsError &&
+  //     nextProps.fetchSongsPending &&
+  //     nextProps.viewType === "songs"
+  //   ) {
+  //     this.props.fetchSongs(nextProps.token);
+  //   }
+  // if (
+  //   nextProps.token !== "" &&
+  //   !nextProps.searchSongsError &&
+  //   nextProps.searchSongsPending &&
+  //   nextProps.viewType === "songs"
+  // )
+  //   else {
+  //     this.props.searchSongs(nextProps.token);
+  //   }
+  // }
+
+  useEffect(() => {
     if (
-      nextProps.token !== "" &&
-      !nextProps.fetchSongsError &&
-      nextProps.fetchSongsPending &&
-      nextProps.viewType === "songs"
+      token !== "" &&
+      !fetchSongsError &&
+      fetchSongsPending
     ) {
-      this.props.fetchSongs(nextProps.token);
+      fetchSongs(token);
+    } else if(favouriteSongs.length === 0) {
+     fetchFavourites()
+    }else {
+      searchSongs(token);
     }
-   
-    else {
-      this.props.searchSongs(nextProps.token);
-    }
+  }, [token, likedSongs, favouriteSongs]);
+
+
+  const openModal = e => {
+    setModal(true);
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[3].children[0].innerText;
+    console.log(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+  };
+
+  const addModalClose = () => {
+    setModal(false);
+  };
+
+  const [addPodcastModalShow, setPodcastModal] = useState(false);
+  const [trackDetails, setTrackDetails] = useState("");
+
+  const openPodcastModal = e => {
+    setPodcastModal(true)
+    let selectedId = e.target.id
+    let selectedTrack = songs.filter(song => song.track.id === selectedId)[0].track
+    setTrackDetails(selectedTrack)
   }
 
-  msToMinutesAndSeconds(ms) {
+  const addPodcastModalClose = () => {
+    setPodcastModal(false);
+  };
+
+  const handleRemoveTrack = e => {
+    let trackName =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[3].children[0].innerText;
+    console.log(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+    setTrackURI(
+      songs.filter(song => song.track.name === trackName)[0].track.uri
+    );
+
+    let playlistID = playlistMenu.filter(
+      playlist => playlist.name === headerTitle
+    )[0].id;
+
+    console.log(playlistID);
+
+    removeTrackFromPlaylist(playlistID, trackURI, token);
+  }
+
+  const addToFavSongs = (e) => {
+    let selectedTrackId = e.target.id
+    let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
+    
+    e.target.className = "fa fa-heart"
+    e.target.style.color = "red"
+    
+      let data = {
+      trackName: selectedTrack.name,
+      trackId: selectedTrack.id,
+      albumName: selectedTrack.album.name,
+      artistName: selectedTrack.artists[0].name,
+      albumReleaseDate : selectedTrack.album.release_date,
+      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+      userName: userName
+    }
+    addFavourites(data)
+ }
+
+  const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+  };
+
+  function toggleButton(e, token, songID) {
+    console.log(e.target);
+    if (e.target.classList.contains("fa-check")) {
+      e.target.className = "fa fa-plus";
+      removeSongFromLibrary(token, songID);
+    } else if (e.target.classList.contains("fa-plus")) {
+      e.target.className = "fa fa-check";
+      addSongToLibrary(token, songID);
+    }
   }
 
-  renderSongs() {
-    return this.props.songs
-      ? this.props.songs.map((song, i) => {
+  const renderSongs = () => {
+    return songs
+      ? songs.map((song, i) => {
+          let songID = song.track.id;
           const buttonClass =
-            song.track.id === this.props.songId && !this.props.songPaused
+            song.track.id === songId && !songPaused
               ? "fa-pause-circle-o"
               : "fa-play-circle-o";
 
           return (
             <li
               className={
-                song.track.id === this.props.songId
+                song.track.id === songId
                   ? "active user-song-item"
                   : "user-song-item"
               }
@@ -53,15 +195,11 @@ class SongList extends Component {
             >
               <div
                 onClick={() => {
-                  song.track.id === this.props.songId &&
-                  this.props.songPlaying &&
-                  this.props.songPaused
-                    ? this.props.resumeSong()
-                    : this.props.songPlaying &&
-                      !this.props.songPaused &&
-                      song.track.id === this.props.songId
-                    ? this.props.pauseSong()
-                    : this.props.audioControl(song);
+                  song.track.id === songId && songPlaying && songPaused
+                    ? resumeSong()
+                    : songPlaying && !songPaused && song.track.id === songId
+                    ? pauseSong()
+                    : audioControl(song);
                 }}
                 className="play-song"
               >
@@ -71,115 +209,189 @@ class SongList extends Component {
                 />
               </div>
 
-              {this.props.viewType !== "songs" && (
-                <p
-                  className="add-song"
-                  onClick={() => {
-                    this.props.addSongToLibrary(this.props.token, song.track.id);
-                  }}
-                >
-                  {this.props.songAddedId === song.track.id ? (
-                    <i className="fa fa-check add-song" aria-hidden="true" />
-                  ) : (
-                    <i className="fa fa-plus add-song" aria-hidden="true" />
-                  )}
-                </p>
+              {viewType !== "Liked Songs" && (
+                <>
+                  <p className="fav-song" >
+                  {favouriteSongs.findIndex(song => song.trackId === songID) > -1 ? (
+                      <i
+                        className="fa fa-heart"
+                        aria-hidden="true"
+                        style={{color: "red"}}
+                      />
+                    ) : (
+                      <i
+                        className="fa fa-heart-o"
+                        aria-hidden="true"
+                        id = {song.track.id}
+                        onClick={addToFavSongs}
+                      />
+                    )}
+
+                  </p>
+                  &nbsp;
+                  <p className="add-song">
+                    {likedSongs.findIndex(song => song.track.id === songID) >
+                    -1 ? (
+                      <i
+                        className={"fa fa-check"}
+                        aria-hidden="true"
+                        onClick={e => toggleButton(e, token, songID)}
+                      />
+                    ) : (
+                      <i
+                        className="fa fa-plus"
+                        aria-hidden="true"
+                        onClick={e => toggleButton(e, token, songID)}
+                      />
+                    )}
+                  </p>
+                </>
               )}
 
-              {this.props.viewType === "songs" && (
-                <p className="add-song">
-                  <i className="fa fa-check" aria-hidden="true" />
-                </p>
-              )}
-            
               <div className="song-title">
-                <p>{song.track.name}</p>
+                <p>{song.track.name ? song.track.name : ""}</p>
               </div>
 
               <div className="song-artist">
-                <p>{song.track.artists[0].name}</p>
+                <p>{song.track.artists ? song.track.artists[0].name: ""}</p>
               </div>
 
               <div className="song-album">
-                <p>{song.track.album.name}</p>
+                <p>{song.track.album ? song.track.album.name : ""}</p>
               </div>
 
               <div className="song-added">
-                <p>{song.track.album.release_date}</p>
-                {/* <p>{moment(song.added_at).format("YYYY-MM-DD")}</p> */}
+                <p>{song.track.album ? song.track.album.release_date : ""}</p>
               </div>
 
               <div className="song-length">
                 <p>
-                  {this.msToMinutesAndSeconds(
+                  {msToMinutesAndSeconds(
                     song.track.duration_ms
                       ? song.track.duration_ms
                       : song.duration_ms
                   )}
                 </p>
               </div>
+
+              {song.added_by ? (
+                song.added_by.id === userId ? (
+                  <div className="remove-song-playlist">
+                    <DropdownButton
+                      id="dropdown-button-drop-right"
+                      title=""
+                      drop="right"
+                      variant="secondary"
+                      key="right"
+                    >
+                      <Dropdown.Item
+                        href="#"
+                        className="options-dropdown"
+                        onClick={handleRemoveTrack}
+                      >
+                        - &nbsp; Remove from Playlist
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </div>
+                ) : null
+              ) : (
+                <>
+                  <div className="add-song">
+                    <DropdownButton
+                      id="dropdown-button-drop-right"
+                      title=""
+                      drop="right"
+                      variant="secondary"
+                      key="right"
+                    >
+                      <Dropdown.Item
+                        href="#"
+                        className="options-dropdown"
+                        onClick={openModal}
+                      >
+                        + &nbsp; Spotify Playlist
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        href="#"
+                        className="options-dropdown"
+                        onClick={openPodcastModal}
+                        id={song.track.id}>
+                        + &nbsp; Podcast
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </div>
+                  <AddToPlaylistModal
+                  onHide={addModalClose}
+                  show={addModalShow}
+                  trackURI={trackURI}
+                />
+
+                <AddToPodcastModal
+                  onHide={addPodcastModalClose}
+                  show={addPodcastModalShow}
+                  trackDetails = {trackDetails}
+                />
+                </>
+              )}
             </li>
           );
         })
       : null;
-  }
+  };
 
-  render() {
-    console.log("View Type:", this.props.viewType);
-    return (
-      <div>
-        <div className="song-header-container">
-          <div className="song-title-header">
-            <p>Title</p>
-          </div>
-          <div className="song-artist-header">
-            <p>Artist</p>
-          </div>
-          <div className="song-album-header">
-            <p>Album</p>
-          </div>
-          <div className="song-added-header">
-            <i className="fa fa-calendar-plus-o" aria-hidden="true" />
-          </div>
-          <div className="song-length-header">
-            <p>
-              <i className="fa fa-clock-o" aria-hidden="true" />
-            </p>
-          </div>
+  console.log("View Type:", viewType);
+  return (
+    <div className="song-container">
+      <div className="song-header-container">
+        <div className="song-title-header">
+          <p>Title</p>
         </div>
-        {this.props.songs &&
-          !this.props.fetchSongsPending &&
-          !this.props.fetchPlaylistSongsPending &&
-          this.renderSongs()}
-
-        {this.props.songs &&
-          !this.props.searchSongsPending &&
-          !this.props.searchSongsError &&
-          this.renderSongs()}
+        <div className="song-artist-header">
+          <p>Artist</p>
+        </div>
+        <div className="song-album-header">
+          <p>Album</p>
+        </div>
+        <div className="song-added-header">
+          <i className="fa fa-calendar-plus-o" aria-hidden="true" />
+        </div>
+        <div className="song-length-header">
+          <p>
+            <i className="fa fa-clock-o" aria-hidden="true" />
+          </p>
+        </div>
       </div>
-    );
-  }
-}
+      {songs &&
+        !fetchSongsPending &&
+        !fetchPlaylistSongsPending &&
+        renderSongs()}
+
+      {songs && !searchSongsPending && !searchSongsError && renderSongs()}
+
+    </div>
+  );
+};
 
 SongList.propTypes = {
   viewType: PropTypes.string,
   token: PropTypes.string,
+  headerTitle: PropTypes.string,
   songId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   songAddedId: PropTypes.string,
   songs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  likedSongs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   searchSongsError: PropTypes.bool,
   searchSongsPending: PropTypes.bool,
   searchSongs: PropTypes.func,
-  //fetchRecentlyPlayed: PropTypes.func,
   fetchTopTracksPending: PropTypes.bool,
   fetchTopTracksError: PropTypes.bool,
-  //fetchTopTracks: PropTypes.func,
   fetchSongsError: PropTypes.bool,
   fetchSongsPending: PropTypes.bool,
   fetchPlaylistSongsPending: PropTypes.bool,
   fetchPlaylistSongsError: PropTypes.bool,
   browseAlbumPending: PropTypes.bool,
   browseAlbumError: PropTypes.bool,
+  playlistMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   //fetchPlaylistSongs: PropTypes.func
   fetchSongs: PropTypes.func,
   audioControl: PropTypes.func,
@@ -192,8 +404,14 @@ SongList.propTypes = {
 
 const mapStateToProps = state => {
   return {
+    userId: state.userReducer.user ? state.userReducer.user.id : "",
     token: state.tokenReducer.token ? state.tokenReducer.token : "",
-    songs: state.songsReducer.songs ? state.songsReducer.songs : "",
+    headerTitle: state.uiReducer.title,
+    songs: state.songsReducer.songs ? state.songsReducer.songs : [],
+    likedSongs: state.songsReducer.likedSongs
+      ? state.songsReducer.likedSongs
+      : [],
+    favouriteSongs : state.songsReducer.favouriteSongs ? state.songsReducer.favouriteSongs : [] ,
     searchSongsError: state.songsReducer.searchSongsError,
     searchSongsPending: state.songsReducer.searchSongsPending,
     fetchTopTracksError: state.songsReducer.fetchTopTracksError,
@@ -204,13 +422,15 @@ const mapStateToProps = state => {
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
     browseAlbumPending: state.songsReducer.browseAlbumPending,
     browseAlbumError: state.songsReducer.browseAlbumError,
+    playlistMenu: state.playlistReducer.playlistMenu,
     //releaseAlbum: state.albumReducer.releaseAlbum,
     //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
     songAddedId: state.userReducer.songId || "",
-    viewType: state.songsReducer.viewType
+    viewType: state.songsReducer.viewType,
+    userName : state.userReducer.user ? state.userReducer.user.display_name : ""
   };
 };
 
@@ -218,9 +438,13 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       fetchSongs,
+      addFavourites,
       addSongToLibrary,
-      //fetchRecentlyPlayed,
-      //fetchTopTracks,
+      fetchFavourites,
+      fetchPlaylistsMenu,
+      fetchUser,
+      removeTrackFromPlaylist,
+      removeSongFromLibrary,
       searchSongs
     },
     dispatch

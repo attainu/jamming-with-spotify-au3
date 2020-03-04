@@ -162,6 +162,28 @@ export const songsReducer = (state = defaultState, action) => {
         fetchPlaylistSongsPending: true
       };
 
+    case "FETCH_PODCASTS_SONGS_PENDING":
+      return {
+        ...state,
+        fetchPodcastSongsPending: true
+      };
+
+    case "FETCH_PODCASTS_SONGS_SUCCESS":
+      return {
+        ...state,
+        podcastSongs: action.songs,
+        viewType: "podcast",
+        fetchPodcastSongsError: false,
+        fetchPodcastSongsPending: false
+      };
+
+    case "FETCH_PODCASTS_SONGS_ERROR":
+      return {
+        ...state,
+        fetchPodcastSongsError: true,
+        fetchPodcastSongsPending: true
+      };
+
     case "FETCH_SONGS_PENDING":
       return {
         ...state,
@@ -171,10 +193,10 @@ export const songsReducer = (state = defaultState, action) => {
     case "FETCH_SONGS_SUCCESS":
       return {
         ...state,
-        songs: action.songs,
+        likedSongs: action.likedSongs,
         fetchSongsError: false,
         fetchSongsPending: false,
-        viewType: "songs"
+        viewType: "Liked Songs"
       };
 
     case "FETCH_SONGS_ERROR":
@@ -184,27 +206,134 @@ export const songsReducer = (state = defaultState, action) => {
         fetchSongsPending: false
       };
 
-    // case "BROWSE_ALBUM_PENDING":
-    //   return {
-    //     ...state,
-    //     browseAlbumPending: true
-    //   };
+    case "SAVE_PLAYLIST_TRACK_PENDING":
+      return {
+        ...state,
+        savePlaylistTrackPending: true
+      };
 
-    // case "BROWSE_ALBUM_SUCCESS":
-    //   return {
-    //     ...state,
-    //     songs: action.songs,
-    //     viewType: "Songs",
-    //     browseAlbumError: false,
-    //     browseAlbumPending: false
-    //   };
+    case "SAVE_PLAYLIST_TRACK_SUCCESS":
+      return {
+        ...state,
+        //songs: action.songs,
+        addedTrack: action.addedTrack,
+        savePlaylistTrackPending: false,
+        savePlaylistTrackError: false
+        //viewType: "songs"
+      };
 
-    // case "BROWSE_ALBUM_ERROR":
-    //   return {
-    //     ...state,
-    //     browseAlbumError: true,
-    //     browseAlbumPending: false
-    //   };
+    case "SAVE_PLAYLIST_TRACK_ERROR":
+      return {
+        ...state,
+        savePlaylistTrackError: true,
+        savePlaylistTrackPending: false
+      };
+
+    case "SAVE_PODCAST_TRACK_PENDING":
+      return {
+        ...state,
+        saveTrackToPodcastPending: true
+      };
+
+    case "SAVE_PODCAST_TRACK_SUCCESS":
+      return {
+        ...state,
+        updatePodcastRes: action.saveTrackRes,
+        saveTrackToPodcastPending: false,
+        saveTrackToPodcastError: false
+      };
+
+    case "SAVE_PODCAST_TRACK_ERROR":
+      return {
+        ...state,
+        saveTrackToPodcastError: true,
+        saveTrackToPodcastPending: false
+      };
+
+    case "REMOVE_PLAYLIST_TRACK_PENDING":
+      return {
+        ...state,
+        savePlaylistTrackPending: true
+      };
+
+    case "REMOVE_PLAYLIST_TRACK_SUCCESS":
+      return {
+        ...state,
+        removedTrack: action.removedTrack,
+        savePlaylistTrackPending: false,
+        savePlaylistTrackError: false
+      };
+
+    case "REMOVE_PLAYLIST_TRACK_ERROR":
+      return {
+        ...state,
+        savePlaylistTrackError: true,
+        savePlaylistTrackPending: false
+      };
+
+    case "DELETE_TRACK_FROM_PODCAST_PENDING":
+      return {
+        ...state,
+        savePodcastTrackPending: true
+      };
+
+    case "DELETE_TRACK_FROM_PODCAST_SUCCESS":
+      return {
+        ...state,
+        delTrackRes: action.delTrackRes,
+        savePodcastTrackPending: false,
+        savePodcastTrackError: false
+      };
+
+    case "DELETE_TRACK_FROM_PODCAST_ERROR":
+      return {
+        ...state,
+        savePodcastTrackError: true,
+        savePodcastTrackPending: false
+      };
+
+    case "ADD_FAVOURITES_PENDING":
+      return {
+        ...state,
+        addFavouritesPending: true
+      };
+
+    case "ADD_FAVOURITES_SUCCESS":
+      return {
+        ...state,
+        newFavSong: action.res,
+        addFavouritesError: false,
+        addFavouritesPending: false,
+      };
+
+    case "ADD_FAVOURITES_ERROR":
+      return {
+        ...state,
+        addFavouritesError: true,
+        addFavouritesPending: false
+      };
+
+    case "FETCH_FAVOURITES_PENDING":
+      return {
+        ...state,
+        fetchFavouritesPending: true
+      };
+
+    case "FETCH_FAVOURITES_SUCCESS":
+      return {
+        ...state,
+        favouriteSongs: action.songs,
+        fetchFavouritesError: false,
+        fetchFavouritesPending: false,
+        viewType: "Favourite Songs"
+      };
+  
+    case "FETCH_FAVOURITES_ERROR":
+      return {
+        ...state,
+        fetchFavouritesError: true,
+        fetchFavouritesPending: false
+      };
 
     default:
       return state;

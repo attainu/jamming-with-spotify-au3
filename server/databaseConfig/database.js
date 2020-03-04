@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
-const playlist = require('../models/playlistModel');
+const podcast = require('../models/podcastModel');
+const favourite = require('../models/favouritesModel')
 
 const data = {
   "user":"postgres",
@@ -26,11 +27,11 @@ sequelize
 
 //creating table
 sequelize.sync()
-.then(() => console.log('playlist model created'))
-.catch((err) => console.log("error creating model", err))
+.then(() => console.log(' model created'))
+.catch((err) => console.log("error creating model", err));
 
 
-const playlistModel = playlist(sequelize,Sequelize);
+const podcastModel = podcast(sequelize,Sequelize);
+const favouriteModel = favourite(sequelize, Sequelize)
 
-
-module.exports = playlistModel;
+module.exports = {podcastModel, favouriteModel, sequelize};

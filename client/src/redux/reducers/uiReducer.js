@@ -1,5 +1,5 @@
 const defaultState = {
-  title: "Songs"
+  title: "Liked Songs"
 };
 
 export const uiReducer = (state = defaultState, action) => {

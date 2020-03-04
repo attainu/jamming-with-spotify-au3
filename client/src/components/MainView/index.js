@@ -9,11 +9,13 @@ import SingleAlbumTracks from "../SingleAlbumTracks";
 import Profile from "../Profile";
 import BrowseView from "../BrowseView";
 import "./MainView.css";
+import LikedSongs from "../LikedSongs";
+import FavouriteSongs from '../FavouriteSongs'
+import PodcastSongs from '../PodcastSongs'
 
 const MainView = ({
   headerTitle,
   viewType,
-  //viewTypeAlbum,
   audioControl,
   resumeSong,
   pauseSong
@@ -26,29 +28,51 @@ const MainView = ({
         <Profile />
 
       ) : headerTitle === "Recently Played" ? (
-        <SongList  resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : headerTitle === "Top Tracks" ? (
-        <SongList  resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-        
+        <SongList
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : headerTitle === "Browse" ? (
         <BrowseView />
       ) : viewType === "Artist" ? (
-        <SingleArtistTracks resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-
-      ) : viewType === "Albums" ? (
+        <SingleArtistTracks
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
+      ) : viewType === "Liked Songs" ? (
+        <LikedSongs
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
+      ) : viewType === "Favourite Songs" ? (
+        <FavouriteSongs
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
+      ) :viewType === "podcast" ? (
+         <PodcastSongs
+         resumeSong={resumeSong}
+         pauseSong={pauseSong}
+         audioControl={audioControl}
+         />
+      ): viewType === "Albums" ? (
         <Albums audioControl={audioControl} />
       ) : viewType === "Album" || viewType === "New Release Album" ? (
-        <SingleAlbumTracks resumeSong={resumeSong}
-        pauseSong={pauseSong}
-        audioControl={audioControl}/>
-        
+        <SingleAlbumTracks
+          resumeSong={resumeSong}
+          pauseSong={pauseSong}
+          audioControl={audioControl}
+        />
       ) : viewType === "Category Playlist" ? null : (
         <SongList
           resumeSong={resumeSong}
@@ -71,7 +95,6 @@ const mapStateToProps = state => {
   return {
     headerTitle: state.uiReducer.title,
     viewType: state.songsReducer.viewType
-    //viewTypeAlbum: state.albumTracksReducer.viewType
   };
 };
 

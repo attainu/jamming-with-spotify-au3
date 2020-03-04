@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import "./SideMenu.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
   fetchSongs,
+  fetchFavourites,
   fetchRecentlyPlayed,
   fetchTopTracks,
   updateViewType
@@ -20,13 +21,26 @@ const SideMenu = ({
   fetchFeatured,
   fetchRecentlyPlayed,
   fetchSongs,
+  fetchFavourites,
   fetchAlbums,
   fetchArtists,
   fetchTopTracks,
   token,
   title,
-  artistIds
+  artistIds,
+  unFollowedAlbum,
+  savedAlbum,
+  followedArtist,
+  unfollowedArtist
 }) => {
+  useEffect(() => {
+    fetchAlbums(token);
+  }, [savedAlbum, unFollowedAlbum]);
+
+  useEffect(() => {
+    fetchArtists(token);
+  }, [followedArtist, unfollowedArtist]);
+
   const handleClick = name => {
     updateHeaderTitle(name);
     updateViewType(name);
@@ -49,8 +63,12 @@ const SideMenu = ({
         action: fetchRecentlyPlayed
       },
       {
-        name: "Songs",
+        name: "Liked Songs",
         action: fetchSongs
+      },
+      {
+        name: "Favourites",
+        action: fetchFavourites
       },
       {
         name: "Albums",
@@ -72,6 +90,7 @@ const SideMenu = ({
           }
           onClick={() => {
             if (item.getArtists) item.action(token, artistIds);
+            else if(item.name === "Favourites") item.action()
             else item.action(token);
 
             handleClick(item.name);
@@ -99,11 +118,8 @@ const SideMenu = ({
       >
         YOUR PROFILE
       </h3>
-      <br />
       <h3 className="user-library-header">Your Library</h3>
       {renderSideMenu()}
-      <br />
-      <h3 className="user-library-header">Create Playlist</h3>
     </ul>
   );
 };
@@ -114,6 +130,7 @@ SideMenu.propTypes = {
   fetchFeatured: PropTypes.func,
   fetchRecentlyPlayed: PropTypes.func,
   fetchSongs: PropTypes.func,
+  fetchFavourites: PropTypes.func,
   fetchAlbums: PropTypes.func,
   fetchArtists: PropTypes.func,
   fetchTopTracks: PropTypes.func,
@@ -129,7 +146,11 @@ const mapStateToProps = state => {
     artistIds: state.artistsReducer.artistIds
       ? state.artistsReducer.artistIds
       : "",
-    title: state.uiReducer.title
+    title: state.uiReducer.title,
+    unFollowedAlbum: state.unFollowAlbumReducer.unFollowedAlbum,
+    savedAlbum: state.saveAlbumReducer.savedAlbum,
+    followedArtist: state.followArtistReducer.followedArtist,
+    unfollowedArtist: state.unfollowArtistReducer.unfollowedArtist
   };
 };
 
@@ -139,6 +160,7 @@ const mapDispatchToProps = dispatch => {
       fetchRecentlyPlayed,
       fetchSongs,
       fetchAlbums,
+      fetchFavourites,
       fetchArtists,
       fetchTopTracks,
       fetchFeatured,

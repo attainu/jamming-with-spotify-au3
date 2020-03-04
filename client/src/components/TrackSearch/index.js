@@ -1,24 +1,24 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./TrackSearch.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { searchSongs } from "../../redux/actions/songActions";
-// import SongList from '../SongList'
+import { updateHeaderTitle } from "../../redux/actions/uiActions";
 
-const TrackSearch = props => {
+const TrackSearch = ({ token, searchSongs, updateHeaderTitle }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const updateSearchTerm = e => {
     setSearchTerm(e.target.value);
   };
 
-  var accessToken = props.token;
+  var accessToken = token;
   return (
     <div className="track-search-container">
       <form
         onSubmit={() => {
-          props.searchSongs(searchTerm, accessToken);
+          searchSongs(searchTerm, accessToken);
         }}
       >
         <input
@@ -29,14 +29,13 @@ const TrackSearch = props => {
         <button
           onClick={e => {
             e.preventDefault();
-            props.searchSongs(searchTerm, accessToken);
+            updateHeaderTitle("Search Results...");
+            searchSongs(searchTerm, accessToken);
           }}
         >
           <i className="fa fa-search search" aria-hidden="true" />
         </button>
       </form>
-
-      {/* <SongList/> */}
     </div>
   );
 };
@@ -48,14 +47,16 @@ TrackSearch.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    token: state.tokenReducer.token
+    token: state.tokenReducer.token,
+    headerTitle: state.uiReducer.title
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      searchSongs
+      searchSongs,
+      updateHeaderTitle
     },
     dispatch
   );

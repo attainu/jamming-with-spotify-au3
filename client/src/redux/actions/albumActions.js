@@ -17,22 +17,41 @@ export const fetchAlbumsPending = () => {
   };
 };
 
-export const browseAlbumPending = () => {
+export const saveAlbumPending = () => {
   return {
-    type: "BROWSE_ALBUM_PENDING"
+    type: "SAVE_ALBUM_PENDING"
   };
 };
 
-export const browseAlbumError = () => {
+export const saveAlbumError = () => {
   return {
-    type: "BROWSE_ALBUM_ERROR"
+    type: "SAVE_ALBUM_ERROR"
   };
 };
 
-export const browseAlbumSuccess = songs => {
+export const saveAlbumSuccess = savedAlbum => {
   return {
-    type: "BROWSE_ALBUM_SUCCESS",
-    songs
+    type: "SAVE_ALBUM_SUCCESS",
+    savedAlbum
+  };
+};
+
+export const unFollowAlbumPending = () => {
+  return {
+    type: "UNFOLLOW_ALBUM_PENDING"
+  };
+};
+
+export const unFollowAlbumError = () => {
+  return {
+    type: "UNFOLLOW_ALBUM_ERROR"
+  };
+};
+
+export const unFollowAlbumSuccess = unFollowedAlbum => {
+  return {
+    type: "UNFOLLOW_ALBUM_SUCCESS",
+    unFollowedAlbum
   };
 };
 
@@ -40,6 +59,31 @@ export const addAlbum = album => {
   return {
     type: "ADD_ALBUM",
     album
+  };
+};
+
+export const searchAlbumPending = () => {
+  return {
+    type: "SEARCH_ALBUM_PENDING"
+  };
+};
+
+export const searchAlbumSuccess = albums => {
+  return {
+    type: "SEARCH_ALBUM_SUCCESS",
+    albums
+  };
+};
+
+export const searchAlbumError = () => {
+  return {
+    type: "SEARCH_ALBUM_ERROR"
+  };
+};
+
+export const clearAlbumSearch = () => {
+  return {
+    type: "CLEAR_ALBUM_SEARCH"
   };
 };
 
@@ -118,31 +162,88 @@ export const fetchAlbumTracks = (accessToken, albumId) => {
   };
 };
 
-export const browseAlbum = (albumId, accessToken) => {
+export const saveAlbum = (albumId, accessToken) => {
   return dispatch => {
     const request = new Request(
-      `https://api.spotify.com/v1/albums/${albumId}/tracks`,
+      `https://api.spotify.com/v1/me/albums?ids=${albumId}`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        }),
+        method: "PUT"
+      }
+    );
+    dispatch(saveAlbumPending());
+
+    fetch(request)
+      // .then(res => {
+      //   if (res.statusText === "Unauthorized") {
+      //     window.location.href = "./";
+      //   }
+      //   return res.json();
+      // })
+      .then(res => {
+        console.log("Save Album", res);
+        dispatch(saveAlbumSuccess(res));
+      })
+      .catch(err => {
+        dispatch(saveAlbumError(err));
+      });
+  };
+};
+
+export const unFollowAlbum = (albumId, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/me/albums?ids=${albumId}`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        }),
+        method: "DELETE"
+      }
+    );
+    dispatch(unFollowAlbumPending());
+
+    fetch(request)
+      .then(res => {
+        console.log("Unfollow Album", res);
+        dispatch(unFollowAlbumSuccess(res));
+      })
+      .catch(err => {
+        dispatch(unFollowAlbumError(err));
+      });
+  };
+};
+
+export const searchAlbum = (albumName, accessToken) => {
+  return dispatch => {
+    const request = new Request(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        albumName
+      )}&type=album`,
+
       {
         headers: new Headers({
           Authorization: "Bearer " + accessToken
         })
       }
     );
-    dispatch(browseAlbumPending());
+
+    dispatch(searchAlbumPending());
 
     fetch(request)
       .then(res => {
-        if (res.statusText === "Unauthorized") {
-          window.location.href = "./";
-        }
         return res.json();
       })
       .then(res => {
-        console.log("Browse Album", res);
-        dispatch(browseAlbumSuccess(res.items));
+        console.log("Searched Album:", res.albums.items);
+        dispatch(searchAlbumSuccess(res.albums.items));
       })
       .catch(err => {
-        dispatch(browseAlbumError(err));
+        dispatch(searchAlbumError(err));
       });
   };
 };
