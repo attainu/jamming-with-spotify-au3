@@ -13,7 +13,6 @@ import "./Albums.css";
 
 const Albums = props => {
   const removeAlbum = albumId => {
-    console.log(albumId);
     props.unFollowAlbum(albumId, props.token);
   };
 

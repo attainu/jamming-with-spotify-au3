@@ -137,3 +137,23 @@ module.exports.delete = (req, res) => {
     res.status(200).send('ok');
   });
 };
+
+// Update a podcast by Id
+module.exports.updatePodcast = (req,res) => {
+  console.log(req.body)
+  podcastModel.update(
+   { podcastName : req.body.name,
+    description : req.body.description,
+   },
+    {where: {
+      id: req.params.podcastId
+    }
+  })
+  .then(() => {
+    res.status(200).send('ok')
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).end()
+  })
+}

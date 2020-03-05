@@ -1,9 +1,7 @@
 import React from "react";
-// import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
-// import CreatePodcast from "../../CreatePodcast";
 import {
     fetchPodcastMenu,
     deletePodcast,
@@ -24,8 +22,6 @@ const DeletePodcastModal = ({
     deletePodcast(podcastId);
     onHide();
   };
-
-  console.log(podcastId);
 
   return (
     <Modal show={show} onHide={onHide} style={{ color: "black", opacity: 0.9 }}>

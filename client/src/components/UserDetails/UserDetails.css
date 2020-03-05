@@ -1,7 +1,5 @@
 .user-details-container {
   display: flex;
-  /* justify-content: flex-end; */
-  /* padding: 10px 0; */
   margin: 10px;
   background: rgb(24, 24, 24);
 }

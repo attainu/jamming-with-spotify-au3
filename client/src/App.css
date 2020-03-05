@@ -49,3 +49,14 @@ body {
   top: 50px;
   padding-bottom: 100px;
 }
+
+@media screen and (max-width: 500px) {
+  .left-side-section {
+    display: none;
+  }
+  .main-section {
+    position: relative;
+    left: 0px;
+    padding: 10px;
+  }
+}

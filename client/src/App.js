@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { fetchUser } from "./redux/actions/userActions";
@@ -17,58 +17,19 @@ import UserPlaylists from "./components/UserPlaylists";
 import UserPodcasts from "./components/UserPodcasts";
 import CreatePlaylist from "./components/CreatePlaylist";
 import Footer from "./components/Footer";
-// import ArtWork from "./components/ArtWork";
 import "./App.css";
 import { connect } from "react-redux";
 import CreatePodcast from "./components/CreatePodcast";
 import SearchView from "./components/SearchView";
-//import { Redirect } from "react-router-dom";
 
 class App extends Component {
-  // const App = ({
-  //   token,
-  //   volume,
-  //   setToken,
-  //   fetchUser,
-  //   playSong,
-  //   stopSong,
-  //   pauseSong,
-  //   resumeSong
-  // }) => {
   static audio;
 
-  // useEffect(() => {
-  //   console.log(window.location.pathname);
-
-  //   if (!window.location.pathname.includes("access_token") && !token)
-  //     window.location.href = "http://localhost:8888/login";
-  //   //<Redirect to="http://localhost:8888/login" />;
-  //   else {
-  //     var access_token = window.location.pathname.split("=")[1].split("&")[0];
-  //     console.log(access_token);
-  //     if (access_token) {
-  //       setToken(access_token);
-  //     }
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (token) fetchUser(token);
-  //     if (audio !== undefined) {
-  //       audio.volume = volume / 100;
-  //     }
-  //   }, 1000);
-  // }, [token]);
   componentDidMount() {
-    // console.log(window.location.pathname);
-
     if (!window.location.pathname.includes("access_token") && !this.props.token)
       window.location.href = "http://localhost:8888/login";
-    //<Redirect to="http://localhost:8888/login" />;
     else {
       var access_token = window.location.pathname.split("=")[1].split("&")[0];
-      // console.log(access_token);
       if (access_token) {
         this.props.setToken(access_token);
       }
@@ -108,22 +69,12 @@ class App extends Component {
 
   audioControl = song => {
     const { playSong, stopSong } = this.props;
-    console.log("Play Song", song);
+
     if (this.audio === undefined) {
       song.track ? playSong(song.track) : playSong(song);
       this.audio = song.track
         ? new Audio(song.track.preview_url)
         : new Audio(song.preview_url);
-      // song
-      //   ? playSong(song)
-      //   : song.track === undefined
-      //   ? playSong(null)
-      //   : playSong(song.track);
-      // this.audio = song
-      //   ? new Audio(song.preview_url)
-      //   : song.track
-      //   ? new Audio(song.track.preview_url)
-      //   : null;
       this.audio.play();
     } else {
       stopSong();
@@ -140,14 +91,12 @@ class App extends Component {
     return (
       <div className="App">
         <div className="app-container">
-          {/* <button className="add-button btn btn-sm btn-light">Install App &nbsp; <i className="fa fa-arrow-down"></i> </button> */}
           <div className="left-side-section">
             <SideMenu />
             <CreatePlaylist />
             <UserPlaylists />
             <CreatePodcast />
             <UserPodcasts/>
-            {/* <ArtWork /> */}
           </div>
           <div className="main-section">
             <Header />

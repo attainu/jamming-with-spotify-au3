@@ -43,3 +43,19 @@ input[type="range"]::-moz-range-track {
   cursor: pointer;
   border-radius: 50%;
 }
+
+@media screen and (max-width: 500px) {
+  .volume-container {
+    top: 55px;
+    left: 145px;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .volume-container {
+    top: 55px;
+    left: 125px;
+    justify-content: center;
+  }
+}

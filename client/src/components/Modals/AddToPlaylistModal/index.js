@@ -15,8 +15,6 @@ const AddToPlaylistModal = ({
   token,
   playlistMenu,
   saveTrackToPlaylist,
-  fetchPlaylistsMenu,
-  fetchPlaylistSongs,
   trackURI
 }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
@@ -26,18 +24,15 @@ const AddToPlaylistModal = ({
   );
 
   const handleChange = e => {
-    console.log(e.target.value);
     setSelectedPlaylist(e.target.value);
   };
 
   const handleClick = e => {
     e.preventDefault();
-    console.log(selectedPlaylist);
     let playlist = playlistMenu.filter(
       playlist => playlist.name === selectedPlaylist
     )[0];
     console.log("Filtered playlist", playlist);
-    console.log(playlist.id, trackURI, token);
     saveTrackToPlaylist(playlist.id, trackURI, token);
     onHide();
   };

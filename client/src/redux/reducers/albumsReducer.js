@@ -24,7 +24,6 @@ export const albumsReducer = (state = {}, action) => {
     case "ADD_ALBUM":
       return {
         ...state,
-        //albums: action.album
         releaseAlbum: action.album
       };
 

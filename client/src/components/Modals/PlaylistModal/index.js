@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
@@ -39,7 +38,6 @@ const PlaylistModal = ({ onHide, show, userId, token, createPlaylist }) => {
               className="form-control"
               name="playlist-name"
               value={newPlaylistName}
-              //onKeyUp={keyChange}
               onChange={handleChange}
             />
           </div>

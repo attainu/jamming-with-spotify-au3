@@ -7,7 +7,8 @@ import {
   searchSongs,
   fetchSongs,
   fetchFavourites,
-  addFavourites
+  addFavourites,
+  removeFavourite
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
@@ -32,6 +33,7 @@ const SongList = ({
   favouriteSongs,
   fetchFavourites,
   addFavourites,
+  removeFavourite,
   viewType,
   fetchSongs,
   searchSongs,
@@ -41,7 +43,6 @@ const SongList = ({
   pauseSong,
   audioControl,
   songId,
-  songAddedId,
   removeTrackFromPlaylist,
   addSongToLibrary,
   removeSongFromLibrary,
@@ -52,26 +53,6 @@ const SongList = ({
 }) => {
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (
-  //     nextProps.token !== "" &&
-  //     !nextProps.fetchSongsError &&
-  //     nextProps.fetchSongsPending &&
-  //     nextProps.viewType === "songs"
-  //   ) {
-  //     this.props.fetchSongs(nextProps.token);
-  //   }
-  // if (
-  //   nextProps.token !== "" &&
-  //   !nextProps.searchSongsError &&
-  //   nextProps.searchSongsPending &&
-  //   nextProps.viewType === "songs"
-  // )
-  //   else {
-  //     this.props.searchSongs(nextProps.token);
-  //   }
-  // }
 
   useEffect(() => {
     if (
@@ -93,9 +74,6 @@ const SongList = ({
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
         .children[3].children[0].innerText;
-    console.log(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
     setTrackURI(
       songs.filter(song => song.track.name === trackName)[0].track.uri
     );
@@ -123,9 +101,6 @@ const SongList = ({
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
         .children[3].children[0].innerText;
-    console.log(
-      songs.filter(song => song.track.name === trackName)[0].track.uri
-    );
     setTrackURI(
       songs.filter(song => song.track.name === trackName)[0].track.uri
     );
@@ -134,29 +109,33 @@ const SongList = ({
       playlist => playlist.name === headerTitle
     )[0].id;
 
-    console.log(playlistID);
-
     removeTrackFromPlaylist(playlistID, trackURI, token);
   }
 
-  const addToFavSongs = (e) => {
+  function toggleFav(e, songID) {
     let selectedTrackId = e.target.id
     let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
-    
-    e.target.className = "fa fa-heart"
-    e.target.style.color = "red"
-    
+ 
+    if (e.target.classList.contains("fa-heart")) {
+      e.target.className = "fa fa-heart-o";
+      removeFavourite(selectedTrack.id);
+    } 
+    else if (e.target.classList.contains("fa-heart-o")) {
       let data = {
-      trackName: selectedTrack.name,
-      trackId: selectedTrack.id,
-      albumName: selectedTrack.album.name,
-      artistName: selectedTrack.artists[0].name,
-      albumReleaseDate : selectedTrack.album.release_date,
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
-      userName: userName
+        trackName: selectedTrack.name,
+        trackId: selectedTrack.id,
+        albumName: selectedTrack.album.name,
+        artistName: selectedTrack.artists[0].name,
+        albumReleaseDate : selectedTrack.album.release_date,
+        duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+        userName: userName
+      }
+
+      e.target.className = "fa fa-heart"
+      e.target.style.color = "red"
+      addFavourites(data);
     }
-    addFavourites(data)
- }
+  }
 
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
@@ -165,7 +144,6 @@ const SongList = ({
   };
 
   function toggleButton(e, token, songID) {
-    console.log(e.target);
     if (e.target.classList.contains("fa-check")) {
       e.target.className = "fa fa-plus";
       removeSongFromLibrary(token, songID);
@@ -217,13 +195,15 @@ const SongList = ({
                         className="fa fa-heart"
                         aria-hidden="true"
                         style={{color: "red"}}
+                        id = {song.track.id}
+                        onClick={e => toggleFav(e, songID)}
                       />
                     ) : (
                       <i
                         className="fa fa-heart-o"
                         aria-hidden="true"
                         id = {song.track.id}
-                        onClick={addToFavSongs}
+                        onClick={e => toggleFav(e, songID)}
                       />
                     )}
 
@@ -293,7 +273,45 @@ const SongList = ({
                       </Dropdown.Item>
                     </DropdownButton>
                   </div>
-                ) : null
+                ) : (
+                  <>
+                    <div className="add-song">
+                      <DropdownButton
+                        id="dropdown-button-drop-right"
+                        title=""
+                        drop="right"
+                        variant="secondary"
+                        key="right"
+                      >
+                        <Dropdown.Item
+                          href="#"
+                          className="options-dropdown"
+                          onClick={openModal}
+                        >
+                          + &nbsp; Spotify Playlist
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          href="#"
+                          className="options-dropdown"
+                          onClick={openPodcastModal}
+                          id={song.track.id}>
+                          + &nbsp; Podcast
+                        </Dropdown.Item>
+                      </DropdownButton>
+                    </div>
+                    <AddToPlaylistModal
+                    onHide={addModalClose}
+                    show={addModalShow}
+                    trackURI={trackURI}
+                  />
+  
+                  <AddToPodcastModal
+                    onHide={addPodcastModalClose}
+                    show={addPodcastModalShow}
+                    trackDetails = {trackDetails}
+                  />
+                  </>
+                )
               ) : (
                 <>
                   <div className="add-song">
@@ -392,7 +410,6 @@ SongList.propTypes = {
   browseAlbumPending: PropTypes.bool,
   browseAlbumError: PropTypes.bool,
   playlistMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-  //fetchPlaylistSongs: PropTypes.func
   fetchSongs: PropTypes.func,
   audioControl: PropTypes.func,
   songPaused: PropTypes.bool,
@@ -423,8 +440,6 @@ const mapStateToProps = state => {
     browseAlbumPending: state.songsReducer.browseAlbumPending,
     browseAlbumError: state.songsReducer.browseAlbumError,
     playlistMenu: state.playlistReducer.playlistMenu,
-    //releaseAlbum: state.albumReducer.releaseAlbum,
-    //fetchPlaylistSongs: state.songsReducer.fetchPlaylistSongs,
     songPlaying: state.songsReducer.songPlaying,
     songPaused: state.songsReducer.songPaused,
     songId: state.songsReducer.songId,
@@ -439,6 +454,7 @@ const mapDispatchToProps = dispatch => {
     {
       fetchSongs,
       addFavourites,
+      removeFavourite,
       addSongToLibrary,
       fetchFavourites,
       fetchPlaylistsMenu,

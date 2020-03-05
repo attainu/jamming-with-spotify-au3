@@ -8,7 +8,6 @@ import SingleArtistTracks from "../SingleArtistTracks";
 import SingleAlbumTracks from "../SingleAlbumTracks";
 import Profile from "../Profile";
 import BrowseView from "../BrowseView";
-import "./MainView.css";
 import LikedSongs from "../LikedSongs";
 import FavouriteSongs from '../FavouriteSongs'
 import PodcastSongs from '../PodcastSongs'

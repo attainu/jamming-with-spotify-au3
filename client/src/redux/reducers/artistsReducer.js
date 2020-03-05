@@ -1,7 +1,5 @@
 const defaultState = {
   artistIds: ""
-  //artistIds: "0OdUWJ0sBjDrqHygGUXeCF,1vCWHaC5f2uS3yhpwWbIA6"
-  //artistIds: "1vCWHaC5f2uS3yhpwWbIA6"
 };
 
 export const artistsReducer = (state = defaultState, action) => {

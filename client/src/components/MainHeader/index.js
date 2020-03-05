@@ -11,8 +11,7 @@ import {
 import {
   fetchPlaylistSongs,
   addPlaylistItem,
-  fetchPlaylistsMenu,
-  unFollowPlaylist
+  fetchPlaylistsMenu
 } from "../../redux/actions/playlistActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import { updateViewType } from "../../redux/actions/songActions";
@@ -41,7 +40,6 @@ const MainHeader = ({
   podcasts,
   categoryPlaylists,
   token,
-  userId,
   userName,
   artists,
   releaseAlbum,
@@ -68,14 +66,12 @@ const MainHeader = ({
     currentPlaylist = playlists.filter(playlist => {
       return playlist.name === headerTitle;
     })[0];
-    console.log("Current Playlist", currentPlaylist);
   }
 
   if (viewType === "podcast") {
     currentPodcast = podcasts.filter(podcast => {
       return podcast.podcastName === headerTitle;
     })[0];
-    console.log("Current Podcast", currentPodcast);
   }
 
   if (viewType === "Album") {
@@ -88,24 +84,21 @@ const MainHeader = ({
       : searchAlbumList.filter(item => {
           return item.name === headerTitle;
         })[0];
-    console.log(currentAlbum);
   }
 
   if (viewType === "New Release Album") {
     currentAlbum = { ...releaseAlbum };
-    console.log(currentAlbum);
   }
 
   if (viewType === "Artist" && artists.length > 0) {
     currentArtist = artists.filter(artist => {
       return artist.name === headerTitle;
     })[0];
-    console.log(currentArtist);
   }
    
   return (
     <div className="section-title">
-      {viewType === "playlist" && (
+      {viewType === "playlist" && currentPlaylist && (
         <div className="playlist-title-container">
           <div className="playlist-image-container">
             <img alt="playlistImg"
@@ -172,8 +165,8 @@ const MainHeader = ({
               <span className="lighter-text">
                 {userName}
               </span>{" "}
-              - {currentPodcast.tracks ? currentPodcast.tracks.length : 0}{" "}
-              {currentPodcast.tracks.length > 1 ? "songs" : "song"}
+              - {currentPodcast.tracks!== null ? currentPodcast.tracks.length : 0}{" "}
+              {currentPodcast.tracks!== null ? currentPodcast.tracks.length > 1 ? "songs" : "song" : " "}
             </p>
             <button
               onClick={!songPaused ? pauseSong : resumeSong}
@@ -189,7 +182,6 @@ const MainHeader = ({
         ? categoryPlaylists.map((currentPlaylist, index) => {
             const getPlaylistSongs = () => {
               addPlaylistItem(currentPlaylist);
-              console.log(currentPlaylist.owner.id, currentPlaylist.id, token);
               fetchPlaylistSongs(
                 currentPlaylist.owner.id,
                 currentPlaylist.id,
@@ -229,10 +221,6 @@ const MainHeader = ({
                       </span>{" "}
                       - {currentPlaylist.tracks.total} songs
                     </p>
-                    <button
-                      onClick={!songPaused ? pauseSong : resumeSong}
-                      className="main-pause-play-btn"
-                    ></button>
                   </div>
                 </div>
                 <br />

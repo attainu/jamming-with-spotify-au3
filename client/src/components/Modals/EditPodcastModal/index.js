@@ -2,55 +2,60 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
-import {createPodcast, fetchPodcastMenu} from '../../../redux/actions/podcastActions'
-import {fetchUser} from '../../../redux/actions/userActions'
+import { editPodcast } from "../../../redux/actions/podcastActions";
 
-const PodcastModal = ({ onHide, show, createPodcast, userName }) => {
-  const [newPodcastName, setNewPodcastName] = useState("");
-  const [newPodcastDesc, setNewPodcastDesc] = useState("");
+const EditPodcastModal = ({
+  onHide,
+  show,
+  podcastId,
+  podcastName,
+  podcastDesc,
+  editPodcast
+}) => {
+  const [newPodcastName, setNewPodcastName] = useState(podcastName);
+  const [newPodcastDesc, setNewPodcastDesc] = useState(podcastDesc);
 
   const handleChange = e => {
-    if (e.target.name === "name") setNewPodcastName(e.target.value);
-    if (e.target.name === "description") setNewPodcastDesc(e.target.value);
+    if (e.target.nodeName === "INPUT") setNewPodcastName(e.target.value);
+    if (e.target.nodeName === "TEXTAREA") setNewPodcastDesc(e.target.value);
   };
 
   const handleClick = e => {
     e.preventDefault();
-    let jsonBody = {
+    let jsonBody = JSON.stringify({
       name: newPodcastName,
       description: newPodcastDesc,
-      createdBy: userName,
       public: false
-    }
-    createPodcast(jsonBody);
+    });
+    editPodcast(podcastId, jsonBody);
     onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide} style={{ color: "black", opacity: 0.9 }}>
       <Modal.Header closeButton>
-        <Modal.Title>NEW PODCAST</Modal.Title>
+        <Modal.Title>EDIT PODCAST</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form>
           <div className="form-group">
-            <label htmlFor="podcast-name">Podcast Name</label>
+            <label htmlFor="playlist-name">Podcast Name</label>
             <input
               type="text"
               className="form-control"
-              name="name"
+              name="playlist-name"
               value={newPodcastName}
               onChange={handleChange}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="podcast-desc">Description</label>
-            <input
-              type="text"
+            <label htmlFor="playlist-desc">Description</label>
+            <textarea
               className="form-control"
-              name="description"
+              name="playlist-desc"
               value={newPodcastDesc}
               onChange={handleChange}
+              maxLength="300"
             />
           </div>
         </form>
@@ -71,20 +76,19 @@ const PodcastModal = ({ onHide, show, createPodcast, userName }) => {
 
 const mapStateToProps = state => {
   return {
-    newPodcastData: state.createPodcastReducer.newPodcastData,
-    userName : state.userReducer.user ? state.userReducer.user.display_name : "",
+    userId: state.userReducer.user ? state.userReducer.user.id : "",
+    token: state.tokenReducer.token ? state.tokenReducer.token : "",
+    newPodcastData: state.createPodcastReducer.newPodcastData
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      createPodcast,
-      fetchPodcastMenu,
-      fetchUser
+      editPodcast
     },
     dispatch
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PodcastModal);
+export default connect(mapStateToProps, mapDispatchToProps)(EditPodcastModal);
