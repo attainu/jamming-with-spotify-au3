@@ -215,11 +215,9 @@ export const songsReducer = (state = defaultState, action) => {
     case "SAVE_PLAYLIST_TRACK_SUCCESS":
       return {
         ...state,
-        //songs: action.songs,
         addedTrack: action.addedTrack,
         savePlaylistTrackPending: false,
         savePlaylistTrackError: false
-        //viewType: "songs"
       };
 
     case "SAVE_PLAYLIST_TRACK_ERROR":
@@ -333,6 +331,27 @@ export const songsReducer = (state = defaultState, action) => {
         ...state,
         fetchFavouritesError: true,
         fetchFavouritesPending: false
+      };
+
+    case "REMOVE_FAVOURITE_PENDING":
+      return {
+        ...state,
+        removeFavouritePending: true
+      };
+
+    case "REMOVE_FAVOURITE_SUCCESS":
+      return {
+        ...state,
+        delRes: action.delRes,
+        removeFavouriteError: false,
+        removeFavouritePending: false,
+      };
+
+    case "REMOVE_FAVOURITE_ERROR":
+      return {
+        ...state,
+        removeFavouriteError: true,
+        removeFavouritePending: false
       };
 
     default:

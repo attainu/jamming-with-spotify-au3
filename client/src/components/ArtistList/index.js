@@ -24,7 +24,6 @@ const ArtistList = ({
       };
 
       const handleClick = (e, artistId) => {
-        console.log(e.target.innerText, artistId);
         if (e.target.innerText === "UNFOLLOW") {
           unfollowArtist(artistId, token);
         }

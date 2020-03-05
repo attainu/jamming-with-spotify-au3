@@ -10,24 +10,37 @@ import {
 import {fetchUser} from '../../redux/actions/userActions'
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import DeletePodcastModal from "../Modals/DeletePodcast";
+import EditPodcastModal from "../Modals/EditPodcastModal";
 import "../UserPlaylists/UserPlaylists.css";
 
-const UserPodcasts = (props) => {  
+const UserPodcasts = ({
+  podcastMenu,
+  fetchPodcastMenu,
+  userName,
+  newPodcastData,
+  delResponse,
+  updateRes,
+  fetchPodcastSongs,
+  updateHeaderTitle,
+  title,
+
+}) => {  
 
   const [addPodcastModalShow, setPodcastModal] = useState(false);
+  const [editModalShow, setEditModal] = useState(false);
   const [podcastName, setpodcastName] = useState("");
   const [podcastId, setpodcastId] = useState("");
+  const [podcastDesc, setPodcastDesc] = useState("");
 
   const openModal = e => {
     setPodcastModal(true);
-    setpodcastName(
-      e.target.parentElement.parentElement.previousSibling.innerText
+    let podcastname = e.target.parentElement.parentElement.previousSibling.previousSibling.innerText.trim();
+    let podcastid = e.target.parentElement.parentElement.previousSibling.previousSibling.getAttribute(
+      "data-key"
     );
-    setpodcastId(
-      e.target.parentElement.parentElement.previousSibling.getAttribute(
-        "data-key"
-      )
-    );
+
+    setpodcastName(podcastname);
+    setpodcastId(podcastid);
 
     setTimeout(() => console.log(podcastId, podcastName));
   };
@@ -36,18 +49,36 @@ const UserPodcasts = (props) => {
     setPodcastModal(false);
   };
 
+  const openEditModal = e => {
+    setEditModal(true);
+    let podcastname = e.target.parentElement.parentElement.previousSibling.innerText.trim();
+    setpodcastName(podcastname);
+
+    let podcastdesc = podcastMenu.filter(
+      podcast => podcast.podcastName === podcastname
+    )[0].description
+    setPodcastDesc(podcastdesc);
+
+    let podcastid = e.target.parentElement.parentElement.previousSibling.getAttribute(
+      "data-key"
+    );
+    setpodcastId(podcastid);
+  };
+
+  let editModalClose = () => {
+    setEditModal(false);
+  };
 
   useEffect(() => {
-   props.fetchPodcastMenu(props.userName)
-   console.log(props)
-  }, [props.userName,props.newPodcastData, props.delResponse])
+   fetchPodcastMenu(userName)
+  }, [userName,newPodcastData, delResponse, updateRes])
 
   const renderPodcasts = () => {
-    return props.podcastMenu.map(podcast => {
+    return podcastMenu.map(podcast => {
       const getPodcastSongs = () => {
-        props.fetchPodcastSongs(podcast.id);
-        props.fetchPodcastMenu(props.userName)
-        props.updateHeaderTitle(podcast.podcastName);
+        fetchPodcastSongs(podcast.id);
+        fetchPodcastMenu(userName)
+        updateHeaderTitle(podcast.podcastName);
       };
 
       return (
@@ -55,7 +86,7 @@ const UserPodcasts = (props) => {
         <li
           onClick={getPodcastSongs}
           className={
-            props.title === podcast.podcastName
+            title === podcast.podcastName
               ? "active side-menu-item"
               : "side-menu-item"
           }
@@ -65,17 +96,33 @@ const UserPodcasts = (props) => {
           {podcast.podcastName}
         </li>
           {
-            <div className="delete-btn">
-              <span>
-                <i className="fa fa-times-circle" onClick={openModal}></i>
-              </span>
-              <DeletePodcastModal
-                onHide={addPodcastModalClose}
-                show={addPodcastModalShow}
-                podcastId={podcastId}
-                podcastName={podcastName}
-              />
-            </div>
+            <>
+              <div className="edit-btn">
+                <span>
+                  <i className="fa fa-edit" onClick={openEditModal}></i>
+                </span>
+                {podcastId && podcastName && podcastDesc && (
+                  <EditPodcastModal
+                    onHide={editModalClose}
+                    show={editModalShow}
+                    podcastId={podcastId}
+                    podcastDesc={podcastDesc}
+                    podcastName={podcastName}
+                  />
+                )}
+              </div>
+              <div className="delete-btn">
+                  <span>
+                    <i className="fa fa-minus-circle" onClick={openModal}></i>
+                  </span>
+                    <DeletePodcastModal
+                    onHide={addPodcastModalClose}
+                    show={addPodcastModalShow}
+                    podcastId={podcastId}
+                    podcastName={podcastName}
+                  />
+                </div>
+            </>
           }
           </div>
       );
@@ -85,14 +132,13 @@ const UserPodcasts = (props) => {
     return (
       <div className="user-playlist-container">
         <h3 className="user-playlist-header">Podcasts</h3>
-        {props.podcastMenu && renderPodcasts()}
+        {podcastMenu && renderPodcasts()}
       </div>
     );
   
 }
 
 UserPodcasts.propTypes = {
-  // userId: PropTypes.string,
   title: PropTypes.string,
   podcastMenu: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   fetchPodcastMenu: PropTypes.func,
@@ -108,7 +154,8 @@ const mapStateToProps = state => {
     title: state.uiReducer.title,
     newPodcastData: state.createPodcastReducer.newPodcastData,
     delResponse : state.deletePodcastReducer.delResponse,
-    userName : state.userReducer.user ? state.userReducer.user.display_name : ""
+    userName : state.userReducer.user ? state.userReducer.user.display_name : "",
+    updateRes : state.editPodcastReducer.updatedPodcastResponse
   };
 };
 

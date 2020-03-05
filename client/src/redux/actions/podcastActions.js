@@ -37,13 +37,11 @@ export const createPodcast =  (podcastData) => {
             return res;
           }
           dispatch(createPodcastError("Request failed!"));
-          //throw new Error("Request failed!");
         })
         .then(res => {
           console.log("podcast successfully created.", res);
           dispatch(createPodcastSuccess(res));
         })
-        // .then(res => dispatch(fetchPlaylistsMenu(userId, accessToken)))
         .catch(err => {
           dispatch(createPodcastError(err));
         });
@@ -262,6 +260,54 @@ export const deleteTrackFromPodcast = (podcastId, trackId) => {
       })
       .catch(err => {
         dispatch(deleteTrackFromPodcastError(err));
+      });
+  };
+};
+
+export const editPodcastPending = () => {
+  return {
+    type: "EDIT_PODCAST_PENDING"
+  };
+};
+
+export const editPodcastSuccess = updateRes => {
+  return {
+    type: "EDIT_PODCAST_SUCCESS",
+    updateRes
+  };
+};
+
+export const editPodcastError = () => {
+  return {
+    type: "EDIT_PODCAST_ERROR"
+  };
+};
+
+export const editPodcast = (podcastId, data) => {
+  return dispatch => {
+    const request = new Request(
+      `http://localhost:8888/${podcastId}`,
+      {
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        method: "PUT",
+        body: data
+      }
+    );
+
+    dispatch(editPodcastPending());
+
+    fetch(request)
+      .then(res => {
+        return res;
+      })
+      .then(res => {
+        console.log("podcast successfully updated.", res);
+        dispatch(editPodcastSuccess(res));
+      })
+      .catch(err => {
+        dispatch(editPodcastError(err));
       });
   };
 };

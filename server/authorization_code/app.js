@@ -113,14 +113,6 @@ app.get("/callback", function(req, res) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
 
-        if (typeof localStorage === "undefined" || localStorage === null) {
-          var LocalStorage = require("node-localstorage").LocalStorage;
-          localStorage = new LocalStorage("./scratch");
-        }
-
-        localStorage.setItem("token", access_token);
-        console.log(localStorage.getItem("token"));
-
         var options = {
           url: "https://api.spotify.com/v1/me",
           headers: { Authorization: "Bearer " + access_token },

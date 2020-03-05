@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -8,35 +8,9 @@ import defaultImage from "./defaultImage.jpg";
 import "./SongControls.css";
 
 class SongControls extends Component {
-  // const SongControls = ({
-  //   songName,
-  //   artistName,
-  //   albumImage,
-  //   songPaused,
-  //   songPlaying,
-  //   timeElapsed,
-  //   songs,
-  //   songDetails,
-  //   stopSong,
-  //   pauseSong,
-  //   resumeSong,
-  //   audioControl
-  // }) => {
   state = {
     timeElapsed: this.props.timeElapsed
   };
-
-  // const [timeElapsedLocal, setTimeElapsed] = useState(timeElapsed);
-  // const [intervalIdLocal, setIntervalId] = useState();
-
-  // useEffect(() => {
-  //   if (!songPlaying) clearInterval(intervalIdLocal);
-  //   if (songPlaying && timeElapsed === 0) {
-  //     clearInterval(intervalIdLocal);
-  //     calculateTime();
-  //   }
-  //   setTimeElapsed(timeElapsed);
-  // }, [songPlaying, timeElapsed]);
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.songPlaying) {
@@ -63,8 +37,6 @@ class SongControls extends Component {
       }
     }, 1000);
 
-    //setIntervalId(intervalId);
-
     this.setState({
       intervalId: intervalId
     });
@@ -85,8 +57,6 @@ class SongControls extends Component {
     } else {
       songs = this.props.songs;
     }
-    //const { songs, songDetails } = this.props;
-    console.log(songDetails);
     const currentIndex = songs
       .map((song, index) => {
         if (song.track === songDetails || song === songDetails) {
@@ -110,7 +80,6 @@ class SongControls extends Component {
       this.props.viewType === "New Release Album"
     ) {
       songs = this.props.albumSongs;
-      console.log(songs);
     } else if(this.props.viewType === "Favourite Songs"){
       songs = this.props.favouriteSongs
     } else {
@@ -123,7 +92,6 @@ class SongControls extends Component {
   };
 
   prevSong = () => {
-    //const { songs, audioControl } = this.props;
     let songs,
       audioControl = this.props.audioControl;
     if (this.props.viewType === "Liked Songs") {
@@ -186,10 +154,6 @@ class SongControls extends Component {
 
         <div className="song-progress-container">
           <p className="timer-start">
-            {/* {moment()
-              .minutes(0)
-              .second(this.state.timeElapsed)
-              .format("m:ss")} */}
           </p>
           <div className="song-progress">
             <div
@@ -218,7 +182,7 @@ class SongControls extends Component {
                 : "song-image"
             }
             src={this.props.albumImage}
-            alt="song-image"
+            alt="song"
           />
         </div>
       </div>
@@ -258,9 +222,6 @@ const mapStateToProps = state => {
           : state.songsReducer.songDetails.artists[0].name
         :  state.songsReducer.songDetails.artistName 
       : "",
-    // state.songsReducer.songDetails.track
-    //   ? state.songsReducer.songDetails.track.artists[0].name
-    //   : state.songsReducer.songDetails.artists[0].name,
     albumImage: state.songsReducer.songDetails
       ? state.songsReducer.songDetails.album
         ? state.songsReducer.songDetails.album.images[0].url 

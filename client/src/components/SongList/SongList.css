@@ -149,10 +149,6 @@
   color: #ccc;
 }
 
-/* .song-container {
-
-} */
-
 .song-header-container {
   display: flex;
   border-bottom: 1px solid #666;
@@ -180,4 +176,26 @@
 
 #dropdown-button-drop-right {
   opacity: 0.4;
+}
+
+@media screen and (max-width: 500px) {
+  .song-artist,
+  .song-artist-header,
+  .song-album,
+  .song-album-header,
+  .song-added,
+  .song-added-header,
+  .song-length,
+  .song-length-header {
+    display: none;
+  }
+​
+  .add-song {
+    margin-left: -15;
+  }
+​
+  .song-title,
+  .song-title-header {
+    width: 230px;
+  }
 }

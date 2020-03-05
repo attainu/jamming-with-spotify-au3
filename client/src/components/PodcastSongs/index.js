@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -12,7 +12,8 @@ import {
 import {
     fetchSongs,
     fetchFavourites,
-    addFavourites
+    addFavourites,
+    removeFavourite
   } from "../../redux/actions/songActions";
 import { fetchPodcastMenu, deleteTrackFromPodcast, fetchPodcastSongs} from "../../redux/actions/podcastActions";
 
@@ -25,6 +26,7 @@ const PodcastSongs = ({
   favouriteSongs,
   fetchSongsPending,
   addFavourites,
+  removeFavourite,
   viewType,
   albumName,
   albums,
@@ -34,62 +36,62 @@ const PodcastSongs = ({
   pauseSong,
   audioControl,
   songId,
-  delTrackRes,
   userName,
   deleteTrackFromPodcast,
   addSongToLibrary,
   removeSongFromLibrary,
   fetchPodcastSongsPending,
-  savePodcastTrackError,
-  fetchPodcastSongsError
 }) => {
  
-  var podcastId = podcastMenu.length > 0 ?  podcastMenu.filter(
-    item => item.podcastName === headerTitle
-  )[0].id : "-1"
-
-
-  // useEffect(() => {
-  //   fetchPodcastSongs(podcastId)
-  // }, [delTrackRes,podcastId]);
-
   const handleRemoveTrack = e => {
     let trackID = e.target.id
+    let podcastId = podcastMenu.length > 0 ?  podcastMenu.filter(
+      item => item.podcastName === headerTitle
+    )[0].id : "-1"
+
     deleteTrackFromPodcast(podcastId, trackID)
     fetchPodcastSongs(podcastId)
   }
 
-  const addToFavSongs = (e) => {
-    let selectedTrackId = e.target.id
-    let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
-    
-    e.target.className = "fa fa-heart"
-    e.target.style.color = "red"
-    
-      let data = {
-      trackName: selectedTrack.name,
-      trackId: selectedTrack.id,
-      albumName: selectedTrack.album.name,
-      artistName: selectedTrack.artists[0].name,
-      albumReleaseDate : selectedTrack.album.release_date,
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
-      userName: userName
-    }
-    addFavourites(data)
- }
+ function toggleButton(e, token, songID) {
+  if (e.target.classList.contains("fa-check")) {
+    e.target.className = "fa fa-plus";
+    removeSongFromLibrary(token, songID);
+  } else if (e.target.classList.contains("fa-plus")) {
+    e.target.className = "fa fa-check";
+    addSongToLibrary(token, songID);
+  }
+}
+
   const msToMinutesAndSeconds = ms => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
 
-  function toggleButton(e, token, songID) {
-    if (e.target.classList.contains("fa-check")) {
-      e.target.className = "fa fa-plus";
-      removeSongFromLibrary(token, songID);
-    } else if (e.target.classList.contains("fa-plus")) {
-      e.target.className = "fa fa-check";
-      addSongToLibrary(token, songID);
+  function toggleFav(e, songID) {
+    let selectedTrackId = e.target.id
+    let selectedTrack = songs.filter(song => song.id === selectedTrackId)[0]
+ 
+    if (e.target.classList.contains("fa-heart")) {
+      e.target.className = "fa fa-heart-o";
+      console.log('id',selectedTrack.id)
+      removeFavourite(selectedTrack.id);
+    } 
+    else if (e.target.classList.contains("fa-heart-o")) {
+      let data = {
+        trackName: selectedTrack.name,
+        trackId: selectedTrack.id,
+        albumName: selectedTrack.album.name,
+        artistName: selectedTrack.artists[0].name,
+        albumReleaseDate : selectedTrack.album.release_date,
+        duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+        userName: userName
+      }
+
+      e.target.className = "fa fa-heart"
+      e.target.style.color = "red"
+      addFavourites(data);
     }
   }
 
@@ -141,13 +143,15 @@ const PodcastSongs = ({
                         className="fa fa-heart"
                         aria-hidden="true"
                         style={{color: "red"}}
+                        id = {song.id}
+                        onClick={e => toggleFav(e, songID)}
                       />
                     ) : (
                       <i
                         className="fa fa-heart-o"
                         aria-hidden="true"
                         id = {song.id}
-                        onClick={addToFavSongs}
+                        onClick={e => toggleFav(e, songID)}
                       />
                     )}
 
@@ -326,6 +330,7 @@ const mapDispatchToProps = dispatch => {
     { 
       fetchSongs,
       addFavourites,
+      removeFavourite,
       addSongToLibrary,
       fetchFavourites,
       fetchPodcastMenu,

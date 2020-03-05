@@ -46,7 +46,6 @@ const SearchView = ({
   };
 
   const handleClick = (e, searchId) => {
-    console.log(e.target.innerText, searchId);
     if (e.target.innerText === "FOLLOW" && headerTitle === "Artists")
       followArtist(searchId, token);
     else if (e.target.innerText === "FOLLOW" && headerTitle === "Albums")
@@ -57,8 +56,6 @@ const SearchView = ({
     console.log("Unmounting");
     if (viewType !== "Artists") clearArtistSearch();
     if (viewType !== "Albums" && viewType !== "Album") clearAlbumSearch();
-
-    console.log(searchArtistList);
   }, [viewType]);
 
   return (

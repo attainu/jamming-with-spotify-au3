@@ -11,7 +11,6 @@ import { updateViewType } from "../../redux/actions/songActions";
 import { updateHeaderTitle } from "../../redux/actions/uiActions";
 import "./BrowseView.css";
 import { fetchAlbumTracks, addAlbum } from "../../redux/actions/albumActions";
-//import { fetchCategoryPlaylists } from "../../redux/actions/playlistActions";
 
 const BrowseView = ({
   view,
@@ -40,14 +39,11 @@ const BrowseView = ({
         addAlbum(item);
         fetchAlbumTracks(token, item.id);
         updateViewType("New Release Album");
-        //fetchPlaylistSongs(item.owner.id, item.id, token);
         updateHeaderTitle(item.name);
       };
 
       const getCategoryPlaylists = () => {
-        //addPlaylistItem(item);
         fetchCategoryPlaylists(token, item.id);
-        //updateViewType("playlist");
         updateViewType("Category Playlist");
         updateHeaderTitle(item.name);
       };

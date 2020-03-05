@@ -96,9 +96,6 @@
 }
 
 .song-image-container {
-  /* max-width: 10px;
-  max-height: 10px; */
-  /* width: 100px; */
   position: fixed;
   bottom: 5px;
   right: -350px;
@@ -118,4 +115,38 @@
 .default-image {
   width: 8%;
   height: 4%;
+}
+
+@media screen and (max-width: 500px) {
+  .song-image-container,
+  .default-image-container {
+    bottom: 60px;
+    left: 350px;
+  }
+
+  .song-name {
+    position: absolute;
+    top: -10px;
+    width: 80px;
+  }
+
+  .song-details .artist-name {
+    display: none;
+  }
+
+  .song-progress-container {
+    margin-top: 10px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .song-image-container {
+    bottom: 60px;
+    left: 300px;
+  }
+
+  .default-image-container {
+    bottom: 40px;
+    left: 300px;
+  }
 }

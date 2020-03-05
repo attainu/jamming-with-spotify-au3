@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal, Form } from "react-bootstrap";
@@ -24,12 +23,10 @@ const AddToPodcastModal = ({
 
   const handleClick = e => {
     e.preventDefault();
-    console.log(selectedPodcast);
     let podcast = podcastMenu.filter(
       podcast => podcast.podcastName === selectedPodcast
     )[0];
     console.log("Filtered podcast", podcast);
-    console.log(podcast.id, trackDetails);
     saveTrackToPodcast(podcast.id, trackDetails);
     onHide();
   };

@@ -21,9 +21,15 @@ module.exports = function(app) {
     // Delete a podcast with Id
     app.delete('/podcasts/:podcastId', podcasts.delete);
 
+    // Update podcast 
+    app.put('/:podcastId', podcasts.updatePodcast)
+
     //Add favourites
     app.post('/favourites', favourites.create)
 
     //Get all favourites
     app.get('/getAllFavourites/:userName', favourites.findAll)
+
+    //Remove Fav
+    app.get('/favourites/:trackId', favourites.delete)
 }

@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-// import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ButtonToolbar, Button, Modal } from "react-bootstrap";
-// import CreatePlaylist from "../../CreatePlaylist";
 import {
   unFollowPlaylist,
   fetchPlaylistsMenu
@@ -24,8 +22,6 @@ const UnFollowPlaylistModal = ({
     unFollowPlaylist(playlistId, token);
     onHide();
   };
-
-  console.log(playlistId, playlistName);
 
   return (
     <Modal show={show} onHide={onHide} style={{ color: "black", opacity: 0.9 }}>

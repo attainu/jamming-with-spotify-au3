@@ -1,21 +1,17 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
-// import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
-  //searchSongs,
   fetchSongs,
-  fetchFavourites,
-  addFavourites
+  addFavourites,
+  removeFavourite
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal";
 import AddToPodcastModal from '../Modals/AddToPodcastModal'
 import {fetchUser} from '../../redux/actions/userActions'
-import { addSongToLibrary } from "../../redux/actions/userActions";
-import { fetchPlaylistsMenu } from "../../redux/actions/playlistActions";
 
 const LikedSongs = ({
   userId,
@@ -28,42 +24,18 @@ const LikedSongs = ({
   viewType,
   fetchSongs,
   addFavourites,
-  fetchFavourites,
-  fetchFavouritesPending,
-  fetchFavouritesError,
+  removeFavourite,
   favouriteSongs,
-  //searchSongs,
   songPlaying,
   songPaused,
   resumeSong,
   pauseSong,
   audioControl,
   songId,
-  newFavSong,
   fetchPlaylistSongsPending,
   fetchPlaylistPending,
   userName
 }) => {
-  // componentWillReceiveProps(nextProps) {
-  //   if (
-  //     nextProps.token !== "" &&
-  //     !nextProps.fetchSongsError &&
-  //     nextProps.fetchSongsPending &&
-  //     nextProps.viewType === "songs"
-  //   ) {
-  //     this.props.fetchSongs(nextProps.token);
-  //   }
-  // if (
-  //   nextProps.token !== "" &&
-  //   !nextProps.searchSongsError &&
-  //   nextProps.searchSongsPending &&
-  //   nextProps.viewType === "songs"
-  // )
-  //   else {
-  //     this.props.searchSongs(nextProps.token);
-  //   }
-  // }
-
   const [addModalShow, setModal] = useState(false);
   const [trackURI, setTrackURI] = useState("");
 
@@ -80,14 +52,9 @@ const LikedSongs = ({
 
   const openModal = e => {
     setModal(true);
-    //fetchPlaylistsMenu(userId, token);
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
         .children[2].children[0].innerText;
-    console.log(trackName);
-    console.log(
-      likedSongs.filter(song => song.track.name === trackName)[0].track.uri
-    );
     setTrackURI(
       likedSongs.filter(song => song.track.name === trackName)[0].track.uri
     );
@@ -111,24 +78,29 @@ const LikedSongs = ({
     setPodcastModal(false);
   };
 
-  const addToFavSongs = (e) => {
-     let selectedTrackId = e.target.id
-     let selectedTrack = likedSongs.filter(song => song.track.id === selectedTrackId)[0].track
-     
-     e.target.className = "fa fa-heart"
-     e.target.style.color = "red"
-     
-       let data = {
-       trackName: selectedTrack.name,
-       trackId: selectedTrack.id,
-       albumName: selectedTrack.album.name,
-       artistName: selectedTrack.artists[0].name,
-       albumReleaseDate : selectedTrack.album.release_date,
-       duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
-       userName: userName
-     }
-     console.log('jsonbody' , data)
-     addFavourites(data)
+  function toggleFav(e, songID) {
+    let selectedTrackId = e.target.id
+    let selectedTrack = likedSongs.filter(song => song.track.id === selectedTrackId)[0].track
+ 
+    if (e.target.classList.contains("fa-heart")) {
+      e.target.className = "fa fa-heart-o";
+      removeFavourite(selectedTrack.id);
+    } 
+    else if (e.target.classList.contains("fa-heart-o")) {
+      let data = {
+        trackName: selectedTrack.name,
+        trackId: selectedTrack.id,
+        albumName: selectedTrack.album.name,
+        artistName: selectedTrack.artists[0].name,
+        albumReleaseDate : selectedTrack.album.release_date,
+        duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+        userName: userName
+      }
+
+      e.target.className = "fa fa-heart"
+      e.target.style.color = "red"
+      addFavourites(data);
+    }
   }
 
   const msToMinutesAndSeconds = ms => {
@@ -141,7 +113,6 @@ const LikedSongs = ({
     return likedSongs
       ? likedSongs.map((song, i) => {
           let songID = song.track.id;
-          //console.log(song.added_by);
           const buttonClass =
             song.track.id === songId && !songPaused
               ? "fa-pause-circle-o"
@@ -178,14 +149,15 @@ const LikedSongs = ({
                     className="fa fa-heart"
                     aria-hidden="true"
                     style={{color: "red"}}
-                    // onClick={e => toggleButton(e, token, songID)}
+                    id = {song.track.id}
+                    onClick={e => toggleFav(e, songID)}
                   />
                 ) : (
                   <i
                     className="fa fa-heart-o"
                     aria-hidden="true"
                     id = {song.track.id}
-                    onClick={addToFavSongs}
+                    onClick={e => toggleFav(e, songID)}
                   />
                 )}
 
@@ -205,7 +177,6 @@ const LikedSongs = ({
 
               <div className="song-added">
                 <p>{song.track.album.release_date}</p>
-                {/* <p>{moment(song.added_at).format("YYYY-MM-DD")}</p> */}
               </div>
 
               <div className="song-length">
@@ -231,7 +202,6 @@ const LikedSongs = ({
                       <Dropdown.Item
                         href="#"
                         className="options-dropdown"
-                        // onClick={openModal}
                       >
                         - &nbsp; Remove from Playlist
                       </Dropdown.Item>
@@ -286,7 +256,6 @@ const LikedSongs = ({
       : null;
   };
 
-  //render() {
   console.log("View Type:", viewType);
   return (
     <div>
@@ -314,31 +283,8 @@ const LikedSongs = ({
         !fetchPlaylistSongsPending &&
         !fetchPlaylistPending &&
         renderSongs()}
-
-      {/* {songs && !searchSongsPending && !searchSongsError && renderSongs()} */}
-
-      {/* {this.props.songs &&
-          !this.props.fetchSongsError &&
-          !this.props.fetchSongsPending &&
-          this.renderSongs()} */}
-
-      {/* {this.props.songs &&
-          !this.props.fetchTopTracksPending &&
-          !this.props.fetchTopTracksError &&
-          this.renderSongs()} */}
-
-      {/* {this.props.songs &&
-          !this.props.fetchPlaylistSongsPending &&
-          !this.props.fetchPlaylistSongsError &&
-          this.renderSongs()} */}
-
-      {/* {this.props.songs &&
-          !this.props.browseAlbumPending &&
-          !this.props.browseAlbumError &&
-          this.renderSongs()} */}
     </div>
   );
-  //}
 };
 
 LikedSongs.propTypes = {
@@ -351,10 +297,8 @@ LikedSongs.propTypes = {
   searchSongsError: PropTypes.bool,
   searchSongsPending: PropTypes.bool,
   searchSongs: PropTypes.func,
-  //fetchRecentlyPlayed: PropTypes.func,
   fetchTopTracksPending: PropTypes.bool,
   fetchTopTracksError: PropTypes.bool,
-  //fetchTopTracks: PropTypes.func,
   fetchSongsError: PropTypes.bool,
   fetchSongsPending: PropTypes.bool,
   fetchPlaylistSongsPending: PropTypes.bool,
@@ -362,14 +306,12 @@ LikedSongs.propTypes = {
   fetchPlaylistSongsError: PropTypes.bool,
   browseAlbumPending: PropTypes.bool,
   browseAlbumError: PropTypes.bool,
-  //fetchPlaylistSongs: PropTypes.func
   fetchSongs: PropTypes.func,
   audioControl: PropTypes.func,
   songPaused: PropTypes.bool,
   songPlaying: PropTypes.bool,
   resumeSong: PropTypes.func,
   pauseSong: PropTypes.func
-  // addSongToLibrary: PropTypes.func
 };
 
 const mapStateToProps = state => {
@@ -388,8 +330,6 @@ const mapStateToProps = state => {
     fetchTopTracksPending: state.songsReducer.fetchTopTracksPending,
     fetchSongsError: state.songsReducer.fetchSongsError,
     fetchSongsPending: state.songsReducer.fetchSongsPending,
-    fetchFavouritesError: state.songsReducer.fetchFavouritesError,
-    fetchFavouritesPending: state.songsReducer.fetchFavouritesPending,
     fetchPlaylistSongsPending: state.songsReducer.fetchPlaylistSongsPending,
     fetchPlaylistPending: state.playlistReducer.fetchPlaylistPending,
     fetchPlaylistSongsError: state.songsReducer.fetchPlaylistSongsError,
@@ -408,12 +348,8 @@ const mapDispatchToProps = dispatch => {
     {
       fetchSongs,
       addFavourites,
-      fetchFavourites,
+      removeFavourite,
       fetchUser
-      //fetchRecentlyPlayed,
-      //fetchTopTracks,
-      //addSongToLibrary,
-      //searchSongs
     },
     dispatch
   );

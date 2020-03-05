@@ -50,12 +50,6 @@ export const podcastReducer = (state = {}, action) => {
         fetchPodcastPending: false
       };
 
-    // case "ADD_PLAYLIST_ITEM":
-    //   return {
-    //     ...state,
-    //     playlists: [...state.playlists, action.playlist]
-    //   };
-
     default:
       return state;
   }
@@ -82,6 +76,34 @@ export const deletePodcastReducer = (state = {}, action) => {
         ...state,
         deletePodcastPending: false,
         deletePodcastError: true
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const editPodcastReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "EDIT_PODCAST_PENDING":
+      return {
+        ...state,
+        editPodcastPending: true
+      };
+
+    case "EDIT_PODCAST_SUCCESS":
+      return {
+        ...state,
+        updatedPodcastResponse: action.updateRes,
+        editPodcastPending: false,
+        editPodcastError: false
+      };
+
+    case "EDIT_PODCAST_ERROR":
+      return {
+        ...state,
+        editPodcastPending: false,
+        editPodcastError: true
       };
 
     default:

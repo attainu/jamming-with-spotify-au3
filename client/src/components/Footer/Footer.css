@@ -7,3 +7,9 @@
   height: 80px;
   z-index: 2;
 }
+
+@media screen and (max-width: 500px) {
+  .footer {
+    height: 110px;
+  }
+}

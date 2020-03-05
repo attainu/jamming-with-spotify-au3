@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-// import PropTypes from "prop-types";
-// import { bindActionCreators } from "redux";
-// import { connect } from "react-redux";
 import PodcastModal from "../Modals/PodcastModal";
-//import { ButtonToolbar } from "react-bootstrap";
 import "../CreatePlaylist/CreatePlaylist.css";
 
 const CreatePodcast = () => {

@@ -1,5 +1,4 @@
 import uniqBy from "lodash/uniqBy";
-// import { setArtistIds } from "./artistActions";
 
 export const updateViewType = view => {
   return {
@@ -80,17 +79,6 @@ export const fetchSongs = accessToken => {
         return res.json();
       })
       .then(res => {
-        // get all artist ids and remove duplicates
-        // let artistIds = uniqBy(res.items, item => {
-        //   return item.track.artists[0].name;
-        // })
-        //   .map(item => {
-        //     return item.track.artists[0].id;
-        //   })
-        //   .join(",");
-
-        // dispatch(setArtistIds(artistIds));
-
         dispatch(fetchSongsSuccess(res.items));
       })
       .catch(err => {
@@ -255,7 +243,6 @@ export const fetchTopTracks = accessToken => {
 };
 
 //adding favourites
-
 export const addFavouritesPending = () => {
   return {
     type: "ADD_FAVOURITES_PENDING"
@@ -291,7 +278,6 @@ export const addFavourites = (data) => {
     dispatch(addFavouritesPending());
     fetch(request)
       .then(res => {
-        console.log(res)
         if (res.ok) {
           return res;
         }
@@ -343,6 +329,50 @@ export const fetchFavourites = (userName) => {
       })
       .catch(err => {
         dispatch(fetchFavouritesError(err));
+      });
+  };
+};
+
+export const removeFavouritePending = () => {
+  return {
+    type: "REMOVE_FAVOURITE_PENDING"
+  };
+};
+
+export const removeFavouriteSuccess = delRes => {
+  return {
+    type: "REMOVE_FAVOURITE_SUCCESS",
+    delRes
+  };
+};
+
+export const removeFavouriteError = () => {
+  return {
+    type: "REMOVE_FAVOURITE_ERROR"
+  };
+};
+
+export const removeFavourite = (trackId) => {
+  return dispatch => {
+    const request = new Request(
+      `http://localhost:8888/favourites/${trackId}`,
+    );
+
+    dispatch(removeFavouritePending());
+
+    fetch(request)
+      .then(res => {
+        if (res.ok) {
+          return res;
+        }
+        dispatch(removeFavouriteError("Request failed!"));
+      })
+      .then(res => {
+        console.log(res)
+        dispatch(removeFavouriteSuccess(res));
+      })
+      .catch(err => {
+        dispatch(removeFavouriteError(err));
       });
   };
 };

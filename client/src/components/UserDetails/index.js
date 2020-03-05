@@ -24,9 +24,6 @@ const mapStateToProps = state => {
       ? state.userReducer.user.display_name
       : "",
     userImage: default_avatar
-    //state.userReducer.user
-    //? default_avatar
-    //: state.userReducer.user.images[0].url
   };
 };
 

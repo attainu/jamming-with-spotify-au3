@@ -197,7 +197,6 @@ export const fetchPlaylistSongs = (userId, playlistId, accessToken) => {
         return res.json();
       })
       .then(res => {
-        //remove duplicate tracks
         res.items = uniqBy(res.items, item => {
           return item.track.id;
         });
@@ -291,13 +290,11 @@ export const createPlaylist = (userId, playlistData, accessToken) => {
           dispatch(createPlaylistError());
         }
         return res.json();
-        //throw new Error("Request failed!");
       })
       .then(res => {
         console.log("playlist successfully created.", res);
         dispatch(createPlaylistSuccess(res));
       })
-      // .then(res => dispatch(fetchPlaylistsMenu(userId, accessToken)))
       .catch(err => {
         dispatch(createPlaylistError(err));
       });
@@ -323,9 +320,6 @@ export const editPlaylist = (playlistId, playlistData, accessToken) => {
     fetch(request)
       .then(res => {
         return res;
-
-        //dispatch(editPlaylistError("Request failed!"));
-        //throw new Error("Request failed!");
       })
       .then(res => {
         console.log("playlist successfully updated.", res);
@@ -374,21 +368,6 @@ export const saveTrackToPlaylist = (playlistId, trackURI, accessToken) => {
 
 export const removeTrackFromPlaylist = (playlistId, trackURI, accessToken) => {
   return dispatch => {
-    // let method = "delete";
-    // let url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-    // let headers = {
-    //   Authorization: "Bearer " + accessToken,
-    //   "Content-Type": "application/json",
-    //   Accept: "application/json"
-    // };
-    // let data = {
-    //   tracks: [
-    //     {
-    //       // "positions": [2],
-    //       uri: trackURI
-    //     }
-    //   ]
-    // };
     const request = new Request(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${encodeURIComponent(
         trackURI
@@ -397,27 +376,12 @@ export const removeTrackFromPlaylist = (playlistId, trackURI, accessToken) => {
         method: "DELETE",
         headers: new Headers({
           Authorization: "Bearer " + accessToken,
-          // Accept: "application/json",
           "Content-Type": "application/json"
         })
-        // data: {
-        //   tracks: [
-        //     {
-        //       uri: JSON.stringify(trackURI)
-        //       //positions: [0]
-        //     }
-        //   ]
-        // }
       }
     );
 
     console.log(request);
-
-    // let request = new Request(url, {
-    //   method: method,
-    //   headers: headers,
-    //   data: JSON.stringify(data)
-    // });
 
     dispatch(removeTrackFromPlaylistPending());
 
@@ -460,7 +424,6 @@ export const followPlaylist = (playlistId, accessToken) => {
         return res;
       })
       .then(res => {
-        //console.log(res);
         console.log("Playlist successfully followed", res);
         dispatch(followPlaylistSuccess(res));
       })
@@ -478,8 +441,6 @@ export const unFollowPlaylist = (playlistId, accessToken) => {
         method: "DELETE",
         headers: new Headers({
           Authorization: "Bearer " + accessToken
-          // Accept: "application/json",
-          // "Content-Type": "application/json"
         })
       }
     );
@@ -494,7 +455,6 @@ export const unFollowPlaylist = (playlistId, accessToken) => {
         return res;
       })
       .then(res => {
-        //console.log(res);
         console.log("Playlist successfully unfollowed", res);
         dispatch(unFollowPlaylistSuccess(res));
       })

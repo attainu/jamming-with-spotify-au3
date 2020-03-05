@@ -15,7 +15,8 @@ import "../SongList/SongList.css";
 import {
   fetchSongs,
   fetchFavourites,
-  addFavourites
+  addFavourites,
+  removeFavourite
 } from "../../redux/actions/songActions";
 
 const SingleArtistTracks = ({
@@ -24,6 +25,7 @@ const SingleArtistTracks = ({
   viewType,
   favouriteSongs,
   addFavourites,
+  removeFavourite,
   fetchFavourites,
   fetchArtistSongsPending,
   fetchArtistSongsError,
@@ -48,7 +50,6 @@ const SingleArtistTracks = ({
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
         .children[2].children[0].innerText;
-    console.log(trackName);
     setTrackURI(
       songs.filter(song => song.track.name === trackName)[0].track.uri
     );
@@ -78,22 +79,29 @@ const SingleArtistTracks = ({
      }
    }, [favouriteSongs]);
 
-  const addToFavSongs = (e) => {
+   function toggleFav(e, songID) {
     let selectedTrackId = e.target.id
     let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
-    e.target.className = "fa fa-heart"
-    e.target.style.color = "red"
-    
+ 
+    if (e.target.classList.contains("fa-heart")) {
+      e.target.className = "fa fa-heart-o";
+      removeFavourite(selectedTrack.id);
+    } 
+    else if (e.target.classList.contains("fa-heart-o")) {
       let data = {
-      trackName: selectedTrack.name,
-      trackId: selectedTrack.id,
-      albumName: selectedTrack.album.name,
-      artistName: selectedTrack.artists[0].name,
-      albumReleaseDate : selectedTrack.album.release_date,
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
-      userName: userName
+        trackName: selectedTrack.name,
+        trackId: selectedTrack.id,
+        albumName: selectedTrack.album.name,
+        artistName: selectedTrack.artists[0].name,
+        albumReleaseDate : selectedTrack.album.release_date,
+        duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+        userName: userName
+      }
+
+      e.target.className = "fa fa-heart"
+      e.target.style.color = "red"
+      addFavourites(data);
     }
-    addFavourites(data)
   }
 
   const msToMinutesAndSeconds = ms => {
@@ -103,7 +111,6 @@ const SingleArtistTracks = ({
   };
 
   function toggleButton(e, token, songID) {
-    console.log(e.target);
     if (e.target.classList.contains("fa-check")) {
       e.target.className = "fa fa-plus";
       removeSongFromLibrary(token, songID);
@@ -151,13 +158,15 @@ const SingleArtistTracks = ({
                     className="fa fa-heart"
                     aria-hidden="true"
                     style={{color: "red"}}
+                    id = {song.track.id}
+                    onClick={e => toggleFav(e, songID)}
                   />
                 ) : (
                   <i
                     className="fa fa-heart-o"
                     aria-hidden="true"
                     id = {song.track.id}
-                    onClick={addToFavSongs}
+                    onClick={e => toggleFav(e, songID)}
                   />
                 )}
              </p>
@@ -310,6 +319,7 @@ const mapDispatchToProps = dispatch => {
       fetchSongs,
       fetchFavourites,
       addFavourites,
+      removeFavourite,
       fetchUser
     },
     dispatch

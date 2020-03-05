@@ -177,12 +177,6 @@ export const saveAlbum = (albumId, accessToken) => {
     dispatch(saveAlbumPending());
 
     fetch(request)
-      // .then(res => {
-      //   if (res.statusText === "Unauthorized") {
-      //     window.location.href = "./";
-      //   }
-      //   return res.json();
-      // })
       .then(res => {
         console.log("Save Album", res);
         dispatch(saveAlbumSuccess(res));

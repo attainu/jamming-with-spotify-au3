@@ -35,11 +35,11 @@ const SideMenu = ({
 }) => {
   useEffect(() => {
     fetchAlbums(token);
-  }, [savedAlbum, unFollowedAlbum]);
+  }, [savedAlbum, unFollowedAlbum, token]);
 
   useEffect(() => {
     fetchArtists(token);
-  }, [followedArtist, unfollowedArtist]);
+  }, [followedArtist, unfollowedArtist, token]);
 
   const handleClick = name => {
     updateHeaderTitle(name);

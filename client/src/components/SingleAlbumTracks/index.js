@@ -13,7 +13,8 @@ import {
 import {
   fetchSongs,
   fetchFavourites,
-  addFavourites
+  addFavourites,
+  removeFavourite
 } from "../../redux/actions/songActions";
 import "../SongList/SongList.css";
 import AddToPodcastModal from "../Modals/AddToPodcastModal";
@@ -24,6 +25,7 @@ const SingleAlbumTracks = ({
   viewType,
   fetchFavourites,
   addFavourites,
+  removeFavourite,
   fetchAlbumTracksPending,
   fetchAlbumTracksError,
   addSongToLibrary,
@@ -49,7 +51,6 @@ const SingleAlbumTracks = ({
     let trackName =
       e.target.parentElement.parentElement.parentElement.parentElement
      .children[3].children[0].innerText;
-    console.log(trackName);
     setTrackURI(songs.filter(song => song.name === trackName)[0].uri);
   };
 
@@ -84,7 +85,6 @@ const SingleAlbumTracks = ({
   };
 
   function toggleButton(e, token, songID) {
-    console.log(e.target);
     if (e.target.classList.contains("fa-check")) {
       e.target.className = "fa fa-plus";
       removeSongFromLibrary(token, songID);
@@ -99,23 +99,30 @@ const SingleAlbumTracks = ({
   ? albums.filter(item => item.album.name === albumName)
   : [];
 
-  const addToFavSongs = (e) => {
+  function toggleFav(e) {
     let selectedTrackId = e.target.id
     let selectedTrack = songs.filter(song => song.track.id === selectedTrackId)[0].track
-    e.target.className = "fa fa-heart"
-    e.target.style.color = "red"
-    
+
+    if (e.target.classList.contains("fa-heart")) {
+      e.target.className = "fa fa-heart-o";
+      removeFavourite(selectedTrack.id);
+    } 
+    else if (e.target.classList.contains("fa-heart-o")) {
       let data = {
-      trackName: selectedTrack.name,
-      trackId: selectedTrack.id,
-      albumName: albumName,
-      artistName: selectedTrack.artists[0].name,
-      albumReleaseDate : selected_album[0] ? selected_album[0].album.release_date : "---",
-      duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
-      userName: userName
+        trackName: selectedTrack.name,
+        trackId: selectedTrack.id,
+        albumName: albumName,
+        artistName: selectedTrack.artists[0].name,
+        albumReleaseDate : selected_album[0] ? selected_album[0].album.release_date : "---",
+        duration: msToMinutesAndSeconds(selectedTrack.duration_ms),
+        userName: userName
+      }
+
+      e.target.className = "fa fa-heart"
+      e.target.style.color = "red"
+      addFavourites(data);
     }
-    addFavourites(data)
- }
+  }
   const renderSongs = () => {
     const selected_album = albums
     ? albums.filter(item => item.album.name === albumName)
@@ -155,13 +162,15 @@ const SingleAlbumTracks = ({
                     className="fa fa-heart"
                     aria-hidden="true"
                     style={{color: "red"}}
+                    id = {song.track.id}
+                    onClick={e => toggleFav(e)}
                   />
                 ) : (
                   <i
                     className="fa fa-heart-o"
                     aria-hidden="true"
                     id = {song.track.id}
-                    onClick={addToFavSongs}
+                    onClick={e => toggleFav(e)}
                   />
                 )}
              </p>
@@ -320,6 +329,7 @@ const mapDispatchToProps = dispatch => {
       fetchSongs,
       fetchFavourites,
       addFavourites,
+      removeFavourite,
       fetchUser
     },
     dispatch

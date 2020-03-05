@@ -4,7 +4,7 @@ import "./Profile.css";
 import { connect } from "react-redux";
 import default_avatar from "../UserDetails/default_avatar.png";
 
-const Profile = ({ userImage, displayName, userID, email, DOB, country }) => {
+const Profile = ({ userImage, displayName, userID, email, country }) => {
   return (
     <div className="profile-details-container">
       <h2 className="header-title">Account Overview</h2>

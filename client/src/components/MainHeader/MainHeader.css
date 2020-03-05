@@ -128,3 +128,18 @@
   cursor: pointer;
   outline: none;
 }
+
+
+@media screen and (max-width: 500px) {
+  .current-artist-header-container,
+  .current-album-header-container,
+  .playlist-title-container {
+    flex-direction: column;
+  }
+
+  .current-artist-info,
+  .current-album-info {
+    margin-top: 10px;
+    padding-left: 0px;
+  }
+}

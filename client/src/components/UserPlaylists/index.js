@@ -11,7 +11,6 @@ import EditModal from "../Modals/EditModal";
 import UnFollowModal from "../Modals/UnFollowPlaylistModal";
 import "./UserPlaylists.css";
 
-//class UserPlaylists extends Component {
 const UserPlaylists = ({
   userId,
   token,
@@ -25,16 +24,10 @@ const UserPlaylists = ({
   folResponse,
   delResponse
 }) => {
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.userId !== "" && nextProps.token !== "") {
-  //     this.props.fetchPlaylistsMenu(nextProps.userId, nextProps.token);
-  //   }
-  // }
 
   const [addModalShow, setModal] = useState(false);
   const [editModalShow, setEditModal] = useState(false);
   const [playlistName, setplaylistName] = useState("");
-  //const [playlistNameEdit, setplaylistNameEdit] = useState("");
   const [playlistDesc, setplaylistDesc] = useState("");
   const [playlistId, setplaylistId] = useState("");
 
@@ -75,7 +68,6 @@ const UserPlaylists = ({
       "data-key"
     );
     setplaylistId(playlistid);
-    console.log(playlistid, playlistname, playlistdesc);
   };
 
   let editModalClose = () => {
