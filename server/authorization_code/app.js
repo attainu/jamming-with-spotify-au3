@@ -22,9 +22,9 @@ var redirect_uri = "https://jamming-spotify.herokuapp.com/callback"; // Your red
 var client_id = "10aa2b5f5aaa4082b571ff9b7bfef2c8"; // Your client id
 var client_secret = "158725be993142a18b6e56f9c27ccd11"; // Your secret
 
-// app.use(cors());
-// app.use(express.static(path.join(__dirname, "../../client/build")));
-// /*React root*/
+app.use(cors());
+app.use(express.static(path.join(__dirname, "../../client/build")));
+/*React root*/
 // app.get(/^\/(?!api).*/, (req, res) => {
 //   // api is starting point of all api's for examplple your user login api is  `/api/user/login`
 //   res.sendFile(path.join(__dirname + "../../client/build/index.html"));
