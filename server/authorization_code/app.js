@@ -152,12 +152,11 @@ app.get("/callback", function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          "/app"
-          // +
-          //   querystring.stringify({
-          //     access_token: access_token,
-          //     refresh_token: refresh_token
-          //   })
+          "/app" +
+            querystring.stringify({
+              access_token: access_token,
+              refresh_token: refresh_token
+            })
         );
       } else {
         res.redirect(
@@ -171,7 +170,7 @@ app.get("/callback", function(req, res) {
   }
 });
 
-app.get("/app", function(req, res) {
+app.get("/app*", function(req, res) {
   console.log(__dirname);
   //res.sendFile("./index.html");
   res.sendFile(path.join(__dirname, "../../client/build/index.html"));

@@ -27,7 +27,7 @@ class App extends Component {
 
   componentDidMount() {
     if (!window.location.pathname.includes("access_token") && !this.props.token)
-      window.location.href = "http://localhost:8888/login";
+      window.location.href = "https://jamming-spotify.herokuapp.com/login";
     else {
       var access_token = window.location.pathname.split("=")[1].split("&")[0];
       if (access_token) {
@@ -96,7 +96,7 @@ class App extends Component {
             <CreatePlaylist />
             <UserPlaylists />
             <CreatePodcast />
-            <UserPodcasts/>
+            <UserPodcasts />
           </div>
           <div className="main-section">
             <Header />
