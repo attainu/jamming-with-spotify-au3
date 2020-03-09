@@ -13,8 +13,8 @@ var cors = require("cors");
 var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
 
-var database = require('../databaseConfig/database')
-var podcast = require('../models/podcastModel')
+var database = require("../databaseConfig/database");
+var podcast = require("../models/podcastModel");
 
 //var client_id = '54df5f9f2997420987bca232f3aa1d4b'; // Your client id
 //var client_secret = 'fc0da25adf544521afc96d5feb945c81'; // Your secret
@@ -52,10 +52,10 @@ app
 
 app.get("/", function(req, res) {
   res.redirect("/login");
-  console.log('database')
+  console.log("database");
 });
 
-require('../routes/routes')(app)
+require("../routes/routes")(app);
 
 app.get("/login", function(req, res) {
   var state = generateRandomString(16);
@@ -173,4 +173,4 @@ app.get("/refresh_token", function(req, res) {
 });
 
 console.log("Listening on 8888");
-app.listen(8888);
+app.listen(process.env.PORT || 8888);
