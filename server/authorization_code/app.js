@@ -85,9 +85,9 @@ app.get("/login", function(req, res) {
         state: state
       })
   );
-});
+  //});
 
-app.get("/callback", function(req, res) {
+  //app.get("/callback", function(req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
 
