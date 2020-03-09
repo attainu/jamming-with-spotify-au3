@@ -52,7 +52,7 @@ var stateKey = "spotify_auth_state";
 var app = express();
 
 app.use(cors());
-
+app.use(express.static(path.join(__dirname, "../../client/build")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -174,7 +174,7 @@ app.get("/callback", function(req, res) {
 app.get("/app", function(req, res) {
   console.log(__dirname);
   //res.sendFile("./index.html");
-  res.sendFile(path.join(__dirname + "../../client/index.html"));
+  res.sendFile(path.join(__dirname, "../../client/build/index.html"));
 });
 
 app.get("/refresh_token", function(req, res) {
