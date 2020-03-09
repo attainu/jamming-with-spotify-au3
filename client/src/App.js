@@ -26,13 +26,17 @@ class App extends Component {
   static audio;
 
   componentDidMount() {
-    // if (!window.location.pathname.includes("access_token") || !this.props.token)
-    //   window.location.href = "https://jamming-spotify.herokuapp.com/login";
-    // else {
-    var access_token = window.location.pathname.split("=")[1].split("&")[0];
-    if (access_token) {
-      this.props.setToken(access_token);
-    } else window.location.href = "https://jamming-spotify.herokuapp.com/login";
+    console.log(window.location.pathname);
+    if (!window.location.pathname.includes("access_token") && !this.props.token)
+      window.location.href = "https://jamming-spotify.herokuapp.com/login";
+    else {
+      var access_token = window.location.pathname.split("=")[1].split("&")[0];
+      console.log(access_token);
+      if (access_token) {
+        this.props.setToken(access_token);
+      }
+    }
+    //else window.location.href = "https://jamming-spotify.herokuapp.com/login";
     //}
   }
 
