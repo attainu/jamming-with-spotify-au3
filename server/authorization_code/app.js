@@ -173,7 +173,7 @@ app.get("/callback", function(req, res) {
 
 app.get("/app", function(req, res) {
   console.log(__dirname);
-  res.sendFile(path.join(__dirname + "../../client/build/index.html"));
+  res.sendFile(path.join(__dirname + "../../client/build/public/index.html"));
 });
 
 app.get("/refresh_token", function(req, res) {
