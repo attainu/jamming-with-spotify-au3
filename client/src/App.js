@@ -26,7 +26,7 @@ class App extends Component {
   static audio;
 
   componentDidMount() {
-    if (!window.location.pathname.includes("access_token") && !this.props.token)
+    if (!window.location.pathname.includes("access_token") || !this.props.token)
       window.location.href = "https://jamming-spotify.herokuapp.com/login";
     else {
       var access_token = window.location.pathname.split("=")[1].split("&")[0];
