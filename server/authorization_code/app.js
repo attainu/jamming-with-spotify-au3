@@ -22,6 +22,14 @@ var redirect_uri = "https://jamming-spotify.herokuapp.com/callback"; // Your red
 var client_id = "10aa2b5f5aaa4082b571ff9b7bfef2c8"; // Your client id
 var client_secret = "158725be993142a18b6e56f9c27ccd11"; // Your secret
 
+// app.use(cors());
+// app.use(express.static(path.join(__dirname, "../../client/build")));
+// /*React root*/
+// app.get(/^\/(?!api).*/, (req, res) => {
+//   // api is starting point of all api's for examplple your user login api is  `/api/user/login`
+//   res.sendFile(path.join(__dirname + "../../client/build/index.html"));
+// });
+
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -127,11 +135,12 @@ app.get("/callback", function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          "https://jamming-spotify.herokuapp.com/:" +
-            querystring.stringify({
-              access_token: access_token,
-              refresh_token: refresh_token
-            })
+          "/app"
+          // +
+          //   querystring.stringify({
+          //     access_token: access_token,
+          //     refresh_token: refresh_token
+          //   })
         );
       } else {
         res.redirect(
@@ -143,6 +152,10 @@ app.get("/callback", function(req, res) {
       }
     });
   }
+});
+
+app.get("/app", function(req, res) {
+  res.sendFile(path.join(__dirname + "../../client/build/index.html"));
 });
 
 app.get("/refresh_token", function(req, res) {
