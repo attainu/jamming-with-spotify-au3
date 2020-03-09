@@ -62,7 +62,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get("/", function(req, res) {
-  res.redirect("/login");
+  if (!window.location.pathname.includes("access_token"))
+    res.redirect("/login");
+  else res.redirect("/app/*");
   console.log("database");
 });
 
