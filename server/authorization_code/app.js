@@ -158,7 +158,7 @@ app.get("/callback", function(req, res) {
 });
 
 app.get("/app", function(req, res) {
-  res.sendFile(path.join(__dirname + "../../client/build/index.html"));
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
 
 app.get("/refresh_token", function(req, res) {
