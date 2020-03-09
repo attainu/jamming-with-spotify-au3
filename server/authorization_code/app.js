@@ -75,15 +75,26 @@ app.get("/login", function(req, res) {
   // your application requests authorization
   var scope =
     "user-top-read user-read-recently-played playlist-read-private playlist-read-collaborative  playlist-modify-public playlist-modify-private ugc-image-upload user-follow-modify user-follow-read user-library-read user-library-modify user-read-private user-read-email user-top-read user-read-playback-state";
+  // res.redirect(
+  //   "https://accounts.spotify.com/authorize?" +
+  //     querystring.stringify({
+  //       response_type: "code",
+  //       client_id: client_id,
+  //       scope: scope,
+  //       redirect_uri: redirect_uri,
+  //       state: state
+  //     })
+  // );
   res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state
-      })
+    "https://accounts.spotify.com/authorize" +
+      "?response_type=code" +
+      "&client_id=" +
+      client_id +
+      (scope ? "&scope=" + encodeURIComponent(scope) : "") +
+      "&redirect_uri=" +
+      encodeURIComponent(redirect_uri) +
+      "&state=" +
+      state
   );
 });
 
@@ -93,9 +104,12 @@ app.get("/callback", function(req, res) {
 
   var code = req.query.code || null;
   var state = req.query.state || null;
-  var storedState = req.cookies ? req.cookies[stateKey] : null;
+  //var storedState = req.cookies ? req.cookies[stateKey] : null;
 
-  if (state === null || state !== storedState) {
+  if (
+    state === null
+    //|| state !== storedState
+  ) {
     res.redirect(
       "/#" +
         querystring.stringify({
