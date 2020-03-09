@@ -249,7 +249,7 @@ export const addFavouritesPending = () => {
   };
 };
 
-export const addFavouritesSuccess = (res) => {
+export const addFavouritesSuccess = res => {
   return {
     type: "ADD_FAVOURITES_SUCCESS",
     res
@@ -262,10 +262,10 @@ export const addFavouritesError = () => {
   };
 };
 
-export const addFavourites = (data) => {
+export const addFavourites = data => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/favourites`,
+      `https://jamming-spotify.herokuapp.com/favourites`,
       {
         headers: new Headers({
           "Content-Type": "application/json"
@@ -312,16 +312,16 @@ export const fetchFavouritesError = () => {
   };
 };
 
-export const fetchFavourites = (userName) => {
+export const fetchFavourites = userName => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/getAllfavourites/${userName}`,
+      `https://jamming-spotify.herokuapp.com/getAllfavourites/${userName}`
     );
 
     dispatch(fetchFavouritesPending());
     fetch(request)
       .then(res => {
-       return res.json()
+        return res.json();
       })
       .then(res => {
         console.log("favourites", res);
@@ -352,10 +352,10 @@ export const removeFavouriteError = () => {
   };
 };
 
-export const removeFavourite = (trackId) => {
+export const removeFavourite = trackId => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/favourites/${trackId}`,
+      `https://jamming-spotify.herokuapp.com/favourites/${trackId}`
     );
 
     dispatch(removeFavouritePending());
@@ -368,7 +368,7 @@ export const removeFavourite = (trackId) => {
         dispatch(removeFavouriteError("Request failed!"));
       })
       .then(res => {
-        console.log(res)
+        console.log(res);
         dispatch(removeFavouriteSuccess(res));
       })
       .catch(err => {
