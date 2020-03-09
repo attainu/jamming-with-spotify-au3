@@ -19,7 +19,7 @@ var podcast = require("../models/podcastModel");
 
 //var client_id = '54df5f9f2997420987bca232f3aa1d4b'; // Your client id
 //var client_secret = 'fc0da25adf544521afc96d5feb945c81'; // Your secret
-var redirect_uri = "https://jamming-spotify.herokuapp.com"; // Your redirect uri
+var redirect_uri = "https://jamming-spotify.herokuapp.com/callback"; // Your redirect uri
 var client_id = "10aa2b5f5aaa4082b571ff9b7bfef2c8"; // Your client id
 var client_secret = "158725be993142a18b6e56f9c27ccd11"; // Your secret
 
@@ -85,9 +85,9 @@ app.get("/login", function(req, res) {
         state: state
       })
   );
-  //});
+});
 
-  //app.get("/callback", function(req, res) {
+app.get("/callback", function(req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
 
