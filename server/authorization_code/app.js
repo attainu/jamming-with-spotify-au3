@@ -12,6 +12,7 @@ var request = require("request"); // "Request" library
 var cors = require("cors");
 var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
+const path = require("path");
 
 var database = require("../databaseConfig/database");
 var podcast = require("../models/podcastModel");
@@ -22,8 +23,8 @@ var redirect_uri = "https://jamming-spotify.herokuapp.com/callback"; // Your red
 var client_id = "10aa2b5f5aaa4082b571ff9b7bfef2c8"; // Your client id
 var client_secret = "158725be993142a18b6e56f9c27ccd11"; // Your secret
 
-app.use(cors());
-app.use(express.static(path.join(__dirname, "../../client/build")));
+//app.use(cors());
+//app.use(express.static(path.join(__dirname, "../../client/build")));
 /*React root*/
 // app.get(/^\/(?!api).*/, (req, res) => {
 //   // api is starting point of all api's for examplple your user login api is  `/api/user/login`
@@ -49,6 +50,8 @@ var generateRandomString = function(length) {
 var stateKey = "spotify_auth_state";
 
 var app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
