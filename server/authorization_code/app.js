@@ -62,8 +62,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get("/", function(req, res) {
-  if (!window.location.pathname.includes("access_token"))
-    res.redirect("/login");
+  if (!localStorage.getItem("access_token")) res.redirect("/login");
   else res.redirect("/app/*");
   console.log("database");
 });
@@ -157,6 +156,7 @@ app.get("/callback", function(req, res) {
               refresh_token: refresh_token
             })
         );
+        localStorage.setItem("access_token", access_token);
       } else {
         res.redirect(
           "/#" +
