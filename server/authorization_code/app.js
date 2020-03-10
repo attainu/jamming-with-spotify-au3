@@ -12,15 +12,16 @@ var request = require("request"); // "Request" library
 var cors = require("cors");
 var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
+var path = require("path");
 
 var database = require('../databaseConfig/database')
 var podcast = require('../models/podcastModel')
 
-//var client_id = '54df5f9f2997420987bca232f3aa1d4b'; // Your client id
-//var client_secret = 'fc0da25adf544521afc96d5feb945c81'; // Your secret
-var redirect_uri = "http://localhost:8888/callback"; // Your redirect uri
-var client_id = "10aa2b5f5aaa4082b571ff9b7bfef2c8"; // Your client id
-var client_secret = "158725be993142a18b6e56f9c27ccd11"; // Your secret
+var client_id = '54df5f9f2997420987bca232f3aa1d4b'; // Your client id
+var client_secret = 'fc0da25adf544521afc96d5feb945c81'; // Your secret
+var redirect_uri = "https://jamming-with-spotify.herokuapp.com/callback"; // Your redirect uri
+// var client_id = "10aa2b5f5aaa4082b571ff9b7bfef2c8"; // Your client id
+// var client_secret = "158725be993142a18b6e56f9c27ccd11"; // Your secret
 
 /**
  * Generates a random string containing numbers and letters
@@ -46,13 +47,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app
-  .use(express.static(__dirname + "/public"))
-  .use(cors())
+  .use(express.static(path.join(__dirname, "../../client/build")))
+  // .use(cors())
   .use(cookieParser());
 
 app.get("/", function(req, res) {
-  res.redirect("/login");
-  console.log('database')
+  if(!localStorage.getItem('access_token'))
+  res.redirect('/login')
+  else
+  res.redirect("/app/*");
 });
 
 require('../routes/routes')(app)
@@ -127,12 +130,13 @@ app.get("/callback", function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          "http://localhost:3000/:" +
+          "/app/:" +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token
             })
-        );
+        )
+        localStorage.setItem('access_token', access_token)
       } else {
         res.redirect(
           "/#" +
@@ -144,6 +148,10 @@ app.get("/callback", function(req, res) {
     });
   }
 });
+
+app.get('/app/*', function(req,res){
+  res.sendFile(path.join(__dirname, '../../client/build/index.html'))
+})
 
 app.get("/refresh_token", function(req, res) {
   // requesting access token from refresh token
@@ -173,4 +181,4 @@ app.get("/refresh_token", function(req, res) {
 });
 
 console.log("Listening on 8888");
-app.listen(8888);
+app.listen(process.env.PORT || 8888);

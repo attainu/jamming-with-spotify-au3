@@ -1,52 +1,52 @@
 export const createPodcastPending = () => {
-    return {
-      type: "CREATE_PODCAST_PENDING"
-    };
+  return {
+    type: "CREATE_PODCAST_PENDING"
   };
-  
-  export const createPodcastSuccess = podcast => {
-    return {
-      type: "CREATE_PODCAST_SUCCESS",
-      podcast
-    };
-  };
-  
-  export const createPodcastError = () => {
-    return {
-      type: "CREATE_PODCAST_ERROR"
-    };
-  };
+};
 
-export const createPodcast =  (podcastData) => {
-    return dispatch => {
-      const request = new Request(
-        `http://localhost:8888/podcasts`,
-        {
-          headers: new Headers({
-            "Content-Type": "application/json"
-          }),
-          method: "POST",
-          body: JSON.stringify(podcastData)
-        }
-      );
-  
-      dispatch(createPodcastPending());
-      fetch(request)
-        .then(res => {
-          if (res.ok) {
-            return res;
-          }
-          dispatch(createPodcastError("Request failed!"));
-        })
-        .then(res => {
-          console.log("podcast successfully created.", res);
-          dispatch(createPodcastSuccess(res));
-        })
-        .catch(err => {
-          dispatch(createPodcastError(err));
-        });
-    };
+export const createPodcastSuccess = podcast => {
+  return {
+    type: "CREATE_PODCAST_SUCCESS",
+    podcast
   };
+};
+
+export const createPodcastError = () => {
+  return {
+    type: "CREATE_PODCAST_ERROR"
+  };
+};
+
+export const createPodcast = podcastData => {
+  return dispatch => {
+    const request = new Request(
+      `https://jamming-spotify.herokuapp.com/podcasts`,
+      {
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        method: "POST",
+        body: JSON.stringify(podcastData)
+      }
+    );
+
+    dispatch(createPodcastPending());
+    fetch(request)
+      .then(res => {
+        if (res.ok) {
+          return res;
+        }
+        dispatch(createPodcastError("Request failed!"));
+      })
+      .then(res => {
+        console.log("podcast successfully created.", res);
+        dispatch(createPodcastSuccess(res));
+      })
+      .catch(err => {
+        dispatch(createPodcastError(err));
+      });
+  };
+};
 
 export const fetchPodcastsMenuPending = () => {
   return {
@@ -67,10 +67,10 @@ export const fetchPodcastsMenuError = () => {
   };
 };
 
-export const fetchPodcastMenu = (userName) => {
+export const fetchPodcastMenu = userName => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/podcasts/${userName}`
+      `https://jamming-spotify.herokuapp.com/podcasts/${userName}`
     );
 
     dispatch(fetchPodcastsMenuPending());
@@ -83,7 +83,7 @@ export const fetchPodcastMenu = (userName) => {
         dispatch(fetchPodcastsMenuSuccess(res));
       })
       .catch(err => {
-        console.log(err)
+        console.log(err);
         dispatch(fetchPodcastsMenuError(err));
       });
   };
@@ -110,7 +110,9 @@ export const fetchPodcastSongsError = () => {
 
 export const fetchPodcastSongs = podcastId => {
   return dispatch => {
-    const request = new Request(`http://localhost:8888/podcast/${podcastId}`);
+    const request = new Request(
+      `https://jamming-spotify.herokuapp.com/podcast/${podcastId}`
+    );
 
     dispatch(fetchPodcastSongsPending());
 
@@ -150,7 +152,7 @@ export const saveTrackToPodcastError = () => {
 export const saveTrackToPodcast = (podcastId, trackDetails) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/updatePodcast/${podcastId}`,
+      `https://jamming-spotify.herokuapp.com/updatePodcast/${podcastId}`,
       {
         headers: new Headers({
           "Content-Type": "application/json"
@@ -193,10 +195,10 @@ export const deletePodcastError = () => {
   };
 };
 
-export const deletePodcast = (podcastId) => {
+export const deletePodcast = podcastId => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/podcasts/${podcastId}`,
+      `https://jamming-spotify.herokuapp.com/podcasts/${podcastId}`,
       {
         method: "DELETE"
       }
@@ -243,7 +245,7 @@ export const deleteTrackFromPodcastError = () => {
 export const deleteTrackFromPodcast = (podcastId, trackId) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/podcast/${podcastId}/${trackId}`,
+      `https://jamming-spotify.herokuapp.com/podcast/${podcastId}/${trackId}`,
       {
         method: "DELETE"
       }
@@ -286,7 +288,7 @@ export const editPodcastError = () => {
 export const editPodcast = (podcastId, data) => {
   return dispatch => {
     const request = new Request(
-      `http://localhost:8888/${podcastId}`,
+      `https://jamming-spotify.herokuapp.com/${podcastId}`,
       {
         headers: new Headers({
           "Content-Type": "application/json"

@@ -30,7 +30,7 @@ const FavouriteSongs = ({
     }
   }, [newFavSong]);
   const renderSongs = () => {
-    return favouriteSongs
+    return favouriteSongs.length>0
       ? favouriteSongs.map((song, i) => {
           const buttonClass =
             song.id === songId && !songPaused
@@ -76,7 +76,7 @@ const FavouriteSongs = ({
             </li>
           );
         })
-      : null;
+      : <div style={{position : 'absolute', left: '40%', top: '70%'}}>No favourite songs yet!!</div>;
   };
   console.log("View Type:", viewType);
   return (

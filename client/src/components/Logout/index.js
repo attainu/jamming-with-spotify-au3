@@ -11,7 +11,8 @@ const Logout = () => {
     );
     setTimeout(() => {
       spotifyLogoutWindow.close();
-      window.location.href = "http://localhost:8888/login";
+      localStorage.clear();
+      window.location.href = "https://jamming-with-spotify.herokuapp.com/";
     }, 2000);
   }
 

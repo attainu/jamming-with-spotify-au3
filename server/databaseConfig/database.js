@@ -3,16 +3,19 @@ const podcast = require('../models/podcastModel');
 const favourite = require('../models/favouritesModel')
 
 const data = {
-  "user":"postgres",
-  "password":"5690",
-  "host":"localhost",
-  "port":5432,
-  "database":"jamming-spotify"
-}
-
-const sequelize = new Sequelize(data.database,data.user,data.password,{
-  host:data.host,
-  dialect:data.user,
+  user: "sjbnyypj",
+  password: "VjCUHiM21kQ9qfegJb-GybSQ2RiHmpDL",
+  host: "drona.db.elephantsql.com",
+  port: 5432,
+  database: "sjbnyypj"
+};
+const sequelize = new Sequelize(data.database, data.user, data.password, {
+  host: data.host,
+  dialect: "postgres",
+  logging: false,
+  dialectOptions: {
+    ssl: true
+  }
 });
 
 //checking connection
@@ -25,7 +28,7 @@ sequelize
     console.error('Unable to connect to the database:', err);
 });
 
-//creating table
+// creating table
 sequelize.sync()
 .then(() => console.log(' model created'))
 .catch((err) => console.log("error creating model", err));
